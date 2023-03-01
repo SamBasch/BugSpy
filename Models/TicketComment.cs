@@ -18,8 +18,10 @@ namespace BugSpy.Models
 
         //FK start
 
-        public int TicketId { get; set; }   
+        public int TicketId { get; set; }
 
+
+        [Required]
         public string? UserId { get; set; }
 
         //FK end

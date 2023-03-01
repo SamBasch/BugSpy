@@ -9,13 +9,11 @@ namespace BugSpy.Models
 
 
 
-        [Display(Name = "Property Changed")]
-        [StringLength(200, ErrorMessage = "The {0} must be at least {2} and at most {1} characters", MinimumLength = 2)]
+
         public string? PropertyName { get; set; }
 
 
         [Display(Name = "Description")]
-        [StringLength(200, ErrorMessage = "The {0} must be at least {2} and at most {1} characters", MinimumLength = 2)]
         public string? Description { get; set; }
 
         [DataType(DataType.Date)]
@@ -24,12 +22,12 @@ namespace BugSpy.Models
 
 
         [Display(Name = "Old Value")]
-        [StringLength(200, ErrorMessage = "The {0} must be at least {2} and at most {1} characters", MinimumLength = 2)]
+
         public string? OldValue { get; set; }
 
 
         [Display(Name = "New Value")]
-        [StringLength(200, ErrorMessage = "The {0} must be at least {2} and at most {1} characters", MinimumLength = 2)]
+ 
         public string? NewValue { get; set; }
 
 
@@ -37,8 +35,10 @@ namespace BugSpy.Models
 
         //FK start
 
-        public int TicketId { get; set; }   
+        public int TicketId { get; set; }
 
+
+        [Required]
         public string? UserId { get; set; }  
 
 

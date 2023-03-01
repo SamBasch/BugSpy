@@ -40,7 +40,6 @@ namespace BugSpy.Models
         public string? Message { get; set; }
 
 
-        [Display(Name = "IsValid?")]
         public bool IsValid { get; set; }
 
         //FK start

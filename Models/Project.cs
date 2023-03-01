@@ -32,15 +32,14 @@ namespace BugSpy.Models
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
 
-        public byte[]? ImageData { get; set; }
+        public byte[]? ImageFileData { get; set; }
 
-        public string? ImageType { get; set; }
+        public string? ImageFileType { get; set; }
 
         [NotMapped]
-        public virtual IFormFile? ImageFile { get; set; }
+        public virtual IFormFile? ImageFormFile { get; set; }
 
 
-        [Display(Name = "Archived?")]
         public bool Archived { get; set; }
 
         //FK start

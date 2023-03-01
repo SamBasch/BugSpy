@@ -16,7 +16,7 @@ namespace BugSpy.Models
    
         [Required]
         [Display(Name = "Description")]
-        [StringLength(600, ErrorMessage = "The {0} must be at least {2} and at most {1} characters", MinimumLength = 2)]
+        [StringLength(6000, ErrorMessage = "The {0} must be at least {2} and at most {1} characters", MinimumLength = 2)]
         public string? Description { get; set; }
 
         [DataType(DataType.Date)]
@@ -24,13 +24,11 @@ namespace BugSpy.Models
 
 
         [DataType(DataType.Date)]
-        public DateTime Updated { get; set; }
+        public DateTime? Updated { get; set; }
 
 
-        [Display(Name = "Archived?")]
         public bool Archived { get; set; }
 
-        [Display(Name = "ProjectArchived?")]
         public bool ArchivedByProject { get; set; }
 
         //FK start
