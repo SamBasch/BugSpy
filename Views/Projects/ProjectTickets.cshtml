@@ -1,0 +1,103 @@
+﻿@model BugSpy.Models.Project
+
+
+
+
+
+
+
+
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <p>Title</p>
+            </th>
+            <th>
+                <p>Description</p>
+            </th>
+            <th>
+                <p>Created</p>
+            </th>
+            <th>
+                <p>Updated</p>
+            </th>
+            <th>
+                <p>Archived</p>
+            </th>
+            <th>
+                <p>Archived By Project</p>
+            </th>
+            <th>
+                <p>Ticket Priority</p>
+            </th>
+            <th>
+                <p>Ticket Type</p>
+            </th>
+            <th>
+                <p>Ticket Status</p>
+            </th>
+@*            <th>
+                <p>Developer lead</p>
+            </th>
+            <th>
+                <p>Ticket submitter</p>
+            </th>*@
+
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (Ticket ticket in Model.Tickets)
+        {
+            <tr>
+                <td>
+                    @ticket.Title
+                </td>
+
+                <td>
+                    @ticket.Description
+                </td>
+
+                <td>
+                    @ticket.Created
+                </td>
+                <td>
+                    @ticket.Updated
+                </td>
+                <td>
+                    @ticket.Archived
+                </td>
+                <td>
+                    @ticket.ArchivedByProject
+                </td>
+                <td>
+                    @ticket.TicketPriority.Name
+                </td>
+                <td>
+                    @ticket.TicketType.Name
+                </td>
+                <td>
+                    @ticket.TicketStatus.Name
+                </td>
+@*                <td>
+                    @ticket.DeveloperUser.FullName
+                </td>
+                <td>
+                    @ticket.SubmitterUser.FullName
+                </td>*@
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+
+
+
+
+
+

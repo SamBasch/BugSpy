@@ -1,0 +1,31 @@
+﻿@model IEnumerable<Project>
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(Project project in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="ProjectOverview" asp-controller="Projects" asp-route-id="@project.Id">@Html.DisplayFor(modelItem => project.Name)</a>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+
+    </table>
+
+
+
+
+
