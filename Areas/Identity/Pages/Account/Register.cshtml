@@ -1,66 +1,68 @@
 ﻿@page
 @model RegisterModel
+
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Log in";
+    Layout = "/Views/Shared/_LoginLayout.cshtml";
 }
-
-<h1>@ViewData["Title"]</h1>
-
-<div class="row">
-    <div class="col-md-4">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Input.Email">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.Password">Password</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-        </form>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
-                        </p>
+<!-- END: Head -->
+<body class="login">
+    <div class="container px-sm-10">
+        <div class="grid columns-2 gap-4">
+            <!-- BEGIN: Register Info -->
+            <div class="g-col-2 g-col-xl-1 d-none d-xl-flex flex-column min-vh-screen">
+                <a href="" class="-intro-x d-flex align-items-center pt-5">
+                    <img alt="Rubick Bootstrap HTML Admin Template" class="w-6" src="~/dist/images/logo.svg">
+                    <span class="text-white fs-lg ms-3"> Ru<span class="fw-medium">bick</span> </span>
+                </a>
+                <div class="my-auto">
+                    <img alt="Rubick Bootstrap HTML Admin Template" class="-intro-x w-1/2 mt-n16" src="~/dist/images/illustration.svg">
+                    <div class="-intro-x text-white fw-medium fs-4xl lh-base mt-10">
+                        A few more clicks to
+                        <br>
+                        sign up to your account.
                     </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
+                    <div class="-intro-x mt-5 fs-lg text-white text-opacity-70 dark-text-gray-500">Manage all your e-commerce accounts in one place</div>
+                </div>
+            </div>
+            <!-- END: Register Info -->
+            <!-- BEGIN: Register Form -->
+            <div class="g-col-2 g-col-xl-1 h-screen h-xl-auto d-flex py-5 py-xl-0 my-10 my-xl-0">
+                <div class="my-auto mx-auto ms-xl-20 bg-white dark-bg-dark-1 bg-xl-transparent px-5 px-sm-8 py-8 p-xl-0 rounded-2 shadow-md shadow-xl-none w-full w-sm-3/4 w-lg-2/4 w-xl-auto">
+                    <h2 class="intro-x fw-bold fs-2xl fs-xl-3xl text-center text-xl-start">
+                        Sign Up
+                    </h2>
+                    <div class="intro-x mt-2 text-gray-500 dark-text-gray-500 d-xl-none text-center">A few more clicks to sign in to your account. Manage all your e-commerce accounts in one place</div>
+                    <div class="intro-x mt-8">
+                        <input type="text" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block" placeholder="First Name">
+                        <input type="text" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block mt-4" placeholder="Last Name">
+                        <input type="text" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block mt-4" placeholder="Email">
+                        <input type="text" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block mt-4" placeholder="Password">
+                        <div class="intro-x w-full grid columns-12 gap-4 h-1 mt-3">
+                            <div class="g-col-3 h-full rounded bg-theme-9"></div>
+                            <div class="g-col-3 h-full rounded bg-theme-9"></div>
+                            <div class="g-col-3 h-full rounded bg-theme-9"></div>
+                            <div class="g-col-3 h-full rounded bg-gray-200 dark-bg-dark-2"></div>
                         </div>
-                    </form>
-                }
-            }
-        </section>
+                        <a href="" class="intro-x text-gray-600 d-block mt-2 fs-xs fs-sm-sm">What is a secure password?</a>
+                        <input type="text" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block mt-4" placeholder="Password Confirmation">
+                    </div>
+                    <div class="intro-x d-flex align-items-center text-gray-700 dark-text-gray-600 mt-4 fs-xs fs-sm-sm">
+                        <input id="remember-me" type="checkbox" class="form-check-input border me-2">
+                        <label class="cursor-pointer select-none" for="remember-me">I agree to the Envato</label>
+                        <a class="text-theme-1 dark-text-theme-10 ms-1" href="">Privacy Policy</a>.
+                    </div>
+                    <div class="intro-x mt-5 mt-xl-8 text-center text-xl-start">
+                        <button class="btn btn-primary py-3 px-4 w-full w-xl-32 me-xl-3 align-top">Register</button>
+                        <button class="btn btn-outline-secondary py-3 px-4 w-full w-xl-32 mt-3 mt-xl-0 align-top">Sign in</button>
+                    </div>
+                </div>
+            </div>
+            <!-- END: Register Form -->
+        </div>
     </div>
-</div>
+
+</body>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -23,6 +23,9 @@ builder.Services.AddIdentity<BTUser, IdentityRole>(options => options.SignIn.Req
 
 builder.Services.AddScoped<IBTFileService, BTFileService>();
 
+builder.Services.AddScoped<IBTService, BTService>();
+
+
 
 builder.Services.AddMvc();
 

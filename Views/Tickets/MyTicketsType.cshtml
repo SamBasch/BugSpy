@@ -1,0 +1,440 @@
+﻿@using X.PagedList;
+
+@using X.PagedList.Mvc.Core;
+@using X.PagedList.Web.Common;
+@model IPagedList<BugSpy.Models.Ticket>
+
+
+<div class="intro-y g-col-12 overflow-auto overflow-lg-visible">
+    <table class="table table-report mt-n2">
+        <thead>
+
+            <a asp-controller="Tickets" asp-action="Create">
+                <div type="button" class="btn btn-success w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Create New Ticket</div>
+            </a>
+
+            <a asp-controller="Tickets" asp-action="MyRecentTickets">
+                <div type="button" class="btn btn-primary w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Filter by Date</div>
+            </a>
+
+
+            <a asp-controller="Tickets" asp-action="MyTicketsType">
+                <div type="button" class="btn btn-primary w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Filter by Type</div>
+            </a>
+
+            <a asp-controller="Tickets" asp-action="MyTicketsPriority">
+                <div type="button" class="btn btn-primary w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Filter by Priority</div>
+            </a>
+
+                        <a asp-controller="Tickets" asp-action="MyTicketsStatus">
+                <div type="button" class="btn btn-primary w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Filter by Status</div>
+            </a>
+
+            <a asp-controller="Tickets" asp-action="MyTicketsTitle">
+                <div type="button" class="btn btn-primary w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Filter by Title</div>
+            </a>
+
+            <a asp-controller="Tickets" asp-action="MyTicketsProject">
+                <div type="button" class="btn btn-primary w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Filter by Project</div>
+            </a>
+
+            <tr>
+
+                <th class="text-nowrap">TICKET NAME</th>
+                <th class="text-nowrap">CREATED/UPDATED</th>
+                <th class="text-nowrap">PROJECT</th>
+                <th class="text-nowrap">MEMBERS</th>
+                <th class="text-center text-nowrap">TYPE</th>
+                <th class="text-center text-nowrap">PRIORITY</th>
+                <th class="text-center text-nowrap">STATUS</th>
+                <th class="text-center text-nowrap">ACTIONS</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Ticket ticket in Model)
+            {
+                <tr class="intro-x">
+                    <td class="">
+                        <a href="" class="fw-medium text-nowrap">@ticket.Title</a>
+                        <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Sport &amp; Outdoor</div>
+                    </td>
+
+                    @if (ticket.Updated != null)
+                    {
+                        <td class="">
+                            <div href="" class="fw-medium text-nowrap"> @ticket.Updated?.ToString("MMM dd, yyyy")</div>
+                            <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Updated Date</div>
+                        </td>
+                    }
+                    else
+                    {
+
+                        <td class="">
+                            <a href="" class="fw-medium text-nowrap"> @ticket.Created.ToString("MMM dd, yyyy")</a>
+                            <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Creation Date</div>
+                        </td>
+                    }
+
+
+                    <td class="">
+                        <a href="" class="fw-medium text-nowrap">@ticket.Project.Name</a>
+                    </td>
+
+                    <td>
+                        <div class="d-flex">
+                            <div class="w-10 h-10 image-fit zoom-in">
+                                <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-15.jpg" title="Uploaded at 27 February 2021">
+                            </div>
+                            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+                                <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-6.jpg" title="Uploaded at 17 July 2022">
+                            </div>
+                            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+                                <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-12.jpg" title="Uploaded at 12 November 2021">
+                            </div>
+                        </div>
+
+
+                    </td>
+
+
+
+                    <td class="text-center">
+                        <a href="" class="fw-medium text-nowrap">@ticket.TicketType.Name</a>
+                    </td>
+
+                    <td class="text-center">
+                        <a href="" class="fw-medium text-nowrap">@ticket.TicketPriority.Name</a>
+                    </td>
+
+
+
+
+                    @if (ticket.Archived == false)
+                    {
+                        <td class="w-40">
+                            <div class="d-flex align-items-center justify-content-center text-theme-9"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Active </div>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="w-40">
+                            <div class="d-flex align-items-center justify-content-center text-theme-6"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Inactive </div>
+                        </td>
+
+                    }
+
+
+
+
+                    <td class="table-report__action w-56">
+                        <div class="d-flex justify-content-center align-items-center">
+                            <a class="d-flex align-items-center me-3" asp-action="Edit" asp-route-id="@ticket.Id"> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Edit </a>
+                            <a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Delete </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+
+            @*            <tr class="intro-x">
+            <td class="w-40">
+            <a href="" class="fw-medium text-nowrap">Nike Air Max 270</a>
+            <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Sport &amp; Outdoor</div>
+            </td>
+            <td>
+            <div class="d-flex">
+            <div class="w-10 h-10 image-fit zoom-in">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-7.jpg" title="Uploaded at 10 August 2022">
+            </div>
+            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-1.jpg" title="Uploaded at 29 April 2022">
+            </div>
+            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-13.jpg" title="Uploaded at 19 December 2020">
+            </div>
+            </div>
+
+            </td>
+            <td class="text-center">195</td>
+            <td class="w-40">
+            <div class="d-flex align-items-center justify-content-center text-theme-9"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Active </div>
+            </td>
+            <td class="table-report__action w-56">
+            <div class="d-flex justify-content-center align-items-center">
+            <a class="d-flex align-items-center me-3" href=""> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Edit </a>
+            <a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Delete </a>
+            </div>
+            </td>
+            </tr>
+            <tr class="intro-x">
+            <td class="w-40">
+            <div class="d-flex">
+            <div class="w-10 h-10 image-fit zoom-in">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-15.jpg" title="Uploaded at 21 May 2022">
+            </div>
+            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-8.jpg" title="Uploaded at 17 April 2022">
+            </div>
+            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-15.jpg" title="Uploaded at 4 June 2021">
+            </div>
+            </div>
+            </td>
+            <td>
+            <a href="" class="fw-medium text-nowrap">Apple MacBook Pro 13</a>
+            <div class="text-gray-600 fs-xs text-nowrap mt-0.5">PC &amp; Laptop</div>
+            </td>
+            <td class="text-center">75</td>
+            <td class="w-40">
+            <div class="d-flex align-items-center justify-content-center text-theme-9"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Active </div>
+            </td>
+            <td class="table-report__action w-56">
+            <div class="d-flex justify-content-center align-items-center">
+            <a class="d-flex align-items-center me-3" href=""> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Edit </a>
+            <a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Delete </a>
+            </div>
+            </td>
+            </tr>
+            <tr class="intro-x">
+            <td class="w-40">
+            <div class="d-flex">
+            <div class="w-10 h-10 image-fit zoom-in">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-3.jpg" title="Uploaded at 8 September 2021">
+            </div>
+            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-14.jpg" title="Uploaded at 17 November 2022">
+            </div>
+            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-1.jpg" title="Uploaded at 26 September 2021">
+            </div>
+            </div>
+            </td>
+            <td>
+            <a href="" class="fw-medium text-nowrap">Nikon Z6</a>
+            <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Photography</div>
+            </td>
+            <td class="text-center">69</td>
+            <td class="w-40">
+            <div class="d-flex align-items-center justify-content-center text-theme-6"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Inactive </div>
+            </td>
+            <td class="table-report__action w-56">
+            <div class="d-flex justify-content-center align-items-center">
+            <a class="d-flex align-items-center me-3" href=""> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Edit </a>
+            <a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Delete </a>
+            </div>
+            </td>
+            </tr>
+            <tr class="intro-x">
+            <td class="w-40">
+            <div class="d-flex">
+            <div class="w-10 h-10 image-fit zoom-in">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-6.jpg" title="Uploaded at 23 September 2020">
+            </div>
+            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-3.jpg" title="Uploaded at 6 March 2021">
+            </div>
+            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-4.jpg" title="Uploaded at 19 April 2022">
+            </div>
+            </div>
+            </td>
+            <td>
+            <a href="" class="fw-medium text-nowrap">Dell XPS 13</a>
+            <div class="text-gray-600 fs-xs text-nowrap mt-0.5">PC &amp; Laptop</div>
+            </td>
+            <td class="text-center">103</td>
+            <td class="w-40">
+            <div class="d-flex align-items-center justify-content-center text-theme-6"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Inactive </div>
+            </td>
+            <td class="table-report__action w-56">
+            <div class="d-flex justify-content-center align-items-center">
+            <a class="d-flex align-items-center me-3" href=""> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Edit </a>
+            <a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Delete </a>
+            </div>
+            </td>
+            </tr>
+            <tr class="intro-x">
+            <td class="w-40">
+            <div class="d-flex">
+            <div class="w-10 h-10 image-fit zoom-in">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-14.jpg" title="Uploaded at 11 October 2022">
+            </div>
+            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-11.jpg" title="Uploaded at 21 January 2021">
+            </div>
+            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-4.jpg" title="Uploaded at 31 December 2021">
+            </div>
+            </div>
+            </td>
+            <td>
+            <a href="" class="fw-medium text-nowrap">Dell XPS 13</a>
+            <div class="text-gray-600 fs-xs text-nowrap mt-0.5">PC &amp; Laptop</div>
+            </td>
+            <td class="text-center">50</td>
+
+            <td class="table-report__action w-56">
+            <div class="d-flex justify-content-center align-items-center">
+            <a class="d-flex align-items-center me-3" href=""> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Edit </a>
+            <a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Delete </a>
+            </div>
+            </td>
+            </tr>
+            <tr class="intro-x">
+            <td class="w-40">
+            <div class="d-flex">
+            <div class="w-10 h-10 image-fit zoom-in">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-3.jpg" title="Uploaded at 14 October 2021">
+            </div>
+            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-6.jpg" title="Uploaded at 5 December 2022">
+            </div>
+            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-5.jpg" title="Uploaded at 9 August 2022">
+            </div>
+            </div>
+            </td>
+            <td>
+            <a href="" class="fw-medium text-nowrap">Sony Master Series A9G</a>
+            <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Electronic</div>
+            </td>
+            <td class="text-center">94</td>
+            <td class="w-40">
+            <div class="d-flex align-items-center justify-content-center text-theme-9"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Active </div>
+            </td>
+            <td class="table-report__action w-56">
+            <div class="d-flex justify-content-center align-items-center">
+            <a class="d-flex align-items-center me-3" href=""> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Edit </a>
+            <a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Delete </a>
+            </div>
+            </td>
+            </tr>
+            <tr class="intro-x">
+            <td class="w-40">
+            <div class="d-flex">
+            <div class="w-10 h-10 image-fit zoom-in">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-11.jpg" title="Uploaded at 7 May 2020">
+            </div>
+            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-10.jpg" title="Uploaded at 29 April 2021">
+            </div>
+            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-15.jpg" title="Uploaded at 24 January 2021">
+            </div>
+            </div>
+            </td>
+            <td>
+            <a href="" class="fw-medium text-nowrap">Nike Tanjun</a>
+            <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Sport &amp; Outdoor</div>
+            </td>
+            <td class="text-center">52</td>
+            <td class="w-40">
+            <div class="d-flex align-items-center justify-content-center text-theme-6"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Inactive </div>
+            </td>
+            <td class="table-report__action w-56">
+            <div class="d-flex justify-content-center align-items-center">
+            <a class="d-flex align-items-center me-3" href=""> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Edit </a>
+            <a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Delete </a>
+            </div>
+            </td>
+            </tr>
+            <tr class="intro-x">
+            <td class="w-40">
+            <div class="d-flex">
+            <div class="w-10 h-10 image-fit zoom-in">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-9.jpg" title="Uploaded at 15 June 2021">
+            </div>
+            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-4.jpg" title="Uploaded at 14 February 2022">
+            </div>
+            <div class="w-10 h-10 image-fit zoom-in ms-n5">
+            <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-4.jpg" title="Uploaded at 13 November 2020">
+            </div>
+            </div>
+            </td>
+            <td>
+            <a href="" class="fw-medium text-nowrap">Sony Master Series A9G</a>
+            <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Electronic</div>
+            </td>
+            <td class="text-center">59</td>
+            <td class="w-40">
+            <div class="d-flex align-items-center justify-content-center text-theme-9"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Active </div>
+            </td>
+            <td class="table-report__action w-56">
+            <div class="d-flex justify-content-center align-items-center">
+            <a class="d-flex align-items-center me-3" href=""> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Edit </a>
+            <a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Delete </a>
+            </div>
+            </td>
+            </tr>
+            </tbody>
+            </table>
+            </div>*@
+            <!-- END: Data List -->
+            <!-- BEGIN: Pagination -->
+
+
+            <div>
+                <div>
+                    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                </div>
+
+                @Html.PagedListPager(Model, pageNum => Url.Action("MyTicketsType", new { pageNum }),
+                new PagedListRenderOptions{
+                LiElementClasses = new string[] {"my-page-item"},
+                PageClasses = new string[] {"my-page-link"}
+                }
+                )
+            </div>
+            @*<div class="intro-y g-col-12 d-flex flex-wrap flex-sm-row flex-sm-nowrap align-items-center">
+            <nav class="w-full w-sm-auto me-sm-auto">
+            <ul class="pagination">
+            <li class="page-item">
+            <a class="page-link" href="#"> <i class="w-4 h-4" data-feather="chevrons-left"></i> </a>
+            </li>
+            <li class="page-item">
+            <a class="page-link" href="#"> <i class="w-4 h-4" data-feather="chevron-left"></i> </a>
+            </li>
+            <li class="page-item"> <a class="page-link" href="#">...</a> </li>
+            <li class="page-item"> <a class="page-link" href="#">1</a> </li>
+            <li class="page-item active"> <a class="page-link" href="#">2</a> </li>
+            <li class="page-item"> <a class="page-link" href="#">3</a> </li>
+            <li class="page-item"> <a class="page-link" href="#">...</a> </li>
+            <li class="page-item">
+            <a class="page-link" href="#"> <i class="w-4 h-4" data-feather="chevron-right"></i> </a>
+            </li>
+            <li class="page-item">
+            <a class="page-link" href="#"> <i class="w-4 h-4" data-feather="chevrons-right"></i> </a>
+            </li>
+            </ul>
+            </nav>
+            <select class="w-20 form-select box mt-3 mt-sm-0">
+            <option>10</option>
+            <option>25</option>
+            <option>35</option>
+            <option>50</option>
+            </select>
+            </div>*@
+            <!-- END: Pagination -->
+</div>
+<!-- BEGIN: Delete Confirmation Modal -->
+<div id="delete-confirmation-modal" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="p-5 text-center">
+                    <i data-feather="x-circle" class="w-16 h-16 text-theme-6 mx-auto mt-3"></i>
+                    <div class="fs-3xl mt-5">Are you sure?</div>
+                    <div class="text-gray-600 mt-2">
+                        Do you really want to delete these records?
+                        <br>
+                        This process cannot be undone.
+                    </div>
+                </div>
+                <div class="px-5 pb-8 text-center">
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-outline-secondary w-24 me-1">Cancel</button>
+                    <button type="button" class="btn btn-danger w-24">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

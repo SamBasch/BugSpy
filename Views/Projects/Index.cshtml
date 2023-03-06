@@ -1,4 +1,7 @@
 ﻿@model IEnumerable<BugSpy.Models.Project>
+@using BugSpy.Models.Enums
+@inject IBTFileService _fileService
+@using BugSpy.Services.Interfaces
 
 @{
     ViewData["Title"] = "Index";
@@ -27,11 +30,14 @@
             <th>
                 @Html.DisplayNameFor(model => model.EndDate)
             </th>
-            <th>
+@*            <th>
                 @Html.DisplayNameFor(model => model.ImageFileData)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ImageFileType)
+            </th>*@
+            <th>
+                <p>Image</p>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Archived)
@@ -63,12 +69,12 @@
             <td>
                 @Html.DisplayFor(modelItem => item.EndDate)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageFileData)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageFileType)
-            </td>
+
+                <td>
+                    <img class="img-fluid border rounded-3 m-2" style="max-height: 250px;" src="@_fileService.ConvertByteArrayToFile(item.ImageFileData!, item.ImageFileType!, (int)DefaultImage.ProjectImage)" alt="">
+                    
+                </td>
+
             <td>
                 @Html.DisplayFor(modelItem => item.Archived)
             </td>
