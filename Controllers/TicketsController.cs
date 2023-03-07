@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -255,13 +256,15 @@ namespace BugSpy.Controllers
 		{
 			string statusMessage;
 
+            ModelState.Remove("BTUserId");
+
 			if (ModelState.IsValid && ticketAttachment.FormFile != null)
 			{
 				ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.FormFile);
 				//ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
 				ticketAttachment.FileType = ticketAttachment.FormFile.ContentType;
-
-                ticketAttachment.Created = DataUtility.GetPostGresDate(DateTime.UtcNow);
+				//ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
+				ticketAttachment.Created = DataUtility.GetPostGresDate(DateTime.UtcNow);
 				ticketAttachment.BTUserId = _userManager.GetUserId(User);
 
 				await _btTicketService.AddTicketAttachmentAsync(ticketAttachment);
@@ -277,6 +280,65 @@ namespace BugSpy.Controllers
 		}
 
 
+
+
+
+
+		public async Task<IActionResult> ShowFile(int id)
+		{
+			TicketAttachment ticketAttachment = await _btTicketService.GetTicketAttachmentByIdAsync(id);
+			string fileName = ticketAttachment.FileType;
+			byte[] fileData = ticketAttachment.FileData;
+			string ext = Path.GetExtension(fileName).Replace(".", "");
+
+			Response.Headers.Add("Content-Disposition", $"inline; filename={fileName}");
+			return File(fileData, $"application/{ext}");
+		}
+
+
+
+
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> AddCommentToTicket([Bind("Id,Comment,Created,TicketId,UserId")] TicketComment ticketComment)
+		{
+
+			ModelState.Remove("UserId");
+			if (ModelState.IsValid)
+			{
+				ticketComment.UserId = _userManager.GetUserId(User);
+
+				ticketComment.Created = DataUtility.GetPostGresDate(DateTime.UtcNow);
+
+                int ticketId = ticketComment.TicketId;
+
+				_context.Add(ticketComment);
+				await _context.SaveChangesAsync();
+				return RedirectToAction("Details", "Tickets", new { id = ticketId });
+			}
+			ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", ticketComment.TicketId);
+			ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", ticketComment.UserId);
+			return View(ticketComment);
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		// GET: Tickets/Details/5
 		public async Task<IActionResult> Details(int? id)
         {
@@ -285,7 +347,8 @@ namespace BugSpy.Controllers
                 return NotFound();
             }
 
-            Ticket?  ticket = await _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).FirstOrDefaultAsync(t => t.Id == id.Value);
+            //Ticket?  ticket = await _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).FirstOrDefaultAsync(t => t.Id == id.Value);
+            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(id);
             if (ticket == null)
             {
                 return NotFound();

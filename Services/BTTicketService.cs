@@ -37,8 +37,24 @@ namespace BugSpy.Services
 			}
 		}
 
-	
 
+		public async Task<Ticket> GetTicketByIdAsync(int? ticketId)
+		{
+
+
+			try
+			{
+				Ticket? ticket = await _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).FirstOrDefaultAsync(t => t.Id == ticketId);
+
+
+				return ticket!;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
 
 
 		public async Task<IEnumerable<Ticket>> GetSubmitterRecentTickets(string? userId)
@@ -324,5 +340,20 @@ namespace BugSpy.Services
 		}
 
 
+		public async Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId)
+		{
+			try
+			{
+				TicketAttachment ticketAttachment = await _context.TicketAttachments
+																  .Include(t => t.BTUser)
+																  .FirstOrDefaultAsync(t => t.Id == ticketAttachmentId);
+				return ticketAttachment;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
 	}
 }

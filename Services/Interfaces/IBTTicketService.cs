@@ -15,7 +15,7 @@ namespace BugSpy.Services.Interfaces
 
 
 
-
+		public Task<Ticket> GetTicketByIdAsync(int? ticketId);
 
 		public Task<IEnumerable<Ticket>> GetSubmitterTicketsByPriority(string? userId);
 
@@ -38,5 +38,7 @@ namespace BugSpy.Services.Interfaces
 
 
 		public Task<IEnumerable<Ticket>> GetDeveloperTicketsByProject(string? userId);
+
+		public Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId);
 	}
 }
