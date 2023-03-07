@@ -128,13 +128,15 @@
 
                 <td class="table-report__action w-56">
                     <div class="d-flex justify-content-center align-items-center">
+                            <a class="d-flex align-items-center me-3" asp-action="Details" asp-route-id="@ticket.Id"> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Details </a>
                         <a class="d-flex align-items-center me-3" asp-action="Edit" asp-route-id="@ticket.Id"> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Edit </a>
                         <a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Delete </a>
                     </div>
                 </td>
             </tr>
-            }
 
+            }
+            </table>
 @*            <tr class="intro-x">
                 <td class="w-40">
                     <a href="" class="fw-medium text-nowrap">Nike Air Max 270</a>
@@ -367,7 +369,7 @@
                 </td>
             </tr>
         </tbody>
-    </table>
+
 </div>*@
 <!-- END: Data List -->
 <!-- BEGIN: Pagination -->

@@ -26,3 +26,11 @@
     box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.1), 0 2px 5px rgba(0, 0, 0, 0.5);
     transition: all 0.3s ease;
 }
+
+
+ .comment .single-comment .comment-img img {
+    border-radius: 100%;
+    max-width: 80px !important;
+    max-height: 80px !important;
+    width: 100%;
+}

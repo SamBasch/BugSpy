@@ -7,16 +7,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugSpy.Data;
 using BugSpy.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugSpy.Controllers
 {
     public class TicketCommentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<BTUser> _userManager;
 
-        public TicketCommentsController(ApplicationDbContext context)
+        public TicketCommentsController(ApplicationDbContext context, UserManager<BTUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: TicketComments
@@ -61,9 +64,15 @@ namespace BugSpy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Comment,Created,TicketId,UserId")] TicketComment ticketComment)
         {
-            if (ModelState.IsValid)
+
+			ModelState.Remove("UserId");
+			if (ModelState.IsValid)
             {
-                _context.Add(ticketComment);
+                ticketComment.UserId = _userManager.GetUserId(User);
+
+				ticketComment.Created = DataUtility.GetPostGresDate(DateTime.UtcNow);
+
+				_context.Add(ticketComment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

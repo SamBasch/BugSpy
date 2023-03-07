@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BugSpy.Extensions;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BugSpy.Models
@@ -27,7 +29,11 @@ namespace BugSpy.Models
 
 
         [NotMapped]
-        public virtual IFormFile? FormFile { get; set; }
+		[DisplayName("Select a file")]
+		[DataType(DataType.Upload)]
+		[MaxFileSize(1024 * 1024)]
+		[AllowedExtensions(new string[] { ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx", ".pdf" })]
+		public virtual IFormFile? FormFile { get; set; }
 
 
 

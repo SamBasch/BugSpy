@@ -10,21 +10,25 @@ using BugSpy.Models;
 using BugSpy.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using X.PagedList;
+using BugSpy.Services;
+using BugSpy.Extensions;
+using System.ComponentModel.Design;
 
 namespace BugSpy.Controllers
 {
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IBTFileService _fileServce;
+        private readonly IBTFileService _fileService;
         private readonly UserManager<BTUser> _userManager;
-        private readonly IBTService _btService;
+        private readonly IBTTicketService _btTicketService;
 
-        public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTService btService)
+        public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTTicketService btTicketService, IBTFileService fileService )
         {
             _context = context;
             _userManager = userManager;
-            _btService = btService;
+            _btTicketService = btTicketService;
+            _fileService = fileService;
         }
 
         // GET: Tickets
@@ -51,24 +55,24 @@ namespace BugSpy.Controllers
         public async Task<IActionResult> MyRecentTickets(int? pageNum)
         {
 
+			int companyId = User.Identity!.GetCompanyId();
 
-
-            int pageSize = 10;
+			int pageSize = 10;
             int page = pageNum ?? 1;
 
             string? userId = _userManager.GetUserId(User);
 
             if(User.IsInRole("Submitter")) {
 
-                IPagedList<Ticket> recentSubmitterTickets = (await _btService.GetSubmitterRecentTickets(userId)).ToPagedList(page, pageSize);
+                IPagedList<Ticket> recentSubmitterTickets = (await _btTicketService.GetSubmitterRecentTickets(userId)).ToPagedList(page, pageSize);
                 return View(recentSubmitterTickets);
             } else if(User.IsInRole("Developer"))
             {
-                IPagedList<Ticket> recentDeveloperTickets = (await _btService.GetDeveloperRecentTickets(userId)).ToPagedList(page, pageSize);
+                IPagedList<Ticket> recentDeveloperTickets = (await _btTicketService.GetDeveloperRecentTickets(userId)).ToPagedList(page, pageSize);
                 return View(recentDeveloperTickets);
             } else
             {
-                IPagedList<Ticket> recentSubmitterTickets = (await _btService.GetSubmitterRecentTickets(userId)).ToPagedList(page, pageSize);
+                IPagedList<Ticket> recentSubmitterTickets = (await _btTicketService.GetSubmitterRecentTickets(userId)).ToPagedList(page, pageSize);
 
                 return View(recentSubmitterTickets);
             }
@@ -88,19 +92,23 @@ namespace BugSpy.Controllers
             string? userId = _userManager.GetUserId(User);
 
             if (User.IsInRole("Submitter"))
-            {
-
-                IPagedList<Ticket> typeSubmitterTickets = (await _btService.GetSubmitterTicketsByType(userId)).ToPagedList(page, pageSize);
+			{
+				int companyId = User.Identity!.GetCompanyId();
+				IPagedList<Ticket> typeSubmitterTickets = (await _btTicketService.GetSubmitterTicketsByType(userId)).ToPagedList(page, pageSize);
                 return View(typeSubmitterTickets);
             }
             else if (User.IsInRole("Developer"))
             {
-                IPagedList<Ticket> typeDeveloperTickets = (await _btService.GetDeveloperTicketsByType(userId)).ToPagedList(page, pageSize);
+
+				int companyId = User.Identity!.GetCompanyId();
+				IPagedList<Ticket> typeDeveloperTickets = (await _btTicketService.GetDeveloperTicketsByType(userId)).ToPagedList(page, pageSize);
                 return View(typeDeveloperTickets);
             }
             else
             {
-                IPagedList<Ticket> typeSubmitterTickets = (await _btService.GetSubmitterTicketsByType(userId)).ToPagedList(page, pageSize);
+
+				int companyId = User.Identity!.GetCompanyId();
+				IPagedList<Ticket> typeSubmitterTickets = (await _btTicketService.GetSubmitterTicketsByType(userId)).ToPagedList(page, pageSize);
 
                 return View(typeSubmitterTickets);
             }
@@ -119,18 +127,22 @@ namespace BugSpy.Controllers
 
             if (User.IsInRole("Submitter"))
             {
-
-                IPagedList<Ticket> prioritySubmitterTickets = (await _btService.GetSubmitterTicketsByPriority(userId)).ToPagedList(page, pageSize);
+				int companyId = User.Identity!.GetCompanyId();
+				IPagedList<Ticket> prioritySubmitterTickets = (await _btTicketService.GetSubmitterTicketsByPriority(userId)).ToPagedList(page, pageSize);
                 return View(prioritySubmitterTickets);
             }
             else if (User.IsInRole("Developer"))
             {
-                IPagedList<Ticket> priorityDeveloperTickets = (await _btService.GetDeveloperTicketsByPriority(userId)).ToPagedList(page, pageSize);
+
+				int companyId = User.Identity!.GetCompanyId();
+				IPagedList<Ticket> priorityDeveloperTickets = (await _btTicketService.GetDeveloperTicketsByPriority(userId)).ToPagedList(page, pageSize);
                 return View(priorityDeveloperTickets);
             }
             else
             {
-                IPagedList<Ticket> prioritySubmitterTickets = (await _btService.GetSubmitterTicketsByPriority(userId)).ToPagedList(page, pageSize);
+
+				int companyId = User.Identity!.GetCompanyId();
+				IPagedList<Ticket> prioritySubmitterTickets = (await _btTicketService.GetSubmitterTicketsByPriority(userId)).ToPagedList(page, pageSize);
 
                 return View(prioritySubmitterTickets);
             }
@@ -149,18 +161,20 @@ namespace BugSpy.Controllers
 
             if (User.IsInRole("Submitter"))
             {
-
-                IPagedList<Ticket> statusSubmitterTickets = (await _btService.GetSubmitterTicketsByPriority(userId)).ToPagedList(page, pageSize);
+				int companyId = User.Identity!.GetCompanyId();
+				IPagedList<Ticket> statusSubmitterTickets = (await _btTicketService.GetSubmitterTicketsByPriority(userId)).ToPagedList(page, pageSize);
                 return View(statusSubmitterTickets);
             }
             else if (User.IsInRole("Developer"))
             {
-                IPagedList<Ticket> statusDeveloperTickets = (await _btService.GetDeveloperTicketsByStatus(userId)).ToPagedList(page, pageSize);
+				int companyId = User.Identity!.GetCompanyId();
+				IPagedList<Ticket> statusDeveloperTickets = (await _btTicketService.GetDeveloperTicketsByStatus(userId)).ToPagedList(page, pageSize);
                 return View(statusDeveloperTickets);
             }
             else
             {
-                IPagedList<Ticket> statusSubmitterTickets = (await _btService.GetSubmitterTicketsByPriority(userId)).ToPagedList(page, pageSize);
+				int companyId = User.Identity!.GetCompanyId();
+				IPagedList<Ticket> statusSubmitterTickets = (await _btTicketService.GetSubmitterTicketsByPriority(userId)).ToPagedList(page, pageSize);
 
                 return View(statusSubmitterTickets);
             }
@@ -179,18 +193,22 @@ namespace BugSpy.Controllers
 
             if (User.IsInRole("Submitter"))
             {
-
-                IPagedList<Ticket> titleSubmitterTickets = (await _btService.GetSubmitterTicketsByTitle(userId)).ToPagedList(page, pageSize);
+				int companyId = User.Identity!.GetCompanyId();
+				IPagedList<Ticket> titleSubmitterTickets = (await _btTicketService.GetSubmitterTicketsByTitle(userId)).ToPagedList(page, pageSize);
                 return View(titleSubmitterTickets);
             }
             else if (User.IsInRole("Developer"))
             {
-                IPagedList<Ticket> titleDeveloperTickets = (await _btService.GetDeveloperTicketsByTitle(userId)).ToPagedList(page, pageSize);
+
+				int companyId = User.Identity!.GetCompanyId();
+				IPagedList<Ticket> titleDeveloperTickets = (await _btTicketService.GetDeveloperTicketsByTitle(userId)).ToPagedList(page, pageSize);
                 return View(titleDeveloperTickets);
             }
             else
             {
-                IPagedList<Ticket> titleSubmitterTickets = (await _btService.GetSubmitterTicketsByTitle(userId)).ToPagedList(page, pageSize);
+
+				int companyId = User.Identity!.GetCompanyId();
+				IPagedList<Ticket> titleSubmitterTickets = (await _btTicketService.GetSubmitterTicketsByTitle(userId)).ToPagedList(page, pageSize);
 
                 return View(titleSubmitterTickets);
             }
@@ -209,18 +227,20 @@ namespace BugSpy.Controllers
 
             if (User.IsInRole("Submitter"))
             {
-
-                IPagedList<Ticket> projectSubmitterTickets = (await _btService.GetSubmitterTicketsByProject(userId)).ToPagedList(page, pageSize);
+				int companyId = User.Identity!.GetCompanyId();
+				IPagedList<Ticket> projectSubmitterTickets = (await _btTicketService.GetSubmitterTicketsByProject(userId)).ToPagedList(page, pageSize);
                 return View(projectSubmitterTickets);
             }
             else if (User.IsInRole("Developer"))
             {
-                IPagedList<Ticket> projectDeveloperTickets = (await _btService.GetDeveloperTicketsByTitle(userId)).ToPagedList(page, pageSize);
+				int companyId = User.Identity!.GetCompanyId();
+				IPagedList<Ticket> projectDeveloperTickets = (await _btTicketService.GetDeveloperTicketsByTitle(userId)).ToPagedList(page, pageSize);
                 return View(projectDeveloperTickets);
             }
             else
             {
-                IPagedList<Ticket> projectSubmitterTickets = (await _btService.GetSubmitterTicketsByProject(userId)).ToPagedList(page, pageSize);
+				int companyId = User.Identity!.GetCompanyId();
+				IPagedList<Ticket> projectSubmitterTickets = (await _btTicketService.GetSubmitterTicketsByProject(userId)).ToPagedList(page, pageSize);
 
                 return View(projectSubmitterTickets);
             }
@@ -229,11 +249,36 @@ namespace BugSpy.Controllers
         }
 
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> AddTicketAttachment([Bind("Id,FormFile,Description,TicketId")] TicketAttachment ticketAttachment)
+		{
+			string statusMessage;
+
+			if (ModelState.IsValid && ticketAttachment.FormFile != null)
+			{
+				ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.FormFile);
+				//ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
+				ticketAttachment.FileType = ticketAttachment.FormFile.ContentType;
+
+                ticketAttachment.Created = DataUtility.GetPostGresDate(DateTime.UtcNow);
+				ticketAttachment.BTUserId = _userManager.GetUserId(User);
+
+				await _btTicketService.AddTicketAttachmentAsync(ticketAttachment);
+				statusMessage = "Success: New attachment added to Ticket.";
+			}
+			else
+			{
+				statusMessage = "Error: Invalid data.";
+
+			}
+
+			return RedirectToAction("Details", new { id = ticketAttachment.TicketId, message = statusMessage });
+		}
 
 
-
-        // GET: Tickets/Details/5
-        public async Task<IActionResult> Details(int? id)
+		// GET: Tickets/Details/5
+		public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {

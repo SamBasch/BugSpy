@@ -6,9 +6,9 @@ namespace BugSpy.Services
     {
         #region Globals
         private readonly string[] suffixes = { "Bytes", "KB", "MB", "GB", "TB", "PB" };
-        private readonly string _defaultBTUserImageSrc = "~/dist/images/DefaultUserImage.png";
-        private readonly string _defaultCompanyImageSrc = "~/dist/images/DefaultCompanyImage.png";
-        private readonly string _defaultProjectImageSrc = "~/dist/images/DefaultProjectImage.png";
+        private readonly string _defaultBTUserImageSrc = "/dist/images/DefaultUserImage.png";
+        private readonly string _defaultCompanyImageSrc = "/dist/images/DefaultCompanyImage.png";
+        private readonly string _defaultProjectImageSrc = "/dist/images/DefaultProjectImage.png";
         #endregion
         #region Convert Byte Array to File
         public string ConvertByteArrayToFile(byte[] fileData, string extension, int imageType)
