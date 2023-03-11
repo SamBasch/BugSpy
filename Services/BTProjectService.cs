@@ -1,5 +1,6 @@
 ﻿using BugSpy.Data;
 using BugSpy.Models;
+using BugSpy.Models.Enums;
 using BugSpy.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,19 +12,21 @@ namespace BugSpy.Services
 
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
+		private readonly IBTRolesService _roleService;
 
 
-        public BTProjectService(ApplicationDbContext context, UserManager<BTUser> userManager)
+        public BTProjectService(ApplicationDbContext context, UserManager<BTUser> userManager, IBTRolesService roleService)
         {
             _context = context;
             _userManager = userManager;
+			_roleService = roleService;
 
         }
-        public async Task<Project> GetProjectByIdAsync(int companyId, int? projectId)
+        public async Task<Project> GetProjectByIdAsync(int? companyId, int? projectId)
         {
             try
 			{
-                Project? project = await _context.Projects.Include(p => p.Members).Include(p => p.Tickets).ThenInclude(t => t.TicketPriority).Include(p => p.Tickets).ThenInclude(t => t.TicketType).Include(p => p.Company).Include(p => p.ProjectPriority).FirstOrDefaultAsync(p => p.Id == projectId);
+                Project? project = await _context.Projects.Where(p => p.CompanyId == companyId).Include(p => p.Members).Include(p => p.Tickets).ThenInclude(t => t.TicketPriority).Include(p => p.Tickets).ThenInclude(t => t.TicketType).Include(p => p.Company).Include(p => p.ProjectPriority).FirstOrDefaultAsync(p => p.Id == projectId);
 
                 return project;
             }
@@ -36,22 +39,43 @@ namespace BugSpy.Services
         }
 
 
-		public async Task MembersToProject(IList<string> userIds, int projectId)
+		public async Task AddMembersToProject(IList<string> userIds, int? projectId, int? companyId)
 		{
 
 			try
 			{
 
 
-				Project? project = await _context.Projects.Include(p => p.Members).FirstOrDefaultAsync(p => p.Id == projectId);
+				Project? project = await GetProjectByIdAsync(companyId, projectId);
 
 				foreach (string userId in userIds)
 				{
 
-					BTUser? bTUser = await _context.Users.FindAsync(userId);
+					BTUser? btUser = await _context.Users.FindAsync(userId);
 
-					project.Members.Add(bTUser);
-				}
+
+					if(btUser != null && project != null)
+					{
+
+						bool IsOnProject = project.Members.Any(m => m.Id == userId);
+
+						if(!IsOnProject)
+						{
+
+							project.Members.Add(btUser);
+						} else
+						{
+
+							continue;
+						}
+
+                        
+
+                    }
+
+
+                  
+                }
 
 				await _context.SaveChangesAsync();
 			}
@@ -65,18 +89,32 @@ namespace BugSpy.Services
 		}
 
 
-		public async Task RemoveAllMembersFromProject(int projectId)
+		public async Task RemoveAllMembersFromProject(int? projectId, int? companyId)
 		{
 
 
 			try
 			{
 
-				Project? project = await _context.Projects.Include(p => p.Members).FirstOrDefaultAsync(p => p.Id == projectId);
+				Project? project = await GetProjectByIdAsync(companyId, projectId);
 
-				project!.Members.Clear();
 
-				_context.Update(project);
+				foreach(BTUser member in project.Members)
+				{
+
+					if(!await _roleService.IsUserInRoleAsync(member, nameof(BTRoles.ProjectManager)))
+					{
+
+						project.Members.Remove(member);
+					}
+
+
+
+				}
+
+				//project!.Members.Clear();
+
+				//_context.Update(project);
 
 				await _context.SaveChangesAsync();
 
@@ -99,6 +137,9 @@ namespace BugSpy.Services
 		{
 
 
+
+
+
 			try
 			{
 				IEnumerable<Project> projects = await _context.Projects.Where(p => p.Members.Any(m => m.Id == userId) && p.CompanyId == companyId).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
@@ -115,7 +156,137 @@ namespace BugSpy.Services
 
 		}
 
+		public async Task<bool> AddProjectManagerAsync(string? userId, int? projectId)
+		{
+			try
+			{
+
+				BTUser? currentPM = await GetProjectManagerAsync(projectId);
+				BTUser? selectedPM = await _context.Users.FindAsync(userId);
 
 
+				if(currentPM != null)
+				{
+					await RemoveProjectManagerAsync(projectId);
+				}
+
+				try
+				{
+					await AddMemberToProjectAsync(selectedPM!, projectId);
+					return true;
+				}
+				catch (Exception)
+				{
+
+					throw;
+				}
+				
+
+
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
+		public async Task<BTUser> GetProjectManagerAsync(int? projectId)
+		{
+			try
+			{
+				Project project = await _context.Projects.Include(p => p.Members).FirstOrDefaultAsync(p => p.Id == projectId);
+
+				foreach(BTUser member in project.Members)
+				{
+					if (await _roleService.IsUserInRoleAsync(member, nameof(BTRoles.ProjectManager)))
+					{
+						return member;
+					}
+
+				}
+
+				return null!;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
+		public async Task RemoveProjectManagerAsync(int? projectId)
+		{
+			try
+			{
+				Project project = await _context.Projects.Include(p => p.Members).FirstOrDefaultAsync(p => p.Id == projectId);
+
+				foreach (BTUser member in project.Members)
+				{
+					if (await _roleService.IsUserInRoleAsync(member, nameof(BTRoles.ProjectManager)))
+					{
+						await RemoveMemberFromProjectAsync(member, projectId);
+					}
+
+				}
+
+				return;
+            }
+
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
+		public async Task<bool> RemoveMemberFromProjectAsync(BTUser member, int? projectId)
+		{
+			try
+			{
+				Project? project = await GetProjectByIdAsync(member.CompanyId, projectId);
+
+				bool IsOnProject = project.Members.Any(m => m.Id == member.Id);
+
+				if (IsOnProject)
+				{
+					project.Members.Remove(member);
+					await _context.SaveChangesAsync();
+					return true;
+				}
+
+				return false;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
+
+		public async Task<bool> AddMemberToProjectAsync(BTUser member, int? projectId)
+		{
+			try
+			{
+				Project project = await GetProjectByIdAsync(member!.CompanyId, projectId );
+
+				bool IsOnProject = project.Members.Any(m => m.Id == member.Id);
+
+				if(!IsOnProject)
+				{
+					project.Members.Add(member);
+					await _context.SaveChangesAsync();
+					return true;
+
+				}
+
+				return false;
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+		}
 	}
 }

@@ -52,6 +52,15 @@
 									<li><strong>Status:</strong> <span class="">Ticket Active</span></li>
 								}
 
+								@if(Model.DeveloperUser == null)
+								{
+									<li><strong>Developer:</strong> <span class="">Unassigned</span></li>
+								} else
+								{
+
+									<li><strong>Developer:</strong> <span class="">@Model.DeveloperUser.FullName</span></li>
+								}
+
 							</ul>
 						</div>
 					</div>
@@ -171,7 +180,7 @@
 									<div>
 										<form asp-action="AddTicketAttachment" asp-controller="Tickets" enctype="multipart/form-data" method="post">
 											<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-											<input type="hidden" asp-for="Id" name="TicketId">
+											<input type="hidden" asp-for="@Model.Id" name="TicketId">
 											<div class="media-body ml-3">
 												<label>
 													Description
@@ -197,7 +206,7 @@
 											<div class="col col-sm-2">
 												<a asp-action="ShowFile" asp-controller="Tickets" asp-route-Id="@item.Id">
 													<div class="icon">
-														<img src="@_fileService.GetFileIcon(item.FileType)" style="height:50px;width:50px" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="@item.FileType" />
+														<img src="@_fileService.GetFileIcon(item.FileName)" style="height:50px;width:50px" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="@item.FileName" />
 													</div>
 												</a>
 												<div style="font-size:x-small">

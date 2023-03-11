@@ -1,0 +1,24 @@
+﻿@model BugSpy.Models.ViewModels.AssignDevViewModel
+
+@{
+    ViewData["Title"] = "Developer";
+}
+<div class="d-flex justify-content-center mt-5 flex-column align-items-center">
+    <h3 class="my-5">Assign Project Manager</h3>
+    <div class="box dark">
+        <div class="card-header">
+            <div class="card-title">@Model.Ticket?.Title</div>
+        </div>
+        <div class="box dark ">
+            <form asp-action="AssignDev" method="post" class="d-flex flex-column">
+                <input type="hidden" asp-for="Ticket!.Id" />
+                <select asp-items="Model.DevList" asp-for="DevId">
+                    <option value="">Unassigned</option>
+                </select>
+                <span asp-validation-for="DevId" class="text-danger"></span>
+                <button type="submit" class="btn btn-primary my-3">Save</button>
+                <a asp-action="Details" asp-route-id="@Model.Ticket?.Id" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

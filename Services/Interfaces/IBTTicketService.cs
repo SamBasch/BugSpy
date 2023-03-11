@@ -8,14 +8,16 @@ namespace BugSpy.Services.Interfaces
 		public Task AddTicketAttachmentAsync(TicketAttachment ticketAttachment);
 
 
+		public Task<Ticket> GetTicketAsNoTracking(int? ticketId, int companyId);
 
-		public Task<IEnumerable<Ticket>> GetSubmitterRecentTickets(string? userId);
+        public Task<IEnumerable<Ticket>> GetSubmitterRecentTickets(string? userId);
 
 		public Task<IEnumerable<Ticket>> GetSubmitterTicketsByType(string? userId);
 
+		public Task<BTUser> GetDeveloperAsync(int? ticketId);
 
-
-		public Task<Ticket> GetTicketByIdAsync(int? ticketId);
+		public Task AssignDeveloperAsync(string userId, int? ticketId);
+        public Task<Ticket> GetTicketByIdAsync(int? ticketId);
 
 		public Task<IEnumerable<Ticket>> GetSubmitterTicketsByPriority(string? userId);
 

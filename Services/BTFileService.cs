@@ -1,4 +1,5 @@
 ﻿using BugSpy.Services.Interfaces;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BugSpy.Services
 {
@@ -76,9 +77,9 @@ namespace BugSpy.Services
             string fileImage = "default";
             if (!string.IsNullOrWhiteSpace(file))
             {
-                fileImage = Path.GetExtension(file).Replace(".", "");
-                return $"wwwroot/contenttype/png/{fileImage}.png";
-            }
+                string ext = Path.GetExtension(file).Replace(".", "");
+				return $"/img/contenttype/{ext}.png";
+			}
             return fileImage;
         }
         #endregion    

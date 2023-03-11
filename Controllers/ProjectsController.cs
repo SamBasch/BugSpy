@@ -16,6 +16,9 @@ using BugSpy.Services;
 using X.PagedList;
 using System.Drawing.Printing;
 using BugSpy.Extensions;
+using BugSpy.Models.ViewModels;
+using BugSpy.Models.Enums;
+using System.Collections;
 
 namespace BugSpy.Controllers
 {
@@ -25,15 +28,16 @@ namespace BugSpy.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IBTFileService _fileService;
         private readonly UserManager<BTUser> _userManager;
-
+        private readonly IBTRolesService _roleService;
         private readonly IBTProjectService _btProjectService;  
 
-        public ProjectsController(ApplicationDbContext context, IBTFileService fileService, UserManager<BTUser> userManager, IBTProjectService btProjectService)
+        public ProjectsController(ApplicationDbContext context, IBTFileService fileService, UserManager<BTUser> userManager, IBTProjectService btProjectService, IBTRolesService roleService)
         {
             _context = context;
             _fileService = fileService; 
             _userManager = userManager;
             _btProjectService = btProjectService;   
+            _roleService = roleService;
             
         }
 
@@ -107,6 +111,144 @@ namespace BugSpy.Controllers
 
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AssignPM(int? Id)
+        {
+            if (Id == null)
+            {
+                return NotFound();
+            }
+
+            int companyId = User.Identity.GetCompanyId();
+
+            IEnumerable<BTUser> projectManagers = await _roleService.GetUserInRoleAsync(nameof(BTRoles.ProjectManager), companyId);
+
+            BTUser? currentPM = await _btProjectService.GetProjectManagerAsync(Id);
+
+            AssignPMViewModel viewModel = new()
+            {
+
+                Project = await _btProjectService.GetProjectByIdAsync(companyId, Id),
+                PMList = new SelectList(projectManagers, "Id", "FullName", currentPM?.Id),
+                PMId = currentPM?.Id
+
+
+            };
+
+            return View(viewModel);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AssignPM(AssignPMViewModel viewModel)
+        {
+
+            if(!string.IsNullOrEmpty(viewModel.PMId))
+            {
+                await _btProjectService.AddProjectManagerAsync(viewModel.PMId, viewModel.Project?.Id);
+
+                return RedirectToAction("Details", new { id = viewModel.Project?.Id });
+            }
+
+
+            ModelState.AddModelError("PMID", "No Manager chosen. Please Select a PM");
+
+            int companyId = User.Identity.GetCompanyId();
+
+            IEnumerable<BTUser> projectManagers = await _roleService.GetUserInRoleAsync(nameof(BTRoles.ProjectManager), companyId);
+
+            BTUser? currentPM = await _btProjectService.GetProjectManagerAsync(viewModel.Project.Id);
+
+            viewModel.Project = await _btProjectService.GetProjectByIdAsync(companyId, viewModel.Project.Id);
+
+            viewModel.PMList = new SelectList(projectManagers, "Id", "FullName", currentPM?.Id);
+
+            viewModel.PMId = currentPM?.Id;
+
+            return View(viewModel);
+
+
+
+        }
+
+
+
+
+        [HttpGet]
+        [Authorize(Roles="Admin, ProjectManager")]
+        public async Task<IActionResult> AssignProjectMembers(int? id)
+        {
+            if(id == null)
+            {
+
+                return NotFound();
+
+            }
+
+            int companyId = User.Identity.GetCompanyId();
+
+
+            Project project = await _btProjectService.GetProjectByIdAsync(companyId, id);
+
+            List<BTUser> submitters = await _roleService.GetUserInRoleAsync(nameof(BTRoles.Submitter), companyId);
+            List<BTUser> developers = await _roleService.GetUserInRoleAsync(nameof(BTRoles.Developer), companyId);
+
+            List<BTUser> usersList = submitters.Concat(developers).ToList();
+
+            List<string> currentMembers = project.Members.Select(m => m.Id).ToList();
+
+            ProjectMembersViewModel viewModel = new()
+            {
+                Project = await _btProjectService.GetProjectByIdAsync(companyId, id),
+
+
+                UsersList = new MultiSelectList(usersList, "Id", "FullName", currentMembers)
+
+
+            };
+
+            return View(viewModel); 
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, ProjectManager")]
+        public async Task<IActionResult> AssignProjectMembers(ProjectMembersViewModel viewModel)
+        {
+
+
+            int companyId = User.Identity.GetCompanyId();
+
+
+            if(viewModel.SelectedMembers != null)
+            {
+
+                await _btProjectService.RemoveAllMembersFromProject(viewModel.Project!.Id, companyId);
+
+
+                await _btProjectService.AddMembersToProject(viewModel.SelectedMembers, viewModel.Project!.Id, companyId);
+
+                return RedirectToAction(nameof(Details), new { id = viewModel.Project.Id });
+            }
+
+            ModelState.AddModelError("SelectedMembers", "No Users chosen. Please select users");
+            viewModel.Project = await _btProjectService.GetProjectByIdAsync(companyId, viewModel.Project!.Id);
+            List<string> currentMembers = viewModel.Project.Members.Select(m => m.Id).ToList();
+            List<BTUser> submitters = await _roleService.GetUserInRoleAsync(nameof(BTRoles.Submitter), companyId);
+            List<BTUser> developers = await _roleService.GetUserInRoleAsync(nameof(BTRoles.Developer), companyId);
+            List<BTUser> usersList = submitters.Concat(developers).ToList();
+
+            viewModel.UsersList = new MultiSelectList(usersList, "Id", "FullName", currentMembers);
+
+            return View(viewModel); 
+        }
+
+
+
 
 
 
@@ -165,7 +307,7 @@ namespace BugSpy.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Created,StartDate,EndDate,ImageFormFile,Archived,Members,CompanyId,ProjectPriorityId")] Project project, IList<string> selected)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Created,StartDate,EndDate,ImageFormFile,Archived,Members,CompanyId,ProjectPriorityId")] Project project)
         {
 
             //BTUser? loggedInUser = await _userManager.GetUserAsync(User);
@@ -196,7 +338,7 @@ namespace BugSpy.Controllers
                 await _context.SaveChangesAsync();
 
 
-                await _btProjectService.MembersToProject(selected, project.Id);
+                //await _btProjectService.AddMembersToProject(selected, project.Id);
 
                 return RedirectToAction(nameof(Index));
 
@@ -318,7 +460,7 @@ namespace BugSpy.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Created,StartDate,EndDate,ImageFormFile,Archived,CompanyId,ProjectPriorityId")] Project project, IList<string> selected)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Created,StartDate,EndDate,ImageFormFile,Archived,CompanyId,ProjectPriorityId")] Project project)
         {
             if (id != project.Id)
             {
@@ -341,16 +483,16 @@ namespace BugSpy.Controllers
 
                     
 
-                    if(selected != null)
-                    {
-                        await _btProjectService.RemoveAllMembersFromProject(project.Id);
+                    //if(selected != null)
+                    //{
+                    //    await _btProjectService.RemoveAllMembersFromProject(project.Id, companyId);
 
 
-                        await _btProjectService.MembersToProject(selected, project.Id);
+                    //    await _btProjectService.AddMembersToProject(selected, project.Id, companyId);
 
-                    }
-                    _context.Update(project);
-                    await _context.SaveChangesAsync();
+                    //}
+                    //_context.Update(project);
+                    //await _context.SaveChangesAsync();
 
 
                 }

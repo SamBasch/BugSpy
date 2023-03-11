@@ -1,5 +1,6 @@
 ﻿using BugSpy.Data;
 using BugSpy.Models;
+using BugSpy.Models.Enums;
 using BugSpy.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -119,6 +120,17 @@ namespace BugSpy.Services
 		}
 
 
+
+		public async Task<Ticket> GetTicketAsNoTracking(int? ticketId, int companyId)
+		{
+
+            Ticket newTicket = await _context.Tickets.Include(t => t.Project).ThenInclude(p => p!.Company).Include(t => t.Attachments).Include(t => t.Comments).Include(t => t.DeveloperUser).Include(t => t.History).
+         
+				
+				Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).AsNoTracking().FirstOrDefaultAsync(t => t.Id == ticketId && t.Project.CompanyId == companyId && t.Archived == false);
+
+			return newTicket;
+        }
 
 		public async Task<IEnumerable<Ticket>> GetSubmitterTicketsByStatus(string? userId)
 		{
@@ -355,5 +367,162 @@ namespace BugSpy.Services
 				throw;
 			}
 		}
+
+
+
+
+        //public async Task<bool> RemoveMemberFromTicketAsync(BTUser member, int? ticketId)
+        //{
+        //    try
+        //    {
+        //        Ticket? ticket = await GetTicketByIdAsync(ticketId);
+
+        //        bool IsOnProject = project.Members.Any(m => m.Id == member.Id);
+
+        //        if (IsOnProject)
+        //        {
+        //            project.Members.Remove(member);
+        //            await _context.SaveChangesAsync();
+        //            return true;
+        //        }
+
+        //        return false;
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //        throw;
+        //    }
+        //}
+
+
+    //    public async Task RemoveDeveloperAsync(int? ticketId)
+    //    {
+    //        try
+    //        {
+    //            Ticket ticket = await _context.Tickets.Include(t => t.DeveloperUser).FirstOrDefaultAsync(t => t.Id == ticketId);
+
+
+				//if(ticket.DeveloperUser != null) {
+				
+				
+				
+				
+				//}
+
+				//ticket.Remove
+
+    //            foreach (BTUser member in project.Members)
+    //            {
+    //                if (await _roleService.IsUserInRoleAsync(member, nameof(BTRoles.ProjectManager)))
+    //                {
+    //                    await RemoveMemberFromProjectAsync(member, projectId);
+    //                }
+
+    //            }
+
+    //            return;
+    //        }
+
+    //        catch (Exception)
+    //        {
+
+    //            throw;
+    //        }
+    //    }
+
+
+        public async Task<BTUser> GetDeveloperAsync(int? ticketId)
+        {
+            try
+            {
+                Ticket ticket = await _context.Tickets.Include(t => t.DeveloperUser).FirstOrDefaultAsync(t => t.Id == ticketId);
+
+				BTUser? developer = ticket.DeveloperUser;
+
+
+				if(developer != null)
+				{
+
+					return developer;
+				}
+
+                //foreach (BTUser member in project.Members)
+                //{
+                //    if (await _roleService.IsUserInRoleAsync(member, nameof(BTRoles.ProjectManager)))
+                //    {
+                //        return member;
+                //    }
+
+                //}
+
+                return null!;
+            }
+            catch (Exception)
+            {
+
+                throw;
+			}
+		}
+
+
+
+		public async Task AssignDeveloperAsync(string? userId, int? ticketId)
+		{
+
+			if(userId != null)
+			{
+                Ticket ticket = await _context.Tickets.Include(t => t.DeveloperUser).FirstOrDefaultAsync(t => t.Id == ticketId);
+
+                BTUser? selectedDev = await _context.Users.FindAsync(userId);
+
+				ticket.DeveloperUser = selectedDev;
+
+                _context.Update(ticket);
+                await _context.SaveChangesAsync();
+
+
+
+            }
+			return;
+		}
+
+
+
+		//public async Task<bool> AddDeveloperAsync(string? userId, int? ticketId)
+		//{
+		//    try
+		//    {
+
+		//        BTUser? currentDev = await GetDeveloperAsync(ticketId);
+		//        BTUser? selectedDev = await _context.Users.FindAsync(userId);
+
+
+		//        if (currentDev != null)
+		//        {
+		//            await RemoveProjectManagerAsync(projectId);
+		//        }
+
+		//        try
+		//        {
+		//            await AddMemberToProjectAsync(selectedPM!, projectId);
+		//            return true;
+		//        }
+		//        catch (Exception)
+		//        {
+
+		//            throw;
+		//        }
+
+
+
+		//    }
+		//    catch (Exception)
+		//    {
+
+		//        throw;
+		//    }
+		//}
+
 	}
 }
