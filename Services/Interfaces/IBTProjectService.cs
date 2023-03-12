@@ -24,5 +24,8 @@ namespace BugSpy.Services.Interfaces
 
 		public Task<bool> AddMemberToProjectAsync(BTUser member, int? projectId);
 
-	}
+		public Task<bool> IsMemberInProject(BTUser member, int? projectId);
+
+
+    }
 }

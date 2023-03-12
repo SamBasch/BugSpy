@@ -655,12 +655,47 @@ License: You must have a valid license purchased only from themeforest(the above
                         </div>
                     </a>
                     <ul class="">
-                        <li>
-                            <a asp-controller="Tickets" asp-action="MyRecentTickets" class="side-menu">
-                                <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
-                                <div class="side-menu__title"> My Tickets </div>
-                            </a>
-                        </li>
+
+
+
+
+                        
+                            <li>
+                                <a asp-controller="Projects" asp-action="ProjectsOverview" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> My Projects </div>
+                                </a>
+                            </li>
+                        
+
+
+                        @if (User.IsInRole("Submitter,Developer"))
+                        {
+                            <li>
+                                <a asp-controller="Tickets" asp-action="MyRecentTickets" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> My Tickets </div>
+                                </a>
+                            </li>
+                        }
+
+      
+
+
+
+
+                        @if (User.IsInRole("Admin"))
+                        {
+
+                            <li>
+                                <a asp-controller="Tickets" asp-action="AllAssignedTickets" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> Assigned Tickets </div>
+                                </a>
+                            </li>
+
+                        }
+
 
                         @if(User.IsInRole("Admin")) {
 
@@ -674,17 +709,37 @@ License: You must have a valid license purchased only from themeforest(the above
                         }
 
 
+                                                @if (User.IsInRole("ProjectManager"))
+                        {
+
+                            <li>
+                                <a asp-controller="Tickets" asp-action="AssignedPMTickets" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> Assigned Tickets </div>
+                                </a>
+                            </li>
+
+                        }
+
+
                         @if (User.IsInRole("ProjectManager"))
                         {
 
                             <li>
                                 <a asp-controller="Tickets" asp-action="UnAssignedPMTickets" class="side-menu">
                                     <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
-                                    <div class="side-menu__title"> Unassigned Tickets </div>
+                                    <div class="side-menu__title"> UnAssignedTickets </div>
                                 </a>
                             </li>
 
                         }
+
+
+
+
+
+
+
 
                         <li>
                             <a href="side-menu-dark-dashboard-overview-2.html" class="side-menu">

@@ -191,6 +191,32 @@ namespace BugSpy.Services
 			}
 		}
 
+
+
+
+
+
+
+		public async Task<bool> IsMemberInProject(BTUser member, int? projectId)
+		{
+            Project project = await GetProjectByIdAsync(member!.CompanyId, projectId);
+
+            bool IsOnProject = project.Members.Any(m => m.Id == member.Id);
+
+            if (!IsOnProject)
+            {
+             
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+
+
+
 		public async Task<BTUser> GetProjectManagerAsync(int? projectId)
 		{
 			try

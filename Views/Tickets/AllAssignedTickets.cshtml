@@ -130,7 +130,7 @@
 
                     <td class="table-report__action w-56">
                         <div class="d-flex justify-content-center align-items-center">
-                            <a class="d-flex align-items-center me-3" asp-action="AssignDev" asp-route-id="@ticket.Id"> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Assign Developer </a>
+                            <a class="d-flex align-items-center me-3" asp-action="AssignDev" asp-route-id="@ticket.Id"> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Change Developer </a>
                             <a class="d-flex align-items-center me-3" asp-action="Details" asp-route-id="@ticket.Id"> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Details </a>
                             <a class="d-flex align-items-center me-3" asp-action="Edit" asp-route-id="@ticket.Id"> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Edit </a>
                             <a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Delete </a>
@@ -376,21 +376,17 @@
     </div>*@
     <!-- END: Data List -->
     <!-- BEGIN: Pagination -->
+    @*    <div>
+    <div>
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    </div>
 
-
-
-
-@*    <div>
-        <div>
-            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
-        </div>
-
-        @Html.PagedListPager(Model, pageNum => Url.Action("AllUnassignedTickets", new { pageNum }),
-        new PagedListRenderOptions{
-        LiElementClasses = new string[] {"my-page-item"},
-        PageClasses = new string[] {"my-page-link"}
-        }
-        )
+    @Html.PagedListPager(Model, pageNum => Url.Action("AllUnassignedTickets", new { pageNum }),
+    new PagedListRenderOptions{
+    LiElementClasses = new string[] {"my-page-item"},
+    PageClasses = new string[] {"my-page-link"}
+    }
+    )
     </div>*@
 
 

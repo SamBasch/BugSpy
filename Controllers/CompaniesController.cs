@@ -14,6 +14,8 @@ using BugSpy.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using BugSpy.Models.Enums;
 using System.Runtime.InteropServices;
+using System.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BugSpy.Controllers
 {
@@ -39,7 +41,7 @@ namespace BugSpy.Controllers
 
 
 
-
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> ManageUserRoles()
         {
@@ -100,11 +102,11 @@ namespace BugSpy.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel viewModel)
         {
             int companyId = User.Identity.GetCompanyId();
-
 
 
 
@@ -122,13 +124,14 @@ namespace BugSpy.Controllers
 
             //List<string>? roles = await _roleService.GetUserRolesAsync(Btuser);
 
-          await _roleService.RemoveUserFromRolesAsync(Btuser, currentRoles);
+          await _roleService.RemoveUserFromRolesAsync(Btuser, await _roleService.GetUserRolesAsync(viewModel.BTUser));
 
             foreach(string role in currentRoles)
             {
                 await _roleService.AddUserToRoleAsync(Btuser, role);
-
             }
+
+            //viewModel.Roles = new MultiSelectList(currentRoles, "Name", "Name", await _roleService.GetUserRolesAsync(viewModel.BTUser));
 
            return RedirectToAction("Index");
            

@@ -140,6 +140,17 @@
 
                     <td class="table-report__action w-56">
                         <div class="d-flex justify-content-center align-items-center">
+                            @if(User.IsInRole("Admin"))
+                            {
+                                <a class="d-flex align-items-center me-3" asp-action="AssignProjectMembers" asp-route-id="@project.Id"> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Assign Members </a>
+                                
+                            }
+                            @if (User.IsInRole("ProjectManager"))
+                            {
+                                <a class="d-flex align-items-center me-3" asp-action="AssignProjectMembers" asp-route-id="@project.Id"> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Assign Members </a>
+
+                            }
+                            <a class="d-flex align-items-center me-3" asp-controller="Tickets" asp-action="Create"> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Create Ticket </a>
                             <a class="d-flex align-items-center me-3" asp-action="Details" asp-route-id="@project.Id"> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Details </a>
                             <a class="d-flex align-items-center me-3" asp-action="Edit" asp-route-id="@project.Id"> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Edit </a>
                             <a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Delete </a>

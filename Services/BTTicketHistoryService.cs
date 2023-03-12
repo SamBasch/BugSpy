@@ -189,7 +189,7 @@ namespace BugSpy.Services
 
 
                 //check Ticket Developer
-                if (oldTicket.DeveloperUserId != newTicket.DeveloperUserId)
+                if (oldTicket.DeveloperUser != newTicket.DeveloperUser)
                 {
                     TicketHistory history = new()
                     {
@@ -199,7 +199,7 @@ namespace BugSpy.Services
                         NewValue = newTicket.DeveloperUser?.FullName,
                         Created = DataUtility.GetPostGresDate(DateTime.UtcNow),
                         UserId = userId,
-                        Description = $"Changed Ticket Type from: {oldTicket.DeveloperUser?.FullName} to : {newTicket.DeveloperUser?.FullName}"
+                        Description = $"Changed Ticket Developer from: {oldTicket.DeveloperUser?.FullName} to : {newTicket.DeveloperUser?.FullName}"
 
                     };
 

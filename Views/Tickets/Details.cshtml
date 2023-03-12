@@ -1,8 +1,18 @@
 ﻿@model BugSpy.Models.Ticket
 @using BugSpy.Models.Enums
 @using BugSpy.Services.Interfaces
+@using Microsoft.AspNetCore.Identity;
 @inject IBTFileService _fileService
+@inject UserManager<BTUser> _userManager
+@inject IBTProjectService _btProjectService
 
+@{
+	ViewData["Title"] = "Details";
+
+	BTUser? projectMember = await _userManager.GetUserAsync(User);
+
+	bool result = await _btProjectService.IsMemberInProject(projectMember, Model.Project.Id);
+}
 
 <h1>Ticket Details</h1>
 
@@ -75,7 +85,7 @@
 							</div>
 							<div class="card-body" style="overflow-y:auto;height:600px;">
 
-								@if (User.Identity.IsAuthenticated)
+								@if (User.Identity.IsAuthenticated && result == false)
 								{
 
 									<div class="comment-respond">
@@ -175,25 +185,29 @@
 
 								@* Refer to the Ticket Attachments document for this section *@
 
-
-								<div class="row clearfix">
-									<div>
-										<form asp-action="AddTicketAttachment" asp-controller="Tickets" enctype="multipart/form-data" method="post">
-											<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-											<input type="hidden" asp-for="@Model.Id" name="TicketId">
-											<div class="media-body ml-3">
-												<label>
-													Description
-													<input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" />
-												</label><br />
-												<label class="btn btn-outline-primary btn-sm">
-													<input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" class="form-control-file" />
-												</label>
-												<button type="submit" class="btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
-											</div>
-										</form>
+								@if (User.Identity.IsAuthenticated && result == false)
+								{
+									<div class="row clearfix">
+										<div>
+											<form asp-action="AddTicketAttachment" asp-controller="Tickets" enctype="multipart/form-data" method="post">
+												<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+												<input type="hidden" asp-for="@Model.Id" name="TicketId">
+												<div class="media-body ml-3">
+													<label>
+														Description
+														<input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" />
+													</label><br />
+													<label class="btn btn-outline-primary btn-sm">
+														<input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" class="form-control-file" />
+													</label>
+													<button type="submit" class="btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
+												</div>
+											</form>
+										</div>
 									</div>
-								</div>
+
+								}
+
 
 
 

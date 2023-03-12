@@ -264,6 +264,8 @@ namespace BugSpy.Controllers
 
             int companyId = User.Identity!.GetCompanyId();
 
+            string? userId = _userManager.GetUserId(User);
+
 
             Project? project = await _btProjectService.GetProjectByIdAsync(companyId, id);
 
@@ -285,6 +287,7 @@ namespace BugSpy.Controllers
 
 
         // GET: Projects/Create
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Create()
         {
             //BTUser? loggedInUser = await _userManager.GetUserAsync(User);
@@ -306,6 +309,7 @@ namespace BugSpy.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin, ProjectManager")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,Created,StartDate,EndDate,ImageFormFile,Archived,Members,CompanyId,ProjectPriorityId")] Project project)
         {
