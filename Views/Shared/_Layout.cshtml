@@ -31,7 +31,20 @@ License: You must have a valid license purchased only from themeforest(the above
     <meta name="author" content="LEFT4CODE">
     <title>Dashboard - Rubick - Bootstrap HTML Admin Template</title>
     <!-- BEGIN: CSS Assets-->
+   
+  
+  
+     <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $('#myTable').DataTable();
+        });
+    </script>
     <link rel="stylesheet" href="~/dist/css/app.css" />
+
+  
     <!-- END: CSS Assets-->
 </head>
 <!-- END: Head -->
@@ -669,7 +682,7 @@ License: You must have a valid license purchased only from themeforest(the above
                         
 
 
-                        @if (User.IsInRole("Submitter,Developer"))
+                        @if (User.IsInRole("Submitter"))
                         {
                             <li>
                                 <a asp-controller="Tickets" asp-action="MyRecentTickets" class="side-menu">
@@ -679,9 +692,40 @@ License: You must have a valid license purchased only from themeforest(the above
                             </li>
                         }
 
-      
+                                                @if (User.IsInRole("Developer"))
+                        {
+                            <li>
+                                <a asp-controller="Tickets" asp-action="MyRecentTickets" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> My Tickets </div>
+                                </a>
+                            </li>
+                        }
 
 
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li>
+                                <a asp-controller="Tickets" asp-action="MyRecentTickets" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> My Tickets </div>
+                                </a>
+                            </li>
+                        }
+
+
+
+                        @if (User.IsInRole("Admin"))
+                        {
+
+                            <li>
+                                <a asp-controller="Tickets" asp-action="Tabulator" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> Tabulator Tickets </div>
+                                </a>
+                            </li>
+
+                        }
 
 
                         @if (User.IsInRole("Admin"))
@@ -691,6 +735,19 @@ License: You must have a valid license purchased only from themeforest(the above
                                 <a asp-controller="Tickets" asp-action="AllAssignedTickets" class="side-menu">
                                     <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
                                     <div class="side-menu__title"> Assigned Tickets </div>
+                                </a>
+                            </li>
+
+                        }
+
+
+                        @if (User.IsInRole("Admin"))
+                        {
+
+                            <li>
+                                <a asp-controller="Invites" asp-action="Create" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> Create Invite </div>
                                 </a>
                             </li>
 
@@ -1580,8 +1637,8 @@ License: You must have a valid license purchased only from themeforest(the above
     <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=[" your-google-map-api"]&libraries=places"></script>
 
-
     <script src="/dist/js/app.js"></script>
+
     <!-- END: JS Assets-->
 
 

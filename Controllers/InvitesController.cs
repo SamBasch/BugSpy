@@ -7,16 +7,39 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugSpy.Data;
 using BugSpy.Models;
+using BugSpy.Extensions;
+using BugSpy.Services.Interfaces;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.DataProtection;
+using BugSpy.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BugSpy.Controllers
 {
     public class InvitesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBTProjectService _projectService;
+        private readonly IBTCompanyService _companyService;
+        private readonly IEmailSender _emailService;
+        private readonly UserManager<BTUser> _userManager;
+       private readonly IDataProtector _protector;
+        private readonly IConfiguration _configuration;
+        private readonly IBTInviteService _inviteService;   
 
-        public InvitesController(ApplicationDbContext context)
+        
+
+        public InvitesController(ApplicationDbContext context, IBTProjectService projecctService, IBTCompanyService companyService, IEmailSender emailService, UserManager<BTUser> userManager, IDataProtectionProvider dataProtectionProvider, IConfiguration configuration, IBTInviteService inviteService)
         {
             _context = context;
+            _projectService = projecctService;
+            _companyService = companyService;
+            _emailService = emailService;
+            _inviteService = inviteService; 
+            _configuration = configuration;
+            _userManager = userManager;
+            _protector = dataProtectionProvider.CreateProtector(configuration.GetValue<string>("ProtectKey")! ?? Environment.GetEnvironmentVariable("ProtectKey")!);
         }
 
         // GET: Invites
@@ -48,13 +71,51 @@ namespace BugSpy.Controllers
             return View(invite);
         }
 
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ProcessInvite(string token, string email, string company)
+        {
+
+            if(string.IsNullOrEmpty(token) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(company))
+            {
+                return NotFound();
+            }
+
+            Guid companyToken = Guid.Parse(_protector.Unprotect(token));
+            string? inviteeEmail = _protector.Unprotect(email);
+            int companyId = int.Parse(_protector.Unprotect(company));
+
+            try
+            {
+                Invite? invite = await _inviteService.GetInviteAsync(companyToken, inviteeEmail, companyId);
+
+                if(invite != null)
+                {
+
+                    return View(invite);    
+                }
+
+                return NotFound();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+        }
+
+
+
         // GET: Invites/Create
+
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
-            ViewData["InviteeId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["InvitorId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Description");
+            int? companyId = User.Identity.GetCompanyId();
+            ViewData["ProjectId"] = new SelectList(_context.Projects.Where(p => p.CompanyId == companyId), "Id", "Description");
             return View();
         }
 
@@ -62,19 +123,74 @@ namespace BugSpy.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,InviteDate,JoinDate,CompanyToken,InviteeEmail,InviteeFirstName,InviteeLastName,Message,IsValid,CompanyId,ProjectId,InvitorId,InviteeId")] Invite invite)
+        public async Task<IActionResult> Create([Bind("Id,InviteeEmail,InviteeFirstName,InviteeLastName,Message,ProjectId")] Invite invite)
         {
+
+
+            int companyId = User.Identity.GetCompanyId();
+
+            ModelState.Remove("InvitorId");
+
             if (ModelState.IsValid)
             {
-                _context.Add(invite);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                try
+                {
+                    Guid guid = Guid.NewGuid();
+
+                    string? token = _protector.Protect(guid.ToString());
+                    string? email = _protector.Protect(invite.InviteeEmail!);
+                    string? company = _protector.Protect(companyId.ToString());
+
+                    string? callbackUrl = Url.Action("ProcessInvite", "Invites", new { token, email, company }, protocol: Request.Scheme);
+
+                    string body = $@"{invite.Message} <br />
+                    Please join my Company. <br />
+                    Click the following link to join our team. <br />
+                    <a href=""{callbackUrl}"">COLLABORATE</a>";
+
+                    string? destination = invite.InviteeEmail;
+
+                    Company btCompany = await _companyService.GetCompanyInfoAsync(companyId);
+
+                    string? subject = $"BugSpy: {btCompany.Name}";
+
+                    await _emailService.SendEmailAsync(destination!, subject, body);
+
+
+                    //Save the INvite in the database 
+
+
+                    invite.CompanyToken = guid;
+
+                    invite.CompanyId = companyId;
+
+                    invite.InviteDate = DataUtility.GetPostGresDate(DateTime.Now);
+
+                    invite.InvitorId = _userManager.GetUserId(User);
+
+                    invite.IsValid = true;  
+
+                    await _inviteService.AddNewInviteAsync(invite);
+
+
+
+                    return RedirectToAction(nameof(Index), "Home");
+
+                    //TODO: sweet alert for email sent success/failure
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
+    
+           
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", invite.CompanyId);
-            ViewData["InviteeId"] = new SelectList(_context.Users, "Id", "Id", invite.InviteeId);
-            ViewData["InvitorId"] = new SelectList(_context.Users, "Id", "Id", invite.InvitorId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Description", invite.ProjectId);
+            ViewData["ProjectId"] = new SelectList(_context.Projects.Where(p => p.CompanyId == companyId), "Id", "Description");
             return View(invite);
         }
 

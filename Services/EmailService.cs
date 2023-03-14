@@ -46,6 +46,7 @@ namespace BugSpy.Services
 
             try
             {
+                
                 var host = _mailSettings.EmailHost ?? Environment.GetEnvironmentVariable("EmailHost");
                 var port = _mailSettings.EmailPort != 0 ? _mailSettings.EmailPort : int.Parse(Environment.GetEnvironmentVariable("EmailPort")!);
                 var password = _mailSettings.EmailPassword ?? Environment.GetEnvironmentVariable("EmailPassword");

@@ -4,6 +4,7 @@ using BugSpy.Models;
 using BugSpy.Services;
 using BugSpy.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using static System.Formats.Asn1.AsnWriter;
 
@@ -22,11 +23,13 @@ builder.Services.AddIdentity<BTUser, IdentityRole>(options => options.SignIn.Req
     .AddClaimsPrincipalFactory<BTUserClaimsPrincipalFactory>()  
     .AddDefaultUI()
     .AddDefaultTokenProviders();
- 
+
+
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
 builder.Services.AddScoped<IBTFileService, BTFileService>();
 
-
+builder.Services.AddScoped<IEmailSender, EmailService>();
 
 builder.Services.AddScoped<IBTTicketService, BTTicketService>();
 
@@ -34,7 +37,15 @@ builder.Services.AddScoped<IBTProjectService, BTProjectService>();
 
 builder.Services.AddScoped<IBTTicketHistoryService, BTTicketHistoryService>();
 
+
+builder.Services.AddScoped<IBTCompanyService, BTCompanyService>();
+
+builder.Services.AddScoped<IBTNotificationService, BTNotificationService>();
+
 builder.Services.AddScoped<IBTRolesService, BTRolesService>();
+
+builder.Services.AddScoped<IBTInviteService, BTInviteService>();
+
 
 
 

@@ -30,7 +30,8 @@ namespace BugSpy.Controllers
         private readonly IBTProjectService _btProjectService;
         private readonly IBTRolesService _roleService;
         private readonly IBTTicketHistoryService _historyService;
-        public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTTicketService btTicketService, IBTFileService fileService, IBTRolesService roleService, IBTTicketHistoryService historyService)
+        private readonly IBTNotificationService _notificationService;
+        public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTTicketService btTicketService, IBTFileService fileService, IBTRolesService roleService, IBTTicketHistoryService historyService, IBTNotificationService notificationService)
         {
             _context = context;
             _userManager = userManager;
@@ -38,6 +39,7 @@ namespace BugSpy.Controllers
             _fileService = fileService;
             _roleService = roleService;
             _historyService = historyService;
+            _notificationService = notificationService;
         }
 
         // GET: Tickets
@@ -109,7 +111,45 @@ namespace BugSpy.Controllers
                 await _historyService.AddHistoryAsync(oldTicket, newTicket, userId);
 
 
-                return RedirectToAction("Details", new { id = viewModel.Ticket?.Id });
+
+
+
+
+				BTUser? btUser = await _userManager.GetUserAsync(User);
+
+
+				Notification? notification = new()
+				{
+					TicketId = viewModel.Ticket.Id,
+
+					Title = "Developer Assigned",
+
+					Message = $"Ticket: {viewModel.Ticket.Title} was assigned by {btUser.FullName}",
+
+					Created = DataUtility.GetPostGresDate(DateTime.Now),
+
+					SenderId = userId,
+
+					RecipientId = viewModel.DevId,
+
+					NotificationTypeId = (await _context.NotificationsTypes.FirstOrDefaultAsync(n => n.Name == nameof(BTNotificationTypes.Ticket)))!.Id,
+
+
+				};
+
+
+			
+					await _notificationService.AddNotificationAsync(notification);
+					await _notificationService.SendEmailNotficationAsync(notification, "Developer Assigned");
+
+				
+
+
+
+
+
+
+				return RedirectToAction("Details", new { id = viewModel.Ticket?.Id });
             }
 
 
@@ -320,6 +360,48 @@ namespace BugSpy.Controllers
 
             return View(projectTickets);
         }
+
+
+
+
+
+
+        public async Task<IActionResult> Tabulator()
+        {
+
+            int companyId = User.Identity!.GetCompanyId();
+
+          
+
+            string? userId = _userManager.GetUserId(User);
+
+            if (User.IsInRole("Submitter"))
+            {
+
+                IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetSubmitterRecentTickets(userId)).ToPagedList();
+                return View(recentSubmitterTickets);
+            }
+            else if (User.IsInRole("Developer"))
+            {
+                IEnumerable<Ticket> recentDeveloperTickets = (await _btTicketService.GetDeveloperRecentTickets(userId)).ToPagedList();
+                return View(recentDeveloperTickets);
+            }
+            else
+            {
+                IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetSubmitterRecentTickets(userId)).ToPagedList();
+
+                return View(recentSubmitterTickets);
+            }
+
+
+
+
+        }
+
+
+
+
+
 
         public async Task<IActionResult> MyRecentTickets(int? pageNum)
         {
@@ -676,7 +758,7 @@ namespace BugSpy.Controllers
                 string userId = _userManager.GetUserId(User);
                 ticket.SubmitterUserId = _userManager.GetUserId(User);
 
-
+                BTUser? btUser = await _userManager.GetUserAsync(User);
 
 
                 ticket.Created = DataUtility.GetPostGresDate(DateTime.UtcNow);
@@ -686,6 +768,40 @@ namespace BugSpy.Controllers
 
                 await _historyService.AddHistoryAsync(null, newTicket, userId);
 
+                BTUser? projectManager = await _btProjectService.GetProjectManagerAsync(ticket.ProjectId);
+
+                Notification? notification = new()
+                {
+                    TicketId = ticket.Id,
+
+                    Title = "New Ticket Added",
+
+                    Message = $"New Ticket: {ticket.Title} was created by {btUser.FullName}",
+
+                    Created = DataUtility.GetPostGresDate(DateTime.Now),
+
+                    SenderId = userId,
+
+                    RecipientId = projectManager?.Id,
+
+                    NotificationTypeId = (await _context.NotificationsTypes.FirstOrDefaultAsync(n => n.Name == nameof(BTNotificationTypes.Ticket)))!.Id,
+
+
+                };
+
+
+                if(projectManager != null)
+                {
+                    await _notificationService.AddNotificationAsync(notification);
+                    await _notificationService.SendEmailNotficationAsync(notification, "New Ticket Added");
+
+                } else
+                {
+
+                    await _notificationService.AdminNotficationAsync(notification, companyId);
+                    await _notificationService.SendAdminEmailNotficiationAsync(notification, "New Ticket Added", companyId);
+
+                }
 
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
@@ -775,7 +891,49 @@ namespace BugSpy.Controllers
 
                 await _historyService.AddHistoryAsync(oldTicket, newTicket, userId);
 
-                return RedirectToAction(nameof(MyRecentTickets));
+
+				BTUser? btUser = await _userManager.GetUserAsync(User);
+
+				BTUser? projectManager = await _btProjectService.GetProjectManagerAsync(ticket.ProjectId);
+
+				Notification? notification = new()
+				{
+					TicketId = ticket.Id,
+
+					Title = "New Ticket Added",
+
+					Message = $"New Ticket: {ticket.Title} was created by {btUser.FullName}",
+
+					Created = DataUtility.GetPostGresDate(DateTime.Now),
+
+					SenderId = userId,
+
+					RecipientId = projectManager?.Id,
+
+					NotificationTypeId = (await _context.NotificationsTypes.FirstOrDefaultAsync(n => n.Name == nameof(BTNotificationTypes.Ticket)))!.Id,
+
+
+				};
+
+
+				if (projectManager != null)
+				{
+					await _notificationService.AddNotificationAsync(notification);
+					await _notificationService.SendEmailNotficationAsync(notification, "New Ticket Added");
+
+				}
+				else
+				{
+
+					await _notificationService.AdminNotficationAsync(notification, companyId);
+					await _notificationService.SendAdminEmailNotficiationAsync(notification, "New Ticket Added", companyId);
+
+				}
+
+
+
+
+				return RedirectToAction(nameof(MyRecentTickets));
             }
             ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
             ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
