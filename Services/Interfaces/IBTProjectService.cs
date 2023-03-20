@@ -20,11 +20,26 @@ namespace BugSpy.Services.Interfaces
 
 		public Task RemoveProjectManagerAsync(int? projectId);
 
-		public Task<bool> RemoveMemberFromProjectAsync(BTUser member, int? projectId);
+		public Task<IEnumerable<Project>> GetAllCompanyProjects(int companyId);
+
+		public Task ArchiveProjectTickets(Project project);
+
+        public Task<bool> RemoveMemberFromProjectAsync(BTUser member, int? projectId);
 
 		public Task<bool> AddMemberToProjectAsync(BTUser member, int? projectId);
 
 		public Task<bool> IsMemberInProject(BTUser member, int? projectId);
+
+
+		public Task UnarchiveProjectTickets(Project project);
+
+
+
+
+        public Task<IEnumerable<Project>> GetAllCompanyActiveProjects(int companyId);
+
+		public Task<IEnumerable<Project>> GetAllCompanyArchivedProjects(int companyId);
+
 
 
     }

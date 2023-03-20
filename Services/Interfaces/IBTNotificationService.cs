@@ -5,7 +5,7 @@ namespace BugSpy.Services.Interfaces
 	public interface IBTNotificationService
 	{
 
-		public Task AddNotificationAsync(Notification? notfication);
+		public Task AddNotificationAsync(Notification? notification);
 
 
 		public Task AdminNotficationAsync(Notification? notification, int companyId);

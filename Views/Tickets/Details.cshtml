@@ -16,6 +16,35 @@
 
 <h1>Ticket Details</h1>
 
+
+@if (User.IsInRole(nameof(BTRoles.Admin)) && Model.Archived == true)
+{
+
+
+	<a class="d-flex align-items-center text-theme-9" href="javascript:;" data-bs-toggle="modal" data-bs-target="#unarchive-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> UnArchive </a>
+}
+
+@if (User.IsInRole(nameof(BTRoles.Admin)) && Model.Archived == false)
+{
+	<a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Archive </a>
+
+
+}
+
+
+@if (User.IsInRole(nameof(BTRoles.ProjectManager)) && result == false && Model.Archived == true)
+{
+
+	<a class="d-flex align-items-center text-theme-9" href="javascript:;" data-bs-toggle="modal" data-bs-target="#unarchive-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> UnArchive </a>
+}
+
+@if (User.IsInRole(nameof(BTRoles.ProjectManager)) && result == false && Model.Archived == false)
+{
+
+	<a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Archive </a>
+}
+
+
 <div>
 	<div classxfont-weighteighteightgetainer-fluid">
 		<div class="row gy-2">
@@ -114,7 +143,7 @@
 								else
 								{
 									<div class="my-5">
-										<p class="display-6">Please <a asp-area="Identity" asp-page="/Account/Login">Sign In</a> or register to leave a comment. Thanks!</p>
+										<p class="display-6">You must be a member of this project to leave a comment!</p>
 									</div>
 
 								}
@@ -206,6 +235,9 @@
 										</div>
 									</div>
 
+								} else
+								{
+									<p>You must be a member of this project to add attachments!</p>
 								}
 
 
@@ -257,6 +289,71 @@
 		</div>
 	</div>
 </div>
+
+
+
+
+
+<div id="delete-confirmation-modal" class="modal fade" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body p-0">
+				<div class="p-5 text-center">
+					<i data-feather="x-circle" class="w-16 h-16 text-theme-6 mx-auto mt-3"></i>
+					<div class="fs-3xl mt-5">Are you sure?</div>
+					<div class="text-gray-600 mt-2">
+						Do you really want to archive these records?
+						<br>
+
+					</div>
+				</div>
+				<div class="px-5 pb-8 text-center">
+					<button type="button" data-bs-dismiss="modal" class="btn btn-outline-secondary w-24 me-1">Cancel</button>
+					<form asp-action="Delete">
+						<input type="hidden" asp-for="Id" />
+						<input type="submit" value="Delete" class="btn btn-danger" /> |
+					</form>
+					@*                    <a asp-controller="Projects" asp-action="DeleteConfirmed" asp-route-id="@project.Id" class="btn btn-danger w-24">Delete</a>*@
+					@*      <button type="button" class="btn btn-danger w-24">Delete</button>*@
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div id="unarchive-confirmation-modal" class="modal fade" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body p-0">
+				<div class="p-5 text-center">
+					<i data-feather="x-circle" class="w-16 h-16 text-theme-6 mx-auto mt-3"></i>
+					<div class="fs-3xl mt-5">Are you sure?</div>
+					<div class="text-gray-600 mt-2">
+						Do you want to unarchive these records?
+						<br>
+
+					</div>
+				</div>
+				<div class="px-5 pb-8 text-center">
+					<button type="button" data-bs-dismiss="modal" class="btn btn-outline-secondary w-24 me-1">Cancel</button>
+					<form asp-action="Unarchive">
+						<input type="hidden" asp-for="Id" />
+						<input type="submit" value="Unarchive" class="btn btn-success" />
+					</form>
+
+					@*                    <a asp-controller="Projects" asp-action="DeleteConfirmed" asp-route-id="@project.Id" class="btn btn-danger w-24">Delete</a>*@
+					@*      <button type="button" class="btn btn-danger w-24">Delete</button>*@
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
 @section Scripts {
 	@{
 		<script src="~/dist/js/ckeditor-classic.js"></script>

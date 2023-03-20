@@ -4,6 +4,7 @@ using BugSpy.Models.Enums;
 using BugSpy.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.Design;
 
 namespace BugSpy.Services
 {
@@ -85,8 +86,839 @@ namespace BugSpy.Services
 
 		}
 
+        public async Task<IEnumerable<Ticket>> GetAllCompanyTickets(int? companyId)
+        {
 
-		public async Task<IEnumerable<Ticket>> GetSubmitterTicketsByType(string? userId)
+            try
+            {
+
+                //List<TicketHistory> ticketHistories = (await _context.TicketHistories.Include(t => t.User).Include(th => th.Ticket).ThenInclude(t => t.Project).Where(t => t.Ticket.Project.CompanyId == companyId).ToListAsync());
+
+
+                IEnumerable<Ticket> allCompanyTickets = await _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).Where(t => t.Project.CompanyId == companyId).ToListAsync();
+                return allCompanyTickets.OrderByDescending(rst => rst.Created);
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+        public async Task<IEnumerable<Ticket>> GetAllCompanyActiveTickets(int? companyId)
+        {
+
+            try
+            {
+
+                //List<TicketHistory> ticketHistories = (await _context.TicketHistories.Include(t => t.User).Include(th => th.Ticket).ThenInclude(t => t.Project).Where(t => t.Ticket.Project.CompanyId == companyId).ToListAsync());
+
+
+                IEnumerable<Ticket> allCompanyTickets = await _context.Tickets.Where(t => t.Archived == false).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).Where(t => t.Project.CompanyId == companyId && t.Archived == false && t.ArchivedByProject == false).ToListAsync();
+
+                return allCompanyTickets.OrderByDescending(rst => rst.Created);
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+        public async Task<IEnumerable<Ticket>> GetAllCompanyArchivedTickets(int? companyId)
+        {
+
+            try
+            {
+
+                //List<TicketHistory> ticketHistories = (await _context.TicketHistories.Include(t => t.User).Include(th => th.Ticket).ThenInclude(t => t.Project).Where(t => t.Ticket.Project.CompanyId == companyId).ToListAsync());
+
+
+                IEnumerable<Ticket> allCompanyTickets = await _context.Tickets.Where(t => t.Archived == true).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).Where(t => t.Project.CompanyId == companyId && t.Archived == true || t.ArchivedByProject == true).ToListAsync();
+                return allCompanyTickets.OrderByDescending(rst => rst.Created);
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+        public async Task<IEnumerable<Ticket>> GetUnassignedPMTickets(string? userId, int? companyId)
+        {
+
+            try
+            {
+
+
+
+
+                BTUser? projectManager = await _context.Users
+                    .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketPriority)
+                      .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketStatus)
+                        .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketType)
+                    .FirstOrDefaultAsync(u => u.Id == userId && u.CompanyId == companyId);
+
+
+                IEnumerable<Ticket> UnassignedPMTickets = projectManager.Projects.SelectMany(p => p.Tickets.Where(t => t.DeveloperUserId == null));
+
+
+
+                return UnassignedPMTickets;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+
+        public async Task<IEnumerable<Ticket>> GetAssignedPMTickets(string? userId, int? companyId)
+        {
+
+            try
+            {
+
+
+
+
+                BTUser? projectManager = await _context.Users
+                    .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketPriority)
+                      .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketStatus)
+                        .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketType)
+                    .FirstOrDefaultAsync(u => u.Id == userId && u.CompanyId == companyId);
+
+
+                IEnumerable<Ticket> UnassignedPMTickets = projectManager.Projects.SelectMany(p => p.Tickets.Where(t => t.DeveloperUserId != null));
+
+
+
+                return UnassignedPMTickets;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+
+        public async Task<IEnumerable<Ticket>> GetPMTicketsHighPriority(string? userId, int? companyId)
+        {
+
+            try
+            {
+
+
+
+
+                BTUser? projectManager = await _context.Users
+                    .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketPriority)
+                      .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketStatus)
+                        .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketType)
+                    .FirstOrDefaultAsync(u => u.Id == userId && u.CompanyId == companyId);
+
+
+                IEnumerable<Ticket> UnassignedPMTickets = projectManager.Projects.SelectMany(p => p.Tickets.Where(t => t.TicketPriorityId >= 3));
+
+
+
+                return UnassignedPMTickets;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+
+        public async Task<IEnumerable<Ticket>> GetPMTicketsWithTypeNewDevelopment(string? userId, int? companyId)
+        {
+
+            try
+            {
+
+
+
+
+                BTUser? projectManager = await _context.Users
+                    .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketPriority)
+                      .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketStatus)
+                        .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketType)
+                    .FirstOrDefaultAsync(u => u.Id == userId && u.CompanyId == companyId);
+
+
+                IEnumerable<Ticket> UnassignedPMTickets = projectManager.Projects.SelectMany(p => p.Tickets.Where(t => t.TicketTypeId >= 1));
+
+
+
+                return UnassignedPMTickets;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+        public async Task<IEnumerable<Ticket>> GetPMTicketsWithTypeWorkTask(string? userId, int? companyId)
+        {
+
+            try
+            {
+
+
+
+
+                BTUser? projectManager = await _context.Users
+                    .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketPriority)
+                      .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketStatus)
+                        .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketType)
+                    .FirstOrDefaultAsync(u => u.Id == userId && u.CompanyId == companyId);
+
+
+                IEnumerable<Ticket> UnassignedPMTickets = projectManager.Projects.SelectMany(p => p.Tickets.Where(t => t.TicketTypeId >= 2));
+
+
+
+                return UnassignedPMTickets;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+        public async Task<IEnumerable<Ticket>> GetPMTicketsWithTypeDefect(string? userId, int? companyId)
+        {
+
+            try
+            {
+
+
+
+
+                BTUser? projectManager = await _context.Users
+                    .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketPriority)
+                      .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketStatus)
+                        .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketType)
+                    .FirstOrDefaultAsync(u => u.Id == userId && u.CompanyId == companyId);
+
+
+                IEnumerable<Ticket> UnassignedPMTickets = projectManager.Projects.SelectMany(p => p.Tickets.Where(t => t.TicketTypeId >= 3));
+
+
+
+                return UnassignedPMTickets;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+        public async Task<IEnumerable<Ticket>> GetPMTicketsWithTypeChangeRequest(string? userId, int? companyId)
+        {
+
+            try
+            {
+
+
+
+
+                BTUser? projectManager = await _context.Users
+                    .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketPriority)
+                      .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketStatus)
+                        .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketType)
+                    .FirstOrDefaultAsync(u => u.Id == userId && u.CompanyId == companyId);
+
+
+                IEnumerable<Ticket> UnassignedPMTickets = projectManager.Projects.SelectMany(p => p.Tickets.Where(t => t.TicketTypeId >= 4));
+
+
+
+                return UnassignedPMTickets;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+
+
+        public async Task<IEnumerable<Ticket>> GetPMTicketsWithTypeEnhancement(string? userId, int? companyId)
+        {
+
+            try
+            {
+
+
+
+
+                BTUser? projectManager = await _context.Users
+                    .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketPriority)
+                      .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketStatus)
+                        .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketType)
+                    .FirstOrDefaultAsync(u => u.Id == userId && u.CompanyId == companyId);
+
+
+                IEnumerable<Ticket> UnassignedPMTickets = projectManager.Projects.SelectMany(p => p.Tickets.Where(t => t.TicketTypeId >= 5));
+
+
+
+                return UnassignedPMTickets;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+
+        public async Task<IEnumerable<Ticket>> GetPMTicketsWithTypeGeneralTask(string? userId, int? companyId)
+        {
+
+            try
+            {
+
+
+
+
+                BTUser? projectManager = await _context.Users
+                    .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketPriority)
+                      .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketStatus)
+                        .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketType)
+                    .FirstOrDefaultAsync(u => u.Id == userId && u.CompanyId == companyId);
+
+
+                IEnumerable<Ticket> UnassignedPMTickets = projectManager.Projects.SelectMany(p => p.Tickets.Where(t => t.TicketTypeId >= 6));
+
+
+
+                return UnassignedPMTickets;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+        public async Task<IEnumerable<Ticket>> GetSubmitterTicketsUrgentAndHighPriority(string? userId)
+        {
+
+            try
+            {
+
+
+
+                IEnumerable<Ticket> urgentHighSubmitterTickets = await _context.Tickets.Where(t => t.SubmitterUserId == userId && t.TicketPriorityId >= 3).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).ToListAsync();
+				return urgentHighSubmitterTickets;
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+        public async Task<IEnumerable<Ticket>> GetDevTicketsUrgentAndHighPriority(string? userId)
+        {
+
+            try
+            {
+
+
+
+                IEnumerable<Ticket> urgentHighSubmitterTickets = await _context.Tickets.Where(t => t.DeveloperUserId == userId && t.TicketPriorityId >= 3).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).ToListAsync();
+                return urgentHighSubmitterTickets;
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+
+
+
+
+        public async Task<IEnumerable<Ticket>> GetSubmitterTicketsWithTypeNewDevelopment(string? userId)
+        {
+
+            try
+            {
+
+
+
+                IEnumerable<Ticket> newDevelopmentTickets = await _context.Tickets.Where(t => t.SubmitterUserId == userId && t.TicketTypeId == 1).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).ToListAsync();
+                return newDevelopmentTickets;
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+        public async Task<IEnumerable<Ticket>> GetDevTicketsWithTypeNewDevelopment(string? userId)
+        {
+
+            try
+            {
+
+
+
+                IEnumerable<Ticket> newDevelopmentTickets = await _context.Tickets.Where(t => t.DeveloperUserId == userId && t.TicketTypeId == 1).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).ToListAsync();
+                return newDevelopmentTickets;
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+        public async Task<IEnumerable<Ticket>> GetSubmitterTicketsWithTypeWorkTask(string? userId)
+        {
+
+            try
+            {
+
+
+
+                IEnumerable<Ticket> workTaskTickets = await _context.Tickets.Where(t => t.SubmitterUserId == userId && t.TicketTypeId == 2).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).ToListAsync();
+                return workTaskTickets;
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+        public async Task<IEnumerable<Ticket>> GetDevTicketsWithTypeWorkTask(string? userId)
+        {
+
+            try
+            {
+
+
+
+                IEnumerable<Ticket> workTaskTickets = await _context.Tickets.Where(t => t.DeveloperUserId == userId && t.TicketTypeId == 2).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).ToListAsync();
+                return workTaskTickets;
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+
+        public async Task<IEnumerable<Ticket>> GetSubmitterTicketsWithTypeDefect(string? userId)
+        {
+
+            try
+            {
+
+
+
+                IEnumerable<Ticket> defectTickets = await _context.Tickets.Where(t => t.SubmitterUserId == userId && t.TicketTypeId == 3).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).ToListAsync();
+                return defectTickets;
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+        public async Task<IEnumerable<Ticket>> GetDevTicketsWithTypeDefect(string? userId)
+        {
+
+            try
+            {
+
+
+
+                IEnumerable<Ticket> defectTickets = await _context.Tickets.Where(t => t.DeveloperUserId == userId && t.TicketTypeId == 3).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).ToListAsync();
+                return defectTickets;
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+
+        public async Task<IEnumerable<Ticket>> GetSubmitterTicketsWithTypeEnhancement(string? userId)
+        {
+
+            try
+            {
+
+
+
+                IEnumerable<Ticket> enchancementTickets = await _context.Tickets.Where(t => t.SubmitterUserId == userId && t.TicketTypeId == 5).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).ToListAsync();
+                return enchancementTickets;
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+
+        public async Task<IEnumerable<Ticket>> GetDevTicketsWithTypeEnhancement(string? userId)
+        {
+
+            try
+            {
+
+
+
+                IEnumerable<Ticket> enchancementTickets = await _context.Tickets.Where(t => t.DeveloperUserId == userId && t.TicketTypeId == 5).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).ToListAsync();
+                return enchancementTickets;
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+
+        public async Task<IEnumerable<Ticket>> GetSubmitterTicketsWithTypeGeneralTask(string? userId)
+        {
+
+            try
+            {
+
+
+
+                IEnumerable<Ticket> generalTaskTickets = await _context.Tickets.Where(t => t.SubmitterUserId == userId && t.TicketTypeId == 6).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).ToListAsync();
+                return generalTaskTickets;
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+        public async Task<IEnumerable<Ticket>> GetDevTicketsWithTypeGeneralTask(string? userId)
+        {
+
+            try
+            {
+
+
+
+                IEnumerable<Ticket> generalTaskTickets = await _context.Tickets.Where(t => t.DeveloperUserId == userId && t.TicketTypeId == 6).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).ToListAsync();
+                return generalTaskTickets;
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+        public async Task<IEnumerable<Ticket>> GetRecentCompanyTickets()
+        {
+
+            try
+            {
+
+
+
+                IEnumerable<Ticket> generalTaskTickets = await _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).ToListAsync();
+                return generalTaskTickets.OrderByDescending(t => t.Created).Take(5);
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+		public async Task<IEnumerable<BTUser>> GetUsersTeamMembers(BTUser btUser, int companyId)
+
+
+
+
+		{
+
+
+            //IEnumerable<Ticket> UnassignedPMTickets = projectManager.Projects.SelectMany(p => p.Tickets.Where(t => t.DeveloperUserId == null));
+
+            IEnumerable<Project> projects = await _context.Projects.Where(p => p.Members.Any(m => m.Id == btUser.Id) && p.CompanyId == companyId).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
+
+			IEnumerable<BTUser> userMembers = projects.SelectMany(p => p.Members);
+
+			//IEnumerable<BTUser> userMembers = userProjects.Members.ToList();
+
+			return userMembers;
+		}
+
+
+        public async Task<IEnumerable<Ticket>> GetSubmitterTicketsWithTypeChangeRequest(string? userId)
+        {
+
+            try
+            {
+
+
+
+                IEnumerable<Ticket> changeRequestTickets = await _context.Tickets.Where(t => t.SubmitterUserId == userId && t.TicketTypeId == 4).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).ToListAsync();
+                return changeRequestTickets;
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+        public async Task<IEnumerable<Ticket>> GetDevTicketsWithTypeChangeRequest(string? userId)
+        {
+
+            try
+            {
+
+
+
+                IEnumerable<Ticket> changeRequestTickets = await _context.Tickets.Where(t => t.DeveloperUserId == userId && t.TicketTypeId == 4).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).ToListAsync();
+                return changeRequestTickets;
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+        }
+
+
+
+        public async Task<IEnumerable<Ticket>> GetSubmitterTicketsByType(string? userId)
 		{
 			try
 			{

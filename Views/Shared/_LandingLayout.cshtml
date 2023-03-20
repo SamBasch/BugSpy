@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Digital Trend HTML Template</title>
+    <!--
+
+    DIGITAL TREND
+
+    https://templatemo.com/tm-538-digital-trend
+
+    -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link rel="stylesheet" href="~/landingassets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/landingassets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/landingassets/css/aos.css">
+    <link rel="stylesheet" href="~/landingassets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/landingassets/css/owl.theme.default.min.css">
+
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="~/landingassets/css/templatemo-digital-trend.css">
+
+</head>
+<body>
+    <div>
+        @RenderBody()
+    </div>
+    <!-- MENU BAR -->
+    <!-- SCRIPTS -->
+    <script src="~/landingassets/js/jquery.min.js"></script>
+    <script src="~/landingassets/js/bootstrap.min.js"></script>
+    <script src="~/landingassets/js/aos.js"></script>
+    <script src="~/landingassets/js/owl.carousel.min.js"></script>
+    <script src="~/landingassets/js/smoothscroll.js"></script>
+    <script src="~/landingassets/js/custom.js"></script>
+
+</body>
+</html>
+
+
+    @await RenderSectionAsync("Scripts", required: false)

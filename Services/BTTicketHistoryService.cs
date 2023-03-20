@@ -225,16 +225,17 @@ namespace BugSpy.Services
         {
 
 
+            List<TicketHistory> ticketHistories = (await _context.TicketHistories.Include(t => t.User).Include(th => th.Ticket).ThenInclude(t => t.Project).Where(t => t.Ticket.Project.CompanyId == companyId).ToListAsync());
+
+            //Company? company = await _context.Companies.Include(c => c.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.History).FirstOrDefaultAsync(c => c.Id == companyId);
 
 
-
-            Company? company = await  _context.Companies.Include(c => c.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.History).FirstOrDefaultAsync(c => c.Id == companyId);
-
-
-            IEnumerable<Ticket> companyTickets = company.Projects.SelectMany(p => p.Tickets.Where(t => t.Archived == false));
+            //IEnumerable<Ticket> companyTickets = company.Projects.SelectMany(p => p.Tickets.Where(t => t.Archived == false));
 
 
-            List<TicketHistory> ticketHistories = companyTickets.SelectMany(t => t.History).ToList();
+            //List<TicketHistory> ticketHistories = companyTickets.SelectMany(t => t.History).ToList();
+
+
 
             return ticketHistories;
         }

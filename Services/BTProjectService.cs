@@ -193,11 +193,78 @@ namespace BugSpy.Services
 
 
 
+        public async Task<IEnumerable<Project>> GetAllCompanyProjects(int companyId)
+        {
 
 
 
 
-		public async Task<bool> IsMemberInProject(BTUser member, int? projectId)
+
+            try
+            {
+                IEnumerable<Project> projects = await _context.Projects.Where(p => p.CompanyId == companyId).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
+
+                return projects.OrderByDescending(p => p.Created);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+        }
+
+        public async Task<IEnumerable<Project>> GetAllCompanyActiveProjects(int companyId)
+        {
+
+
+
+
+
+            try
+            {
+                IEnumerable<Project> projects = await _context.Projects.Where(p => p.CompanyId == companyId && p.Archived == false).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
+
+                return projects.OrderByDescending(p => p.Created);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+        }
+
+        public async Task<IEnumerable<Project>> GetAllCompanyArchivedProjects(int companyId)
+        {
+
+
+
+
+
+            try
+            {
+                IEnumerable<Project> projects = await _context.Projects.Where(p => p.CompanyId == companyId && p.Archived == true).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
+
+                return projects.OrderByDescending(p => p.Created);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+        }
+
+
+
+        public async Task<bool> IsMemberInProject(BTUser member, int? projectId)
 		{
             Project project = await GetProjectByIdAsync(member!.CompanyId, projectId);
 
@@ -214,10 +281,69 @@ namespace BugSpy.Services
 
         }
 
+		public async Task ArchiveProjectTickets(Project project)
+		{
+			
+
+
+			
+
+
+            if (project != null && project.Archived == true)
+            {
+                foreach (Ticket ticket in project.Tickets) 
+				
+				{
+					ticket.ArchivedByProject = true;
+					ticket.Archived = true;
+                    _context.Update(ticket);
+               
+                }
+		
+
+			}
+            await _context.SaveChangesAsync();
+
+        }
 
 
 
-		public async Task<BTUser> GetProjectManagerAsync(int? projectId)
+
+        public async Task UnarchiveProjectTickets(Project project)
+        {
+
+
+
+
+
+
+            if (project != null && project.Archived == false)
+            {
+				
+
+                foreach (Ticket ticket in project.Tickets)
+
+                {
+
+					if(ticket.ArchivedByProject == true)
+					{
+                        ticket.ArchivedByProject = false;
+                        ticket.Archived = false;
+                    }
+
+          
+                    _context.Update(ticket);
+
+                }
+
+
+            }
+            await _context.SaveChangesAsync();
+
+        }
+
+
+        public async Task<BTUser> GetProjectManagerAsync(int? projectId)
 		{
 			try
 			{

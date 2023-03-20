@@ -106,7 +106,7 @@
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="border border-gray-200 dark-border-dark-5 rounded-2 p-5 mt-5">
+@*                    <div class="border border-gray-200 dark-border-dark-5 rounded-2 p-5 mt-5">
                         <div class="fw-medium d-flex align-items-center border-bottom border-gray-200 dark-border-dark-5 pb-5"> <i data-feather="chevron-down" class="w-4 h-4 me-2"></i> Caption & Images </div>
                         <div class="mt-5">
                             <div>
@@ -141,7 +141,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>*@
                 </div>
             </div>
         </div>
@@ -184,14 +184,14 @@
                     </div>
                 </div>
 
-                <div class="mb-3">
+@*                <div class="mb-3">
                     <label class="form-label">Developer Assign</label>
                     <div class="form-group dropdown-toggle btn w-full btn-outline-secondary dark-bg-dark-2 dark-border-dark-2 d-flex align-items-center justify-content-start w-full">
                           <label asp-for="DeveloperUserId" class="control-label"></label>
                         <select asp-for="DeveloperUserId" class="form-control" asp-items="ViewBag.DeveloperUserId"> </select>
                         <i class="w-4 h-4 ms-auto" data-feather="chevron-down"></i>
                     </div>
-                </div>
+                </div>*@
 
                 <div class="mb-3">
                     <label class="form-label">Project Assign</label>
@@ -202,19 +202,40 @@
                     </div>
                 </div>
 
-               
-              
-@*            <div class="form-check form-switch flex-column align-items-start ps-0 mt-3">
-                <label for="post-form-5" class="form-check-label ms-0 mb-2">Published</label>
-                <input id="post-form-5" class="form-check-input ms-0" type="checkbox">
-            </div>*@
+@*                @if (User.IsInRole("Admin"))
+                {
+                    <div class="form-check form-switch flex-column align-items-start ps-0 mt-3">
+                        <label for="post-form-5" class="form-check-label ms-0 mb-2">Archive Ticket</label>
+                        <input asp-for="Archived" id="post-form-5" class="form-check-input ms-0" type="checkbox">
+                    </div>
+                }
+
+
+                @if (User.IsInRole("ProjectManager"))
+                {
+                    <div class="form-check form-switch flex-column align-items-start ps-0 mt-3">
+                        <label for="post-form-5" class="form-check-label ms-0 mb-2">Archive Ticket</label>
+                        <input asp-for="Archived" id="post-form-5" class="form-check-input ms-0" type="checkbox">
+                    </div>
+                }*@
+
+
+
+   @*             <div class="form-group d-flex justify-content-end mt-3">
+                    <div class="form-group form-check d-flex my-auto">
+                        <label class="form-check-label my-auto me-4">
+                            <input type="checkbox" class="form-check-input me-3" asp-for="IsPublished" />&nbsp; Publish?
+                        </label>
+                    </div>*@
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
 @*            <div class="form-check form-switch flex-column align-items-start ps-0 mt-3">
                 <label for="post-form-6" class="form-check-label ms-0 mb-2">Show Author Name</label>
                 <input id="post-form-6" class="form-check-input ms-0" type="checkbox">
             </div>*@
-                <div class="form-group">
+@*                <div class="form-group">
                     <input type="submit" value="Create" class="btn btn-primary" />
-                </div>
+                </div>*@
         </div>
     </div>
 

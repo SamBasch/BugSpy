@@ -1,8 +1,19 @@
-﻿@using X.PagedList;
-
+﻿@using Microsoft.AspNetCore.Identity;
+@using X.PagedList;
+@using BugSpy.Services.Interfaces
 @using X.PagedList.Mvc.Core;
 @using X.PagedList.Web.Common;
+@inject UserManager<BTUser> _userManager
 @model IEnumerable<BugSpy.Models.Ticket>
+@inject IBTProjectService _btProjectService
+@{
+    BTUser? projectMember = await _userManager.GetUserAsync(User);
+
+    string userId = _userManager.GetUserId(User);
+
+  
+}
+
 
 
 <div class="intro-y g-col-12 overflow-auto overflow-lg-visible">
@@ -40,7 +51,7 @@
 
             <tr>
 
-                <th class="text-nowrap">TICKET NAME</th>
+                <th clickable class="text-nowrap">TICKET NAME</th>
                 <th class="text-nowrap">CREATED/UPDATED</th>
                 <th class="text-nowrap">PROJECT</th>
                 <th class="text-nowrap">MEMBERS</th>
@@ -53,6 +64,10 @@
         <tbody>
             @foreach(Ticket ticket in Model)
             {
+
+                int priorityId = ticket.TicketPriorityId;
+
+                bool result = await _btProjectService.IsMemberInProject(projectMember, ticket.ProjectId);
                <tr class="intro-x">
                 <td class="">
                     <a href="" class="fw-medium text-nowrap">@ticket.Title</a>
@@ -101,34 +116,195 @@
                         <a href="" class="fw-medium text-nowrap">@ticket.TicketType.Name</a>
                     </td>
 
-                                        <td class="text-center">
-                        <a href="" class="fw-medium text-nowrap">@ticket.TicketPriority.Name</a>
-                    </td>
 
 
-        
-      
-                    @if(ticket.Archived == false)
+                    @switch(priorityId)
                     {
-                        <td class="w-40">
-                            <div class="d-flex align-items-center justify-content-center text-theme-9"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Active </div>
-                        </td>
-                    }    else
-                    {
-                        <td class="w-40">
-                            <div class="d-flex align-items-center justify-content-center text-theme-6"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Inactive </div>
-                        </td>
+                        
+                        case 1:
+                            <td class="text-center">
+                                <a class="fw-medium text-nowrap"><span class="text-theme-9">@ticket.TicketPriority.Name</span></a>
+                            </td>
+                            break;
+
+                        case 2:
+                            <td class="text-center">
+                                <a class="fw-medium text-nowrap"><span class="text-theme-31">@ticket.TicketPriority.Name</span></a>
+                            </td>
+                            break;
+
+
+                        case 3:
+                            <td class="text-center">
+                                <a class="fw-medium text-nowrap"><span class="text-theme-32">@ticket.TicketPriority.Name</span></a>
+                            </td>
+                            break;
+
+
+                        case 4:
+                            <td class="text-center">
+                                <a class="fw-medium text-nowrap"><span class="text-theme-6">@ticket.TicketPriority.Name</span></a>
+                            </td>
+                            break;
+
 
                     }
 
-                   
 
 
-                     <td class="table-report__action w-56">
+
+
+
+                    <td class="w-40">
+                        <div class="d-flex align-items-center justify-content-center">  @ticket.TicketStatus.Name </div>
+                    </td>
+
+
+
+                    <td class="table-report__action w-56">
                         <div class="d-flex justify-content-center align-items-center">
-                            <a class="d-flex align-items-center me-3" asp-action="Details" asp-route-id="@ticket.Id"> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Details </a>
-                            <a class="d-flex align-items-center me-3" asp-action="Edit" asp-route-id="@ticket.Id"> <i data-feather="check-square" class="w-4 h-4 me-1"></i> Edit </a>
-                            <a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Delete </a>
+
+
+
+
+
+                            <nav class="side-nav p-4">
+                                <ul>
+                                    <a href="javascript:;.html" class="side-menu p-3">
+
+                                        <div class="side-menu__title">
+                                            Actions
+                                            <div class="side-menu__sub-icon"> <i data-feather="chevron-down"></i> </div>
+                                        </div>
+                                    </a>
+
+
+                                    <ul class="p-3">
+
+
+
+
+                                        <li class="mb-2">
+                                            <a asp-action="Details" asp-route-id="@ticket.Id">
+                                                <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                                                <div class="side-menu__title"> Details </div>
+                                            </a>
+                                        </li>
+
+
+
+
+
+
+
+
+
+                                        @if ((User.IsInRole("Admin")) || ticket.SubmitterUserId == userId || ticket.DeveloperUserId == userId)
+                                        {
+
+
+
+
+
+
+                                            <li class="mb-2">
+                                                <a asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id">
+                                                    <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                                                    <div class="side-menu__title"> Edit </div>
+                                                </a>
+                                            </li>
+
+
+
+
+
+
+
+                                        }
+
+                                        @if ((User.IsInRole("ProjectManager")) && result == false)
+                                        {
+
+
+
+
+
+
+                                            <li class="mb-2">
+                                                <a asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id">
+                                                    <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                                                    <div class="side-menu__title"> Edit </div>
+                                                </a>
+                                            </li>
+
+
+
+
+
+
+
+                                        }
+
+
+
+
+
+
+                                        @if ((User.IsInRole("Admin")))
+                                        {
+
+                                            <li class="mb-2">
+                                                <a class=" text-theme-6"  asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">
+                                                    <i data-feather="trash-2" class="w-4 h-4 me-1"></i>
+                                                    <div class="side-menu__title"> Delete </div>
+                                                </a>
+                                            </li>
+                                        }
+
+                                        @if ((User.IsInRole("ProjectManager")) && result == false)
+                                        {
+                                            <li class="mb-2">
+                                                <a class=" text-theme-6" asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">
+                                                    <i data-feather="trash-2" class="w-4 h-4 me-1"></i>
+                                                    <div class="side-menu__title"> Delete </div>
+                                                </a>
+                                            </li>
+                                        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                    </ul>
+
+                                </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                         </div>
                     </td>
                 </tr>

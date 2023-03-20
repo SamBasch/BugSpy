@@ -34,10 +34,18 @@
                     </h2>
                     <div class="intro-x mt-2 text-gray-500 dark-text-gray-500 d-xl-none text-center">A few more clicks to sign in to your account. Manage all your e-commerce accounts in one place</div>
                     <div class="intro-x mt-8">
-                        <input type="text" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block" placeholder="First Name">
-                        <input type="text" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block mt-4" placeholder="Last Name">
-                        <input type="text" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block mt-4" placeholder="Email">
-                        <input type="text" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block mt-4" placeholder="Password">
+                        <input asp-for="Input.FirstName" type="text" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block" placeholder="First Name">
+                        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                        <input asp-for="Input.LastName" type="text" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block mt-4" placeholder="Last Name">
+                        <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                        <input asp-for="Input.CompanyName" type="text" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block mt-4" placeholder="Company Name">
+                        <span asp-validation-for="Input.CompanyName" class="text-danger"></span>
+                        <input asp-for="Input.CompanyDescription" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block mt-4" placeholder="Company Description">
+                        <span asp-validation-for="Input.CompanyDescription" class="text-danger"></span>
+                        <input asp-for="Input.Email" type="email" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block mt-4" placeholder="Email">
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        <input asp-for="Input.Password" type="password" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block mt-4" placeholder="Password">
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
                         <div class="intro-x w-full grid columns-12 gap-4 h-1 mt-3">
                             <div class="g-col-3 h-full rounded bg-theme-9"></div>
                             <div class="g-col-3 h-full rounded bg-theme-9"></div>
@@ -45,7 +53,7 @@
                             <div class="g-col-3 h-full rounded bg-gray-200 dark-bg-dark-2"></div>
                         </div>
                         <a href="" class="intro-x text-gray-600 d-block mt-2 fs-xs fs-sm-sm">What is a secure password?</a>
-                        <input type="text" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block mt-4" placeholder="Password Confirmation">
+      @*                  <input type="text" class="intro-x login__input form-control py-3 px-4 border-gray-300 d-block mt-4" placeholder="Password Confirmation">*@
                     </div>
                     <div class="intro-x d-flex align-items-center text-gray-700 dark-text-gray-600 mt-4 fs-xs fs-sm-sm">
                         <input id="remember-me" type="checkbox" class="form-check-input border me-2">

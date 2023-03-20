@@ -116,7 +116,7 @@
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="border border-gray-200 dark-border-dark-5 rounded-2 p-5 mt-5">
+@*                    <div class="border border-gray-200 dark-border-dark-5 rounded-2 p-5 mt-5">
                         <div class="fw-medium d-flex align-items-center border-bottom border-gray-200 dark-border-dark-5 pb-5"> <i data-feather="chevron-down" class="w-4 h-4 me-2"></i> Caption & Images </div>
                         <div class="mt-5">
                             <div>
@@ -151,7 +151,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>*@
                 </div>
             </div>
         </div>
@@ -213,11 +213,22 @@
                 </div>
 
 
+ @*               @if (User.IsInRole("Admin"))
+                {
+                    <div class="form-check form-switch flex-column align-items-start ps-0 mt-3">
+                        <label for="post-form-5" class="form-check-label ms-0 mb-2">Archive Ticket</label>
+                        <input asp-for="Archived" id="post-form-5" class="form-check-input ms-0" type="checkbox">
+                    </div>
+                }
 
-                @*            <div class="form-check form-switch flex-column align-items-start ps-0 mt-3">
-                <label for="post-form-5" class="form-check-label ms-0 mb-2">Published</label>
-                <input id="post-form-5" class="form-check-input ms-0" type="checkbox">
-                </div>*@
+
+                @if (User.IsInRole("ProjectManager"))
+                {
+                    <div class="form-check form-switch flex-column align-items-start ps-0 mt-3">
+                        <label for="post-form-5" class="form-check-label ms-0 mb-2">Archive Ticket</label>
+                        <input asp-for="Archived" id="post-form-5" class="form-check-input ms-0" type="checkbox">
+                    </div>
+                }*@
                 @*            <div class="form-check form-switch flex-column align-items-start ps-0 mt-3">
                 <label for="post-form-6" class="form-check-label ms-0 mb-2">Show Author Name</label>
                 <input id="post-form-6" class="form-check-input ms-0" type="checkbox">

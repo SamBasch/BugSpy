@@ -57,15 +57,15 @@ namespace BugSpy.Controllers
 
         //GET: Projects Overview
 
-        public async Task<IActionResult> ProjectsOverview(int? pageNum)
+        public async Task<IActionResult> ProjectsOverview()
 
 
 
         {
 
 
-            int pageSize = 10;
-            int page = pageNum ?? 1;
+            //int pageSize = 10;
+            //int page = pageNum ?? 1;
 
             //BTUser? loggedInUser = await _userManager.GetUserAsync(User);
 
@@ -83,7 +83,10 @@ namespace BugSpy.Controllers
             //IPagedList<Project> projects = await _context.Projects.Where(p => p.Members.Any(m => m.Id == userId)).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
 
 
-            IPagedList<Project> myRecentProjects = (await _btProjectService.GetSignedInUserProjects(companyId, userId)).ToPagedList(page, pageSize);
+                        
+
+
+                IEnumerable<Project> myRecentProjects = (await _btProjectService.GetSignedInUserProjects(companyId, userId));
             return View(myRecentProjects);
 
 
@@ -94,7 +97,91 @@ namespace BugSpy.Controllers
 
         }
 
+
+
+        public async Task<IActionResult> ProjectsIndex()
+
+
+
+        {
+
+
+            //int pageSize = 10;
+            //int page = pageNum ?? 1;
+
+            //BTUser? loggedInUser = await _userManager.GetUserAsync(User);
+
+            int companyId = User.Identity!.GetCompanyId();
+
+            //IEnumerable<Project> projects = await _context.Projects.Where(p => p.Archived == false && p.CompanyId == companyId).Include(p => p.Members).Include(p => p.Tickets).ToListAsync();
+
+
+            string? userId = _userManager.GetUserId(User);
+
+            //int companyId = loggedInUser!.CompanyId;
+
+            //IPagedList<Project> projects = await _context.Projects.Where(p => p.CompanyId == companyId && p.Members.Any(m => m.Id == userId)).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
+
+            //IPagedList<Project> projects = await _context.Projects.Where(p => p.Members.Any(m => m.Id == userId)).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
+
         
+                IEnumerable<Project> companyProjects = (await _btProjectService.GetAllCompanyProjects(companyId));
+                return View(companyProjects);
+            
+
+
+
+         
+
+
+            //projects.ToPagedList(page, pageSize);   
+
+            //return View(projects);
+
+
+        }
+
+        public async Task<IActionResult> CompanyArchivedProjects()
+
+
+
+        {
+
+
+            //int pageSize = 10;
+            //int page = pageNum ?? 1;
+
+            //BTUser? loggedInUser = await _userManager.GetUserAsync(User);
+
+            int companyId = User.Identity!.GetCompanyId();
+
+            //IEnumerable<Project> projects = await _context.Projects.Where(p => p.Archived == false && p.CompanyId == companyId).Include(p => p.Members).Include(p => p.Tickets).ToListAsync();
+
+
+            string? userId = _userManager.GetUserId(User);
+
+            //int companyId = loggedInUser!.CompanyId;
+
+            //IPagedList<Project> projects = await _context.Projects.Where(p => p.CompanyId == companyId && p.Members.Any(m => m.Id == userId)).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
+
+            //IPagedList<Project> projects = await _context.Projects.Where(p => p.Members.Any(m => m.Id == userId)).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
+
+
+            IEnumerable<Project> companyProjects = (await _btProjectService.GetAllCompanyArchivedProjects(companyId));
+            return View(companyProjects);
+
+
+
+
+
+
+
+            //projects.ToPagedList(page, pageSize);   
+
+            //return View(projects);
+
+
+        }
 
         public async Task<IActionResult> ProjectOverview(int? id)
         {
@@ -458,7 +545,6 @@ namespace BugSpy.Controllers
             ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Name", project.ProjectPriorityId);
             return View(project);
         }
-
         // POST: Projects/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -479,13 +565,34 @@ namespace BugSpy.Controllers
             {
                 try
                 {
+                    if (project.ImageFormFile != null)
+                    {
+                        project.ImageFileData = await _fileService.ConvertFileToByteArrayAsync(project.ImageFormFile);
+                        project.ImageFileType = project.ImageFormFile.ContentType;
+                    }
+
+
                     project.Created = DataUtility.GetPostGresDate(project.Created);
                     project.StartDate = DateTime.SpecifyKind(project.StartDate, DateTimeKind.Utc);
                     project.EndDate = DateTime.SpecifyKind(project.EndDate, DateTimeKind.Utc);
                     _context.Update(project);
                     await _context.SaveChangesAsync();
 
-                    
+
+                    if (project.Archived == true)
+                    {
+                       
+                        //_context.Update(project);
+                        await _btProjectService.ArchiveProjectTickets(project);
+
+                        await _context.SaveChangesAsync();
+
+
+
+
+
+                    }
+
 
                     //if(selected != null)
                     //{
@@ -518,6 +625,7 @@ namespace BugSpy.Controllers
             return View(project);
         }
 
+
         // GET: Projects/Delete/5
         [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Delete(int? id)
@@ -539,22 +647,104 @@ namespace BugSpy.Controllers
         // POST: Projects/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int? id)
+        public async Task<IActionResult> DeleteConfirmed(int? Id)
         {
             if (_context.Projects == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Projects'  is null.");
             }
-            Project? project = await _context.Projects.Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).FirstOrDefaultAsync(p => p.Id == id.Value);
+            Project? project = await _context.Projects.Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).FirstOrDefaultAsync(p => p.Id == Id.Value);
+
+
             if (project != null)
             {
                 project.Archived = true;
+                _context.Update(project);
+                await _btProjectService.ArchiveProjectTickets(project);
+
+                await _context.SaveChangesAsync();
+
+             
                 
+
+
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+
+
+
+
+
+
+
+
+        // POST: Projects/Delete/5
+        [HttpPost, ActionName("Unarchive")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnarchiveConfirm(int? Id)
+        {
+            if (_context.Projects == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Projects'  is null.");
+            }
+            Project? project = await _context.Projects.Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).FirstOrDefaultAsync(p => p.Id == Id.Value);
+
+
+            if (project != null)
+            {
+                project.Archived = false;
+                _context.Update(project);
+                //await _btProjectService.UnarchiveProjectTickets(project);
+
+                await _context.SaveChangesAsync();
+
+
+
+
+
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+
+        // POST: Projects/Delete/5
+        [HttpPost, ActionName("UnarchiveWithTickets")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnarchiveAndTicketsConfirm(int? Id)
+        {
+            if (_context.Projects == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Projects'  is null.");
+            }
+            Project? project = await _context.Projects.Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).FirstOrDefaultAsync(p => p.Id == Id.Value);
+
+
+            if (project != null)
+            {
+                project.Archived = false;
+                _context.Update(project);
+                await _btProjectService.UnarchiveProjectTickets(project);
+
+                await _context.SaveChangesAsync();
+
+
+
+
+
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
 
         private bool ProjectExists(int id)
         {

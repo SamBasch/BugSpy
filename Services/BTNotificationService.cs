@@ -26,15 +26,15 @@ namespace BugSpy.Services
 
 
 		
-		public async Task AddNotificationAsync(Notification? notfication)
+		public async Task AddNotificationAsync(Notification? notification)
 		{
 			try
 			{
 						
-				if(notfication != null)
+				if(notification != null)
 				{
 
-					await _context.AddAsync(notfication);
+					await _context.AddAsync(notification);
 					await _context.SaveChangesAsync();
 				}
 

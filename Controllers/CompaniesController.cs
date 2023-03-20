@@ -133,7 +133,7 @@ namespace BugSpy.Controllers
 
             //viewModel.Roles = new MultiSelectList(currentRoles, "Name", "Name", await _roleService.GetUserRolesAsync(viewModel.BTUser));
 
-           return RedirectToAction("Index");
+           return RedirectToAction("ManageUserRoles");
            
      
 

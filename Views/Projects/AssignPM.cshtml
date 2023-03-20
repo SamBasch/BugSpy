@@ -13,10 +13,31 @@
         <div class="box dark ">
             <form asp-action="AssignPM" method="post" class="d-flex flex-column">
                 <input type="hidden" asp-for="Project!.Id" />
+
+
+
+                <div class="mb-3">
+                    <div class="form-group dropdown-toggle btn w-full btn-outline-secondary dark-bg-dark-2 dark-border-dark-2 d-flex align-items-center justify-content-start w-full">
+                        @*  <label asp-for="DeveloperUserId" class="control-label"></label>*@
+                        <select asp-for="PMId" class="form-control" asp-items="Model.PMList">
+                            <option value="">Unassigned</option>
+                        </select>
+                    
+                        <span asp-validation-for="PMId" class="text-danger"></span>
+                        <i class="w-4 h-4 ms-auto" data-feather="chevron-down"></i>
+                    </div>
+                </div>
+
+
+
+@*
                 <select asp-items="Model.PMList" asp-for="PMId">
                     <option value="">Unassigned</option>
                 </select>
-                <span asp-validation-for="PMId" class="text-danger"></span>
+                <span asp-validation-for="PMId" class="text-danger"></span>*@
+
+
+
                 <button type="submit" class="btn btn-primary my-3">Save</button>
                 <a asp-action="Details" asp-route-id="@Model.Project?.Id" class="btn btn-secondary">Cancel</a>
             </form>

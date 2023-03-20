@@ -31,7 +31,7 @@ namespace BugSpy.Controllers
         private readonly IBTRolesService _roleService;
         private readonly IBTTicketHistoryService _historyService;
         private readonly IBTNotificationService _notificationService;
-        public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTTicketService btTicketService, IBTFileService fileService, IBTRolesService roleService, IBTTicketHistoryService historyService, IBTNotificationService notificationService)
+        public TicketsController(ApplicationDbContext context, UserManager<BTUser> userManager, IBTTicketService btTicketService, IBTFileService fileService, IBTRolesService roleService, IBTTicketHistoryService historyService, IBTNotificationService notificationService, IBTProjectService projectService)
         {
             _context = context;
             _userManager = userManager;
@@ -40,6 +40,7 @@ namespace BugSpy.Controllers
             _roleService = roleService;
             _historyService = historyService;
             _notificationService = notificationService;
+            _btProjectService = projectService;
         }
 
         // GET: Tickets
@@ -179,12 +180,12 @@ namespace BugSpy.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        public IActionResult AllUnassignedTickets()
+        public async Task<IActionResult> AllUnassignedTickets()
         {
             int companyId = User.Identity.GetCompanyId();
             //string PMUserId = _userManager.GetUserId(User);
 
-            IEnumerable<Ticket> unassignedTickets = _context.Tickets.Where(t => t.DeveloperUser == null && t.Project.CompanyId == companyId).Include(t => t.Project).Include(t => t.TicketType).Include(t => t.TicketPriority).Include(t => t.TicketStatus);
+            IEnumerable<Ticket> unassignedTickets = await _context.Tickets.Where(t => t.DeveloperUser == null && t.Project.CompanyId == companyId).Include(t => t.Project).Include(t => t.TicketType).Include(t => t.TicketPriority).Include(t => t.TicketStatus).ToListAsync(); 
 
 
             //IEnumerable<Ticket> unassignedDevTickets =  await _context.Projects.Where(p => p.Members.Any(m => m.Id == developerUserId) && p.Tickets.Any(t => t.DeveloperUser == null))
@@ -201,12 +202,12 @@ namespace BugSpy.Controllers
             return View(unassignedTickets);
         }
         [Authorize(Roles = "Admin")]
-        public IActionResult AllAssignedTickets()
+        public async Task<IActionResult> AllAssignedTickets()
         {
             int companyId = User.Identity.GetCompanyId();
             //string PMUserId = _userManager.GetUserId(User);
 
-            IEnumerable<Ticket> unassignedTickets = _context.Tickets.Where(t => t.DeveloperUser != null && t.Project.CompanyId == companyId).Include(t => t.Project).Include(t => t.TicketType).Include(t => t.TicketPriority).Include(t => t.TicketStatus);
+            IEnumerable<Ticket> unassignedTickets =  await _context.Tickets.Where(t => t.DeveloperUser != null && t.Project.CompanyId == companyId).Include(t => t.Project).Include(t => t.TicketType).Include(t => t.TicketPriority).Include(t => t.TicketStatus).ToListAsync();
 
 
             //IEnumerable<Ticket> unassignedDevTickets =  await _context.Projects.Where(p => p.Members.Any(m => m.Id == developerUserId) && p.Tickets.Any(t => t.DeveloperUser == null))
@@ -234,14 +235,10 @@ namespace BugSpy.Controllers
 
 
 
-            BTUser? projectManager = await _context.Users
-                .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketPriority)
-                  .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketStatus)
-                    .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketType)
-                .FirstOrDefaultAsync(u => u.Id == PMUserId && u.CompanyId == companyId);
+       
 
 
-            IEnumerable<Ticket> UnassignedPMTickets = projectManager.Projects.SelectMany(p => p.Tickets.Where(t => t.DeveloperUserId == null));
+            IEnumerable<Ticket> UnassignedPMTickets = await _btTicketService.GetUnassignedPMTickets( PMUserId, companyId);
 
 
         
@@ -297,16 +294,12 @@ namespace BugSpy.Controllers
             int companyId = User.Identity.GetCompanyId();
 
 
-            BTUser? projectManager = await _context.Users
-                .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketPriority)
-                  .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketStatus)
-                    .Include(u => u.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.TicketType)
-                .FirstOrDefaultAsync(u => u.Id == PMUserId && u.CompanyId == companyId);
 
 
-            IEnumerable<Ticket> UnassignedPMTickets = projectManager.Projects.SelectMany(p => p.Tickets.Where(t => t.DeveloperUserId != null));
 
-            return View(UnassignedPMTickets);
+            IEnumerable<Ticket> AssignedPMTickets = await _btTicketService.GetAssignedPMTickets(PMUserId, companyId);
+
+            return View(AssignedPMTickets);
 
 
 
@@ -366,7 +359,7 @@ namespace BugSpy.Controllers
 
 
 
-        public async Task<IActionResult> Tabulator()
+        public async Task<IActionResult> TabulatorTickets()
         {
 
             int companyId = User.Identity!.GetCompanyId();
@@ -378,20 +371,66 @@ namespace BugSpy.Controllers
             if (User.IsInRole("Submitter"))
             {
 
-                IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetSubmitterRecentTickets(userId)).ToPagedList();
+                IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetSubmitterRecentTickets(userId));
                 return View(recentSubmitterTickets);
             }
             else if (User.IsInRole("Developer"))
             {
-                IEnumerable<Ticket> recentDeveloperTickets = (await _btTicketService.GetDeveloperRecentTickets(userId)).ToPagedList();
+                IEnumerable<Ticket> recentDeveloperTickets = (await _btTicketService.GetDeveloperRecentTickets(userId));
                 return View(recentDeveloperTickets);
             }
-            else
+            else if(User.IsInRole("Admin"))
             {
-                IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetSubmitterRecentTickets(userId)).ToPagedList();
+                IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetAllCompanyTickets(companyId));
+
+                return View(recentSubmitterTickets);
+            } else
+            {
+                IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetAllCompanyTickets(companyId));
 
                 return View(recentSubmitterTickets);
             }
+
+
+
+
+        }
+
+
+
+        public async Task<IActionResult> TicketsIndex()
+        {
+
+            int companyId = User.Identity!.GetCompanyId();
+
+
+
+            string? userId = _userManager.GetUserId(User);
+
+           
+                IEnumerable<Ticket> companyTickets = (await _btTicketService.GetAllCompanyActiveTickets(companyId));
+                return View(companyTickets);
+        
+
+
+
+
+        }
+
+
+        public async Task<IActionResult> CompanyArchivedTickets()
+        {
+
+            int companyId = User.Identity!.GetCompanyId();
+
+
+
+            string? userId = _userManager.GetUserId(User);
+
+
+            IEnumerable<Ticket> companyTickets = (await _btTicketService.GetAllCompanyArchivedTickets(companyId));
+            return View(companyTickets);
+
 
 
 
@@ -736,7 +775,7 @@ namespace BugSpy.Controllers
 
 
             ViewData["DeveloperUserId"] = new SelectList(_context.Users.Where(u => u.CompanyId == companyId), "Id", "FullName");
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name");
+            ViewData["ProjectId"] = new SelectList(_context.Projects.Where(p => p.CompanyId == companyId), "Id", "Name");
             ViewData["SubmitterUserId"] = new SelectList(_context.Users.Where(u => u.CompanyId == companyId), "Id", "FullName");
             ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name");
             ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name");
@@ -752,7 +791,7 @@ namespace BugSpy.Controllers
         public async Task<IActionResult> Create([Bind("Id,Title,Description,Created,Updated,Archived,ArchivedByProject,ProjectId,TicketTypeId,TicketStatusId,TicketPriorityId,DeveloperUserId,SubmitterUserId")] Ticket ticket)
         {
             ModelState.Remove("SubmitterUserId");
-
+            int companyId = User.Identity.GetCompanyId();
             if (ModelState.IsValid)
             {
                 string userId = _userManager.GetUserId(User);
@@ -761,9 +800,19 @@ namespace BugSpy.Controllers
                 BTUser? btUser = await _userManager.GetUserAsync(User);
 
 
+
+
+
                 ticket.Created = DataUtility.GetPostGresDate(DateTime.UtcNow);
 
-                int companyId = User.Identity.GetCompanyId();
+
+
+                _context.Add(ticket);
+                await _context.SaveChangesAsync();
+
+
+                
+                //int companyId = User.Identity.GetCompanyId();
                 Ticket newTicket = await _btTicketService.GetTicketAsNoTracking(ticket.Id, companyId);
 
                 await _historyService.AddHistoryAsync(null, newTicket, userId);
@@ -784,6 +833,8 @@ namespace BugSpy.Controllers
 
                     RecipientId = projectManager?.Id,
 
+                    ProjectId = ticket.ProjectId,   
+
                     NotificationTypeId = (await _context.NotificationsTypes.FirstOrDefaultAsync(n => n.Name == nameof(BTNotificationTypes.Ticket)))!.Id,
 
 
@@ -802,13 +853,11 @@ namespace BugSpy.Controllers
                     await _notificationService.SendAdminEmailNotficiationAsync(notification, "New Ticket Added", companyId);
 
                 }
-
-                _context.Add(ticket);
-                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Description", ticket.ProjectId);
+            
+            ViewData["DeveloperUserId"] = new SelectList(_context.Users.Where(u => u.CompanyId == companyId), "Id", "FullName", ticket.DeveloperUserId);
+            ViewData["ProjectId"] = new SelectList(_context.Projects.Where(p => p.CompanyId == companyId), "Id", "Name", ticket.ProjectId);
             ViewData["SubmitterUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.SubmitterUserId);
             ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
             ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
@@ -826,7 +875,7 @@ namespace BugSpy.Controllers
 
             string userId = _userManager.GetUserId(User);
 
-            Ticket? ticket = await _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).FirstOrDefaultAsync(t => t.Id == id.Value && t.SubmitterUserId == userId || t.DeveloperUserId == userId);
+            Ticket? ticket = await _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).FirstOrDefaultAsync(t => t.Id == id.Value);
 
             if (ticket == null)
             {
@@ -911,6 +960,8 @@ namespace BugSpy.Controllers
 					RecipientId = projectManager?.Id,
 
 					NotificationTypeId = (await _context.NotificationsTypes.FirstOrDefaultAsync(n => n.Name == nameof(BTNotificationTypes.Ticket)))!.Id,
+
+                    ProjectId = ticket.ProjectId
 
 
 				};
