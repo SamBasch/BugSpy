@@ -770,7 +770,7 @@ namespace BugSpy.Controllers
                     await _notificationService.SendAdminEmailNotficiationAsync(notification, "New Ticket Added", companyId);
 
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(TabulatorTickets));
             }
 
 
@@ -912,7 +912,7 @@ namespace BugSpy.Controllers
 
 
 
-				return RedirectToAction(nameof(MyRecentTickets));
+				return RedirectToAction(nameof(TabulatorTickets));
             }
 
             ViewData["ProjectId"] = new SelectList(await _btTicketService.GetProjectListAsync(companyId), "Id", "Name");

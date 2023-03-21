@@ -391,7 +391,7 @@ namespace BugSpy.Controllers
 
             
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ProjectsIndex));
 
 
             }
