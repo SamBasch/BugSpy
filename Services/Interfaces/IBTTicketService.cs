@@ -39,7 +39,7 @@ namespace BugSpy.Services.Interfaces
         public Task<IEnumerable<Ticket>> GetActiveCompanyTicketsUrgentPriority(int? companyId);
 
         public Task AssignDeveloperAsync(string userId, int? ticketId);
-        public Task<Ticket> GetTicketByIdAsync(int? ticketId);
+        public Task<Ticket> GetTicketByIdAsync(int? ticketId, int? companyId);
 
 
 		public Task<IEnumerable<Project>> GetProjectListAsync(int companyId);

@@ -21,6 +21,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace BugSpy.Controllers
 {
+
+    [Authorize]
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -77,7 +79,7 @@ namespace BugSpy.Controllers
             AssignDevViewModel viewModel = new()
             {
 
-                Ticket = await _btTicketService.GetTicketByIdAsync(Id),
+                Ticket = await _btTicketService.GetTicketByIdAsync(Id, companyId),
                 DevList = new SelectList(developers, "Id", "FullName", currentDev?.Id),
                 DevId = currentDev?.Id
 
@@ -163,7 +165,7 @@ namespace BugSpy.Controllers
 
             BTUser? currentDev = await _btTicketService.GetDeveloperAsync(viewModel.Ticket.Id);
 
-            viewModel.Ticket = await _btTicketService.GetTicketByIdAsync(viewModel.Ticket.Id);
+            viewModel.Ticket = await _btTicketService.GetTicketByIdAsync(viewModel.Ticket.Id, companyId);
 
             viewModel.DevList = new SelectList(developers, "Id", "FullName", currentDev?.Id);
 
@@ -663,12 +665,14 @@ namespace BugSpy.Controllers
 		// GET: Tickets/Details/5
 		public async Task<IActionResult> Details(int? id)
         {
+            int companyId = User.Identity.GetCompanyId();
+
             if (id == null)
             {
                 return NotFound();
             }
 
-            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(id);
+            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(id, companyId);
             if (ticket == null)
             {
                 return NotFound();
@@ -799,7 +803,7 @@ namespace BugSpy.Controllers
 
             string userId = _userManager.GetUserId(User);
 
-            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(id);
+            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(id, companyId);
 
             if (ticket == null)
             {
@@ -821,6 +825,7 @@ namespace BugSpy.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+      
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Created,Updated,Archived,ArchivedByProject,ProjectId,TicketTypeId,TicketStatusId,TicketPriorityId,DeveloperUserId,SubmitterUserId")] Ticket ticket)
         {
@@ -929,12 +934,14 @@ namespace BugSpy.Controllers
         // GET: Tickets/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            int companyId = User.Identity.GetCompanyId();
+
             if (id == null)
             {
                 return NotFound();
             }
 
-            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(id);
+            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(id, companyId);
 
             if (ticket == null)
             {
@@ -949,11 +956,13 @@ namespace BugSpy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
+            int companyId = User.Identity.GetCompanyId();
+
             if (_context.Tickets == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Tickets'  is null.");
             }
-            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(id);
+            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(id, companyId);
             if (ticket != null)
             {
                 ticket.Archived = true;
