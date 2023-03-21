@@ -566,7 +566,7 @@ namespace BugSpy.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ProjectsIndex));
             }
 
             ViewData["ProjectPriorityId"] = new SelectList(await _btProjectService.GetProjectPriorityList(), "Id", "Name");
