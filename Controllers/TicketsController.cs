@@ -917,7 +917,7 @@ namespace BugSpy.Controllers
 
 
 
-				return RedirectToAction(nameof(TabulatorTickets));
+                return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }
 
             ViewData["ProjectId"] = new SelectList(await _btTicketService.GetProjectListAsync(companyId), "Id", "Name");
@@ -948,6 +948,8 @@ namespace BugSpy.Controllers
                 return NotFound();
             }
 
+            return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
+
             return View(ticket);
         }
 
@@ -975,7 +977,7 @@ namespace BugSpy.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
         }
 
         private bool TicketExists(int id)

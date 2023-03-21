@@ -19,6 +19,7 @@ using BugSpy.Extensions;
 using BugSpy.Models.ViewModels;
 using BugSpy.Models.Enums;
 using System.Collections;
+using Org.BouncyCastle.Bcpg;
 
 namespace BugSpy.Controllers
 {
@@ -570,7 +571,7 @@ namespace BugSpy.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(ProjectsIndex));
+                return RedirectToAction("Details", "Projects", new { id = project.Id });
             }
 
             ViewData["ProjectPriorityId"] = new SelectList(await _btProjectService.GetProjectPriorityList(), "Id", "Name");
@@ -595,7 +596,7 @@ namespace BugSpy.Controllers
             {
                 return NotFound();
             }
-
+            return RedirectToAction("Details", "Projects", new { id = project.Id });
             return View(project);
         }
 
@@ -629,7 +630,7 @@ namespace BugSpy.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Projects", new { id = project.Id });
         }
 
 
@@ -670,7 +671,7 @@ namespace BugSpy.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Projects", new { id = project.Id });
         }
 
 
@@ -704,7 +705,7 @@ namespace BugSpy.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Projects", new { id = project.Id });
         }
 
 
