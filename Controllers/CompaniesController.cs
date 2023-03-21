@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BugSpy.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CompaniesController : Controller
     {
         private readonly ApplicationDbContext _context;
