@@ -262,7 +262,12 @@ namespace BugSpy.Services
 
         }
 
+        public async Task<IEnumerable<ProjectPriority>> GetProjectPriorityList()
+		{
+			IEnumerable<ProjectPriority> priorityList = await _context.ProjectPriorities.ToListAsync();
 
+			return priorityList;	
+		}
 
         public async Task<bool> IsMemberInProject(BTUser member, int? projectId)
 		{

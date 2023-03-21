@@ -19,8 +19,9 @@ namespace BugSpy.Services.Interfaces
 		public Task<BTUser> GetProjectManagerAsync(int? projectId);
 
 		public Task RemoveProjectManagerAsync(int? projectId);
+		public Task<IEnumerable<ProjectPriority>> GetProjectPriorityList();
 
-		public Task<IEnumerable<Project>> GetAllCompanyProjects(int companyId);
+        public Task<IEnumerable<Project>> GetAllCompanyProjects(int companyId);
 
 		public Task ArchiveProjectTickets(Project project);
 

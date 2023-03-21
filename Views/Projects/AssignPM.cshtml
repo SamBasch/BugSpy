@@ -18,7 +18,7 @@
 
                 <div class="mb-3">
                     <div class="form-group dropdown-toggle btn w-full btn-outline-secondary dark-bg-dark-2 dark-border-dark-2 d-flex align-items-center justify-content-start w-full">
-                        @*  <label asp-for="DeveloperUserId" class="control-label"></label>*@
+
                         <select asp-for="PMId" class="form-control" asp-items="Model.PMList">
                             <option value="">Unassigned</option>
                         </select>
@@ -30,11 +30,6 @@
 
 
 
-@*
-                <select asp-items="Model.PMList" asp-for="PMId">
-                    <option value="">Unassigned</option>
-                </select>
-                <span asp-validation-for="PMId" class="text-danger"></span>*@
 
 
 

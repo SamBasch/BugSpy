@@ -50,54 +50,51 @@
 		<div class="row gy-2">
 			<div class="col-md-12 col">
 				<div class="row col-cols-2 mt-5 bg-secondary">
-					<div class="box dark col m-1 p-2">
-						<div class="card-body">
-							@*Title of Ticket*@
-							<h5>@Model.Title<h5>
-							@*Description of Ticket*@
-									<p>@Html.Raw(Model.Description)</p>
-							<div class="progress-container progress-info m-b-25">
-								@*Project Name and information*@
+					<div class="box border-1 mx-2 dark col m-1 p-2">
+						<div class="card-body mt-2">
+						
+							<h5 class="mt-2">@Model.Title<h5>
+					
+									<p class="mt-2">@Html.Raw(Model.Description)</p>
+							<div class="progress-container progress-info mt-2 m-b-25">
+						
 								<span class="progress-badge" style="font-size:small">Project: @Model.Project.Name</span>
-								<div class="progress">
-									@*Progress bar logic*@
-									@*Variable from razor logic*@
-									<div class="progress-bar" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" style="width: [Percent]%;">
-										@*Variable from razor logic*@
-										<span class="progress-value">[Percent]%</span>
+								<div class="progress mt-3">
+					
+									<div class="progress-bar mt-3" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" style="width: [Percent]%;">
+				
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="box dark col m-1 p-2">
+					<div class="box dark col mx-2 m-1 p-2">
 						<div class="card-body">
-							<ul class="list-unstyled">
-								@*Ticket date*@
-								<li><strong>Date Entered:</strong> <span class="">  @Model.Created</</span></li>
-								@*Project end date*@
-								<li><strong>Deadline:</strong> <span class="">  @Model.Project.EndDate</</span></li>
-								@*Ticket type*@
-								<li><strong>Type:</strong> <span class="">  @Model.TicketType.Name</span></li>
-								@*Ticket priority*@
-								<li><strong>Priority:</strong> <span class="">  @Model.TicketPriority.Name</span></li>
-								@*Ticket status*@
-
+							<ul class="list-unstyled mt-2">
+							
+								<li class="mt-2"><strong>Date Entered:</strong> <span class="">  @Model.Created</</span></li>
+							
+								<li class="mt-2"><strong>Deadline:</strong> <span class="">  @Model.Project.EndDate</</span></li>
+					
+								<li class="mt-2"><strong>Type:</strong> <span class="">  @Model.TicketType.Name</span></li>
+						
+								<li class="mt-2"><strong>Priority:</strong> <span class="">  @Model.TicketPriority.Name</span></li>
+							
 								@if(Model.Archived == true)
 								{
-									<li><strong>Status:</strong> <span class="">Ticket Archived</span></li>
+									<li class="mt-2"><strong>Status:</strong> <span class="">Ticket Archived</span></li>
 								} else
 								{
-									<li><strong>Status:</strong> <span class="">Ticket Active</span></li>
+									<li class="mt-2"><strong>Status:</strong> <span class="">Ticket Active</span></li>
 								}
 
 								@if(Model.DeveloperUser == null)
 								{
-									<li><strong>Developer:</strong> <span class="">Unassigned</span></li>
+									<li class="mt-2"><strong>Developer:</strong> <span class="">Unassigned</span></li>
 								} else
 								{
 
-									<li><strong>Developer:</strong> <span class="">@Model.DeveloperUser.FullName</span></li>
+									<li class="mt-2"><strong>Developer:</strong> <span class="">@Model.DeveloperUser.FullName</span></li>
 								}
 
 							</ul>
@@ -152,15 +149,18 @@
 								<ul class="right_chat list-unstyled mb-0">
 									@foreach (var ticketComment in Model.Comments)
 									{
-										<li class="mb-5 mt-2 comment">
-											<div class="comment-body">
-												<div class="single-comment">
+
+
+
+										<li class="mb-5 mt-2 d-block comment">
+											<div class=" d-inline-flex mx-5 comment-body">
+												<div class=" d-inline-flex mx-5  single-comment">
 													<div class="comment-img">
 														<span class="user-img">
 															<img src="@_fileService.ConvertByteArrayToFile(ticketComment.User!.ImageFileData!, ticketComment.User!.ImageFileType!, (int)DefaultImage.BTUserImage)" alt="Post Images" />
 														</span>
 													</div>
-													<div class="comment-inner">
+													<div class=" d-block mx-2 px-8 py-4 comment-inner">
 														<h6 class="commenter">
 														
 															
@@ -168,11 +168,11 @@
 														
 													
 														</h6>
-														<div class="comment-meta">
-															<div class="time-spent">@ticketComment.Created.ToString("MMM dd, yyyy")</div>
+														<div class=" comment-meta">
+															<div class="d-block time-spent">@ticketComment.Created.ToString("MMM dd, yyyy")</div>
 														</div>
-														<div class="comment-text">
-															<p class="b2">
+														<div class=" d-block display-block justify-content-end align-items-end align-items-right comment-text">
+															<p class="d-block b2">
 																@Html.Raw(ticketComment.Comment)
 															</p>
 														</div>
@@ -212,7 +212,7 @@
 							</div>
 							<div class="card-body" style="overflow-y:auto;height:300px;">
 
-								@* Refer to the Ticket Attachments document for this section *@
+						
 
 								@if (User.Identity.IsAuthenticated && result == false)
 								{
@@ -224,12 +224,12 @@
 												<div class="media-body ml-3">
 													<label>
 														Description
-														<input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" />
+														<input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="mb-3 form-control" />
 													</label><br />
 													<label class="btn btn-outline-primary btn-sm">
 														<input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" class="form-control-file" />
 													</label>
-													<button type="submit" class="btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
+													<button type="submit" class=" mx-2 btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
 												</div>
 											</form>
 										</div>
@@ -243,13 +243,13 @@
 
 
 
-								<hr />
-								<h6>Attachments</h6>
+								<hr class="mt-3"/>
+								<h6 class="mt-2">Attachments</h6>
 								<div class="container">
 									<div class="row">
 										@foreach (TicketAttachment item in Model.Attachments)
 										{
-											<div class="col col-sm-2">
+											<div class="col mt-2 col-sm-2">
 												<a asp-action="ShowFile" asp-controller="Tickets" asp-route-Id="@item.Id">
 													<div class="icon">
 														<img src="@_fileService.GetFileIcon(item.FileName)" style="height:50px;width:50px" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="@item.FileName" />
@@ -275,13 +275,13 @@
 			</div>
 			<div class="col-md-4 col mt-5 ">
 				<div class="bg-dark">
-					<div class="card m-1 p-2">
+					<div class="card box dark m-1 p-2">
 						<div class="card-header">
 							<h2>History</h2>
 							<hr />
 						</div>
-						<div class="card-body" style="overflow-y:auto;height:1000px;background-color:antiquewhite">
-							@*Loop to show the history entries for the Ticket*@
+						<div class="card-body box dark" style="overflow-y:auto;height:1000px;">
+					
 						</div>
 					</div>
 				</div>
@@ -313,8 +313,7 @@
 						<input type="hidden" asp-for="Id" />
 						<input type="submit" value="Delete" class="btn btn-danger" /> |
 					</form>
-					@*                    <a asp-controller="Projects" asp-action="DeleteConfirmed" asp-route-id="@project.Id" class="btn btn-danger w-24">Delete</a>*@
-					@*      <button type="button" class="btn btn-danger w-24">Delete</button>*@
+	
 				</div>
 			</div>
 		</div>
@@ -342,8 +341,7 @@
 						<input type="submit" value="Unarchive" class="btn btn-success" />
 					</form>
 
-					@*                    <a asp-controller="Projects" asp-action="DeleteConfirmed" asp-route-id="@project.Id" class="btn btn-danger w-24">Delete</a>*@
-					@*      <button type="button" class="btn btn-danger w-24">Delete</button>*@
+	
 				</div>
 			</div>
 		</div>

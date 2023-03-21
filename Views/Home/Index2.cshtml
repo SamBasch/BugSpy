@@ -30,6 +30,8 @@
     int enchancementTicketsCount = enchancementTickets.Count();
     IEnumerable<Ticket> generalTaskTickets = (await _btTicketService.GetSubmitterTicketsWithTypeGeneralTask(userId));
     int generalTaskTicketsCount = generalTaskTickets.Count();
+
+
     //END GET TICKET STATS FOR SUBMITTER LOGIN
 
 
@@ -103,9 +105,48 @@
 
     //END GET STATS FOR ADMIN LOGIN
 
+    IEnumerable<Ticket> companyTicketsLowPriority = (await _btTicketService.GetActiveCompanyTicketsLowPriority(companyId));
+    int companyTicketsLowPriorityCount = companyTicketsLowPriority.Count();
+
+    IEnumerable<Ticket> companyTicketsMediumPriority = (await _btTicketService.GetActiveCompanyTicketsMediumPriority(companyId));
+    int companyTicketsMediumPriorityCount = companyTicketsMediumPriority.Count();
+
+
+    IEnumerable<Ticket> companyTicketsHighPriority = (await _btTicketService.GetActiveCompanyTicketsHighPriority(companyId));
+    int companyTicketsHighPriorityCount = companyTicketsHighPriority.Count();
+
+    IEnumerable<Ticket> companyTicketsUrgentPriority = (await _btTicketService.GetActiveCompanyTicketsUrgentPriority(companyId));
+    int companyTicketsUrgentPriorityCount = companyTicketsUrgentPriority.Count();
+
+
+
+
+
+    IEnumerable<Ticket> inactiveCompanyTicketsLowPriority = (await _btTicketService.GetInactiveCompanyTicketsLowPriority(companyId));
+    int inactiveCompanyTicketsLowPriorityCount = inactiveCompanyTicketsLowPriority.Count();
+
+
+    IEnumerable<Ticket> inactiveCompanyTicketsMediumPriority = (await _btTicketService.GetInactiveCompanyTicketsMediumPriority(companyId));
+    int inactiveCompanyTicketsMediumPriorityCount = inactiveCompanyTicketsMediumPriority.Count();
+
+
+    IEnumerable<Ticket> inactiveCompanyTicketsHighPriority = (await _btTicketService.GetInactiveCompanyTicketsHighPriority(companyId));
+    int inactiveCompanyTicketsHighPriorityCount = inactiveCompanyTicketsHighPriority.Count();
+
+
+
+    IEnumerable<Ticket> inactiveCompanyTicketsUrgentPriority = (await _btTicketService.GetInactiveCompanyTicketsUrgentPriority(companyId));
+    int inactiveCompanyTicketsUrgentPriorityCount = inactiveCompanyTicketsUrgentPriority.Count();
+
+
+
+
+
 
     IEnumerable<Ticket> recentCompanyTickets = await _btTicketService.GetRecentCompanyTickets();
+
     IEnumerable<TicketHistory> ticketHistories = await _historyService.GetCompanyTicketHistoriesAsync(companyId);
+    IEnumerable<TicketHistory> tenTicketHistories = ticketHistories.Take(7);
     IEnumerable<BTUser> teamMebers = await _btTicketService.GetUsersTeamMembers(btUser, companyId);
 
 }
@@ -196,10 +237,10 @@
            
 
                     <div class="mt-14 mt-xxl-24 dropdown">
-                        <button class="dropdown-toggle btn btn-rounded-primary w-44 w-xxl-52 px-4 position-relative justify-content-start" aria-expanded="false" data-bs-toggle="dropdown">
+@*                        <button class="dropdown-toggle btn btn-rounded-primary w-44 w-xxl-52 px-4 position-relative justify-content-start" aria-expanded="false" data-bs-toggle="dropdown">
                             Download Reports
                             <span class="w-8 h-8 position-absolute d-flex justify-content-center align-items-center end-0 top-0 bottom-0 my-auto ms-auto me-1"> <i data-feather="chevron-down" class="w-4 h-4"></i> </span>
-                        </button>
+                        </button>*@
                         <div class="dropdown-menu w-44 w-xxl-52">
                             <ul class="dropdown-content">
                                 <li>
@@ -213,7 +254,7 @@
                     </div>
                 </div>
                 <div class="g-row-start-2 g-row-start-md-auto g-col-12 g-col-md-4 py-6 border-black dark-border-dark-3 border-opacity-10 border-top border-top-md-0 border-start-md border-end-md border-dashed px-10 px-sm-28 px-md-5 mx-n5">
-                    <div class="d-flex flex-wrap align-items-center">
+@*                    <div class="d-flex flex-wrap align-items-center">
                         <div class="d-flex align-items-center w-full w-sm-auto justify-content-center justify-content-sm-start me-auto mb-5 mb-xxl-0">
                             <div class="w-2 h-2 bg-theme-1 rounded-circle mt-n4"></div>
                             <div class="ms-3.5">
@@ -228,49 +269,105 @@
                             <option value="yearly">Yearly</option>
                             <option value="custom-date">Custom Date</option>
                         </select>
-                    </div>
-                    <div class="mt-10 text-gray-700 dark-text-gray-500">You have spent about 35% of your annual budget.</div>
-                    <canvas class="mt-6" id="report-bar-chart-1" height="267"></canvas>
+                    </div>*@
+                    <div class="mt-10 text-gray-700 dark-text-gray-500">Monthly Completed Tickets</div>
+                    <canvas class="mt-6" id="myChartThree" height="267"></canvas>
                 </div>
                 <div class="g-col-12 g-col-sm-6 g-col-md-4 py-6 border-black border-opacity-10 border-top border-top-sm-0 border-start border-start-sm-0 border-dashed ms-n4 ps-4 ms-md-0 ps-md-0">
+                    <div class="d-flex"><h3 class=" align-items-center justify-content-middle mx-auto p-4">Ticket Priorities</h3></div>
                     <ul class="nav nav-pills w-3/4 w-xxl-4/6 bg-theme-8 bg-opacity-50 dark-bg-dark-2 rounded-2 p-1 mx-auto" role="tablist">
+                        
                         <li id="active-users-tab" class="nav-item flex-1" role="presentation">
                             <button class="nav-link w-full py-1.5 px-2 active" data-bs-toggle="pill" data-bs-target="#active-users" type="button" role="tab" aria-controls="active-users-tab" aria-selected="true">Active</button>
                         </li>
+                       
                         <li id="inactive-users-tab" class="nav-item flex-1" role="presentation">
                             <button class="nav-link w-full py-1.5 px-2" data-bs-toggle="pill" data-bs-target="#inactive-users" type="button" role="tab" aria-controls="inactive-users-tab" aria-selected="false">Inactive</button>
                         </li>
+                       
                     </ul>
+                   
+                    
                     <div class="tab-content mt-6">
                         <div class="tab-pane fade show active" id="active-users" role="tabpanel" aria-labelledby="active-users-tab">
                             <div class="position-relative">
-                                <canvas class="mt-8" id="report-donut-chart-3" height="190"></canvas>
+                                <canvas class="mt-8" id="myChartOne" height="130"></canvas>
                                 <div class="d-flex flex-column justify-content-center align-items-center position-absolute w-full h-full top-0 start-0">
-                                    <div class="fs-xl fs-xxl-2xl fw-medium">2.501</div>
-                                    <div class="text-gray-600 dark-text-gray-600 mt-0.5">Active Users</div>
+                             @*       <div class="fs-xl fs-xxl-2xl fw-medium">2.501</div>
+                                    <div class="text-gray-600 dark-text-gray-600 mt-0.5">Active Users</div>*@
+                                </div>
+                            </div>
+                    
+
+                            <div class="mx-auto w-10/12 w-xxl-2/3 mt-8">
+                                <div class="d-flex align-items-center">
+                                    <div class="w-2 h-2 bg-theme-9 rounded-circle me-3"></div>
+                                    <span class="truncate">Low Priority</span>
+                                    <div class="h-px flex-1 border border-end border-dashed border-gray-300 mx-3 d-xl-none"></div>
+                                    <span class="fw-medium ms-xl-auto">@companyTicketsLowPriorityCount</span>
+                                </div>
+                                <div class="d-flex align-items-center mt-4">
+                                    <div class="w-2 h-2 bg-theme-31 rounded-circle me-3"></div>
+                                    <span class="truncate">Medium Priority</span>
+                                    <div class="h-px flex-1 border border-end border-dashed border-gray-300 mx-3 d-xl-none"></div>
+                                    <span class="fw-medium ms-xl-auto">@companyTicketsMediumPriorityCount</span>
+                                </div>
+                                <div class="d-flex align-items-center mt-4">
+                                    <div class="w-2 h-2 bg-theme-32 rounded-circle me-3"></div>
+                                    <span class="truncate">High Priority</span>
+                                    <div class="h-px flex-1 border border-end border-dashed border-gray-300 mx-3 d-xl-none"></div>
+                                    <span class="fw-medium ms-xl-auto">@companyTicketsHighPriorityCount</span>
+                                </div>
+                                <div class="d-flex align-items-center mt-4">
+                                    <div class="w-2 h-2 bg-theme-6 rounded-circle me-3"></div>
+                                    <span class="truncate">Urgent Priority</span>
+                                    <div class="h-px flex-1 border border-end border-dashed border-gray-300 mx-3 d-xl-none"></div>
+                                    <span class="fw-medium ms-xl-auto">@companyTicketsUrgentPriorityCount</span>
+                                </div>
+                            </div>
+                        </div>
+
+
+                  
+                        <div class="tab-pane fade show active" id="inactive-users" role="tabpanel" aria-labelledby="inactive-users-tab">
+                            <div class="position-relative">
+                                <canvas class="mt-8" id="myChartTwo" height="130"></canvas>
+                                <div class="d-flex flex-column justify-content-center align-items-center position-absolute w-full h-full top-0 start-0">
+                                    @*         <div class="fs-xl fs-xxl-2xl fw-medium">2.501</div>
+                                    <div class="text-gray-600 dark-text-gray-600 mt-0.5">Active Users</div>*@
                                 </div>
                             </div>
                             <div class="mx-auto w-10/12 w-xxl-2/3 mt-8">
                                 <div class="d-flex align-items-center">
-                                    <div class="w-2 h-2 bg-theme-11 rounded-circle me-3"></div>
-                                    <span class="truncate">17 - 30 Years old</span>
+                                    <div class="w-2 h-2 bg-theme-9 rounded-circle me-3"></div>
+                                    <span class="truncate">Low Priority</span>
                                     <div class="h-px flex-1 border border-end border-dashed border-gray-300 mx-3 d-xl-none"></div>
-                                    <span class="fw-medium ms-xl-auto">62%</span>
+                                    <span class="fw-medium ms-xl-auto">@inactiveCompanyTicketsLowPriorityCount</span>
                                 </div>
                                 <div class="d-flex align-items-center mt-4">
-                                    <div class="w-2 h-2 bg-theme-1 rounded-circle me-3"></div>
-                                    <span class="truncate">31 - 50 Years old</span>
+                                    <div class="w-2 h-2 bg-theme-31 rounded-circle me-3"></div>
+                                    <span class="truncate">Medium Priority</span>
                                     <div class="h-px flex-1 border border-end border-dashed border-gray-300 mx-3 d-xl-none"></div>
-                                    <span class="fw-medium ms-xl-auto">33%</span>
+                                    <span class="fw-medium ms-xl-auto">@inactiveCompanyTicketsMediumPriorityCount</span>
                                 </div>
                                 <div class="d-flex align-items-center mt-4">
-                                    <div class="w-2 h-2 bg-theme-12 rounded-circle me-3"></div>
-                                    <span class="truncate">>= 50 Years old</span>
+                                    <div class="w-2 h-2 bg-theme-32 rounded-circle me-3"></div>
+                                    <span class="truncate">High Priority</span>
                                     <div class="h-px flex-1 border border-end border-dashed border-gray-300 mx-3 d-xl-none"></div>
-                                    <span class="fw-medium ms-xl-auto">10%</span>
+                                    <span class="fw-medium ms-xl-auto">@inactiveCompanyTicketsHighPriorityCount</span>
+                                </div>
+
+                                <div class="d-flex align-items-center mt-4">
+                                    <div class="w-2 h-2 bg-theme-6 rounded-circle me-3"></div>
+                                    <span class="truncate">Urgent Priority</span>
+                                    <div class="h-px flex-1 border border-end border-dashed border-gray-300 mx-3 d-xl-none"></div>
+                                    <span class="fw-medium ms-xl-auto">@inactiveCompanyTicketsUrgentPriorityCount</span>
                                 </div>
                             </div>
                         </div>
+             
+
+                 
                     </div>
                 </div>
             </div>
@@ -685,12 +782,12 @@
                         Most Recent Company Tickets
                     </h2>
                     <div class="d-flex align-items-center ms-sm-auto mt-3 mt-sm-0">
-                        <button class="btn box d-flex align-items-center text-gray-700 dark-text-gray-300"> <i data-feather="file-text" class="d-none d-sm-block w-4 h-4 me-2"></i> Export to Excel </button>
-                        <button class="ms-3 btn box d-flex align-items-center text-gray-700 dark-text-gray-300"> <i data-feather="file-text" class="d-none d-sm-block w-4 h-4 me-2"></i> Export to PDF </button>
+@*                        <button class="btn box d-flex align-items-center text-gray-700 dark-text-gray-300"> <i data-feather="file-text" class="d-none d-sm-block w-4 h-4 me-2"></i> Export to Excel </button>
+                        <button class="ms-3 btn box d-flex align-items-center text-gray-700 dark-text-gray-300"> <i data-feather="file-text" class="d-none d-sm-block w-4 h-4 me-2"></i> Export to PDF </button>*@
                     </div>
                 </div>
                 <div class="intro-y overflow-auto overflow-lg-visible mt-8 mt-sm-0">
-                    <div class="table-responsive" style="overflow-y:auto;height:600px;">
+                    <div class="table-responsive overflow-y-xl-auto" style="overflow-y:auto;height:600px;">
                         <table class="table table-report mt-n2">
                             <thead>
 
@@ -805,10 +902,10 @@
                         <h2 class="fs-lg fw-medium truncate me-5">
                             Recent Activities
                         </h2>
-                        <a href="" class="ms-auto text-theme-1 dark-text-theme-10 truncate">Show More</a>
+                    @*    <a href="" class="ms-auto text-theme-1 dark-text-theme-10 truncate">Show More</a>*@
                     </div>
                     <div class="report-timeline mt-5 position-relative">
-                        @foreach(TicketHistory history in ticketHistories)
+                        @foreach (TicketHistory history in tenTicketHistories)
                         {
                             <div class="intro-x position-relative d-flex align-items-center mb-3">
                                 <div class="report-timeline__image">
@@ -827,7 +924,7 @@
                         }
 
 
-                <div class="g-col-12 g-col-md-6 g-col-xl-4 g-col-xxl-12 mt-3 mt-xxl-8">
+     @*           <div class="g-col-12 g-col-md-6 g-col-xl-4 g-col-xxl-12 mt-3 mt-xxl-8">
                     <div class="intro-x d-flex align-items-center h-10">
                         <h2 class="fs-lg fw-medium truncate me-5">
                             Transactions
@@ -897,7 +994,7 @@
                         <a href="" class="intro-x w-full d-block text-center rounded-2 py-3 border border-dotted border-theme-15 dark-border-dark-5 text-theme-16 dark-text-gray-600">View More</a>
                     </div>
                 </div>
-                <!-- END: Transactions -->
+                <!-- END: Transactions -->*@
             </div>
         </div>
     </div>
@@ -906,6 +1003,123 @@
 <!-- END: Content -->
         </div>
 
+        @section Scripts {
 
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.2.1/chart.umd.js"></script>
+    <script>
+        const ctx = document.getElementById('myChartOne').getContext('2d');
+
+        const myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    'Low',
+                    'Medium',
+                    'High',
+                    'Urgent'
+
+                ],
+                datasets: [{
+                    label: 'My First Dataset',
+                    data: [@companyTicketsLowPriorityCount, @companyTicketsMediumPriorityCount, @companyTicketsHighPriorityCount, @companyTicketsUrgentPriorityCount],
+                    backgroundColor: [
+                        'rgb(145, 199, 20)',
+                        'rgb(255, 255, 0)',
+                        'rgb(255, 172, 28)',
+                        'rgb(211, 41, 41)'
+                    ],
+                    hoverOffset: 4
+                       
+                }]
+          
+            
+            
+            }
+        
+        });
+
+
+
+
+        const ctx2 = document.getElementById('myChartTwo').getContext('2d');
+
+        const myChart2 = new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    'Low',
+                    'Medium',
+                    'High',
+                    'Urgent'
+
+                ],
+                datasets: [{
+                    label: 'My Second Dataset',
+                    data: [@inactiveCompanyTicketsLowPriorityCount, @inactiveCompanyTicketsMediumPriorityCount, @inactiveCompanyTicketsHighPriorityCount, @inactiveCompanyTicketsUrgentPriorityCount],
+                    backgroundColor: [
+                        'rgb(145, 199, 20)',
+                        'rgb(255, 255, 0)',
+                        'rgb(255, 172, 28)',
+                        'rgb(211, 41, 41)'
+                    ],
+                    hoverOffset: 4
+                  
+                }]
+
+
+
+            }
+
+        });
+
+
+
+
+                const ctx3 = document.getElementById('myChartThree').getContext('2d');
+
+        const myChart3 = new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: [
+                    'Jan',
+                    'Feb',
+                    'Mar',
+                    'Apr',
+                    'May', 
+                    'Jun',
+                    'Jul',
+                    'Aug',
+                    'Sept',
+                    'Oct',
+                    'Nov',
+                    'Dec'
+
+                ],
+                datasets: [{
+                    label: 'Completed Tickets',
+                    data: [60, 150, 30, 200, 180, 120, 230, 180, 250, 270, 180, 200],
+                    backgroundColor: [
+                        'rgb(145, 199, 20)'
+                  
+                    ],
+                    hoverOffset: 4
+                  
+                }]
+
+
+
+            }
+
+        });
+
+
+
+    </script>
+
+    <script>
+
+    </script>
+        }
 
 

@@ -64,23 +64,14 @@ namespace BugSpy.Controllers
         {
 
 
-            //int pageSize = 10;
-            //int page = pageNum ?? 1;
-
-            //BTUser? loggedInUser = await _userManager.GetUserAsync(User);
-
             int companyId = User.Identity!.GetCompanyId();
 
-            //IEnumerable<Project> projects = await _context.Projects.Where(p => p.Archived == false && p.CompanyId == companyId).Include(p => p.Members).Include(p => p.Tickets).ToListAsync();
+   
 
 
             string? userId = _userManager.GetUserId(User);
 
-            //int companyId = loggedInUser!.CompanyId;
 
-            //IPagedList<Project> projects = await _context.Projects.Where(p => p.CompanyId == companyId && p.Members.Any(m => m.Id == userId)).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
-
-            //IPagedList<Project> projects = await _context.Projects.Where(p => p.Members.Any(m => m.Id == userId)).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
 
 
                         
@@ -90,9 +81,7 @@ namespace BugSpy.Controllers
             return View(myRecentProjects);
 
 
-            //projects.ToPagedList(page, pageSize);   
 
-            //return View(projects);
 
 
         }
@@ -106,23 +95,15 @@ namespace BugSpy.Controllers
         {
 
 
-            //int pageSize = 10;
-            //int page = pageNum ?? 1;
-
-            //BTUser? loggedInUser = await _userManager.GetUserAsync(User);
 
             int companyId = User.Identity!.GetCompanyId();
 
-            //IEnumerable<Project> projects = await _context.Projects.Where(p => p.Archived == false && p.CompanyId == companyId).Include(p => p.Members).Include(p => p.Tickets).ToListAsync();
+       
 
 
             string? userId = _userManager.GetUserId(User);
 
-            //int companyId = loggedInUser!.CompanyId;
-
-            //IPagedList<Project> projects = await _context.Projects.Where(p => p.CompanyId == companyId && p.Members.Any(m => m.Id == userId)).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
-
-            //IPagedList<Project> projects = await _context.Projects.Where(p => p.Members.Any(m => m.Id == userId)).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
+      
 
         
                 IEnumerable<Project> companyProjects = (await _btProjectService.GetAllCompanyProjects(companyId));
@@ -134,9 +115,7 @@ namespace BugSpy.Controllers
          
 
 
-            //projects.ToPagedList(page, pageSize);   
 
-            //return View(projects);
 
 
         }
@@ -148,23 +127,15 @@ namespace BugSpy.Controllers
         {
 
 
-            //int pageSize = 10;
-            //int page = pageNum ?? 1;
-
-            //BTUser? loggedInUser = await _userManager.GetUserAsync(User);
 
             int companyId = User.Identity!.GetCompanyId();
 
-            //IEnumerable<Project> projects = await _context.Projects.Where(p => p.Archived == false && p.CompanyId == companyId).Include(p => p.Members).Include(p => p.Tickets).ToListAsync();
 
 
             string? userId = _userManager.GetUserId(User);
 
-            //int companyId = loggedInUser!.CompanyId;
 
-            //IPagedList<Project> projects = await _context.Projects.Where(p => p.CompanyId == companyId && p.Members.Any(m => m.Id == userId)).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
 
-            //IPagedList<Project> projects = await _context.Projects.Where(p => p.Members.Any(m => m.Id == userId)).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
 
 
             IEnumerable<Project> companyProjects = (await _btProjectService.GetAllCompanyArchivedProjects(companyId));
@@ -176,9 +147,7 @@ namespace BugSpy.Controllers
 
 
 
-            //projects.ToPagedList(page, pageSize);   
 
-            //return View(projects);
 
 
         }
@@ -377,18 +346,11 @@ namespace BugSpy.Controllers
         [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Create()
         {
-            //BTUser? loggedInUser = await _userManager.GetUserAsync(User);
 
-            //int companyId = loggedInUser!.CompanyId;
 
             int companyId = User.Identity!.GetCompanyId();
 
-            IEnumerable<BTUser> Members = await  _context.Users.Include(u => u.Projects).Where(u => u.CompanyId == companyId).ToListAsync();
-
-
-            ViewData["Members"] = new MultiSelectList(_context.Users.Where(u => u.CompanyId == companyId).Include(u => u.Projects), "Id", "FullName");
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Name");
+            ViewData["ProjectPriorityId"] = new SelectList( await _btProjectService.GetProjectPriorityList(), "Id", "Name");
             return View();
         }
 
@@ -401,9 +363,7 @@ namespace BugSpy.Controllers
         public async Task<IActionResult> Create([Bind("Id,Name,Description,Created,StartDate,EndDate,ImageFormFile,Archived,Members,CompanyId,ProjectPriorityId")] Project project)
         {
 
-            //BTUser? loggedInUser = await _userManager.GetUserAsync(User);
-
-            //int companyId = loggedInUser!.CompanyId;
+        
 
             int companyId = User.Identity!.GetCompanyId();
 
@@ -429,16 +389,14 @@ namespace BugSpy.Controllers
                 await _context.SaveChangesAsync();
 
 
-                //await _btProjectService.AddMembersToProject(selected, project.Id);
+            
 
                 return RedirectToAction(nameof(Index));
 
 
             }
 
-            //ViewData["Members"] = new MultiSelectList(_context.Users.Where(u => u.CompanyId == companyId).Include(u => u.Projects), "Id", "FullName");
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Name", project.ProjectPriorityId);
+            ViewData["ProjectPriorityId"] = new SelectList(await _btProjectService.GetProjectPriorityList(), "Id", "Name");
             return View(project);
         }
 
@@ -533,16 +491,15 @@ namespace BugSpy.Controllers
                 return NotFound();
             }
 
-            Project? project = await _context.Projects.Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).FirstOrDefaultAsync(p => p.Id == id.Value);
+            Project? project = await _btProjectService.GetProjectByIdAsync(companyId, id);
             if (project == null)
             {
                 return NotFound();
             }
 
 
-            ViewData["Members"] = new MultiSelectList(_context.Users.Where(u => u.CompanyId == companyId).Include(u => u.Projects), "Id", "FullName");
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Name", project.ProjectPriorityId);
+
+            ViewData["ProjectPriorityId"] = new SelectList(await _btProjectService.GetProjectPriorityList(), "Id", "Name");
             return View(project);
         }
         // POST: Projects/Edit/5
@@ -582,7 +539,7 @@ namespace BugSpy.Controllers
                     if (project.Archived == true)
                     {
                        
-                        //_context.Update(project);
+                       
                         await _btProjectService.ArchiveProjectTickets(project);
 
                         await _context.SaveChangesAsync();
@@ -594,16 +551,7 @@ namespace BugSpy.Controllers
                     }
 
 
-                    //if(selected != null)
-                    //{
-                    //    await _btProjectService.RemoveAllMembersFromProject(project.Id, companyId);
-
-
-                    //    await _btProjectService.AddMembersToProject(selected, project.Id, companyId);
-
-                    //}
-                    //_context.Update(project);
-                    //await _context.SaveChangesAsync();
+           
 
 
                 }
@@ -620,8 +568,8 @@ namespace BugSpy.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Name", project.ProjectPriorityId);
+
+            ViewData["ProjectPriorityId"] = new SelectList(await _btProjectService.GetProjectPriorityList(), "Id", "Name");
             return View(project);
         }
 
@@ -630,12 +578,15 @@ namespace BugSpy.Controllers
         [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Delete(int? id)
         {
+
+            int companyId = User.Identity!.GetCompanyId();
+
             if (id == null)
             {
                 return NotFound();
             }
 
-            Project? project = await _context.Projects.Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).FirstOrDefaultAsync(p => p.Id == id.Value);
+            Project? project = await _btProjectService.GetProjectByIdAsync(companyId, id);
             if (project == null)
             {
                 return NotFound();
@@ -649,11 +600,14 @@ namespace BugSpy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? Id)
         {
+            int companyId = User.Identity!.GetCompanyId();
+
+
             if (_context.Projects == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Projects'  is null.");
             }
-            Project? project = await _context.Projects.Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).FirstOrDefaultAsync(p => p.Id == Id.Value);
+            Project? project = await _btProjectService.GetProjectByIdAsync(companyId, Id);
 
 
             if (project != null)
@@ -687,18 +641,21 @@ namespace BugSpy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UnarchiveConfirm(int? Id)
         {
+
+            int companyId = User.Identity!.GetCompanyId();
+
             if (_context.Projects == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Projects'  is null.");
             }
-            Project? project = await _context.Projects.Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).FirstOrDefaultAsync(p => p.Id == Id.Value);
+            Project? project = await _btProjectService.GetProjectByIdAsync(companyId, Id);
 
 
             if (project != null)
             {
                 project.Archived = false;
                 _context.Update(project);
-                //await _btProjectService.UnarchiveProjectTickets(project);
+              
 
                 await _context.SaveChangesAsync();
 
@@ -718,11 +675,14 @@ namespace BugSpy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UnarchiveAndTicketsConfirm(int? Id)
         {
+
+            int companyId = User.Identity!.GetCompanyId();
+
             if (_context.Projects == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Projects'  is null.");
             }
-            Project? project = await _context.Projects.Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).FirstOrDefaultAsync(p => p.Id == Id.Value);
+            Project? project = await _btProjectService.GetProjectByIdAsync(companyId, Id);
 
 
             if (project != null)

@@ -25,7 +25,7 @@
 {
 
 
-    <a class="d-flex align-items-center text-theme-9" href="javascript:;" data-bs-toggle="modal" data-bs-target="#unarchive-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> UnArchive </a>
+    <a class="d-flex align-items-center text-theme-9" href="javascript:;" data-bs-toggle="modal" data-bs-target="#unarchive-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Unarchive </a>
 }
 
 @if (User.IsInRole(nameof(BTRoles.Admin)) && Model.Archived == false)
@@ -38,7 +38,7 @@
 
 @if(User.IsInRole(nameof(BTRoles.ProjectManager)) && result == false && Model.Archived == true) {
 
-    <a class="d-flex align-items-center text-theme-9" href="javascript:;" data-bs-toggle="modal" data-bs-target="#unarchive-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> UnArchive </a>
+    <a class="d-flex align-items-center text-theme-9" href="javascript:;" data-bs-toggle="modal" data-bs-target="#unarchive-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Unarchive </a>
 }
 
 @if (User.IsInRole(nameof(BTRoles.ProjectManager)) && result == false && Model.Archived == false)
@@ -54,12 +54,16 @@
         <div class="row gy-2">
             <div class="col-md-12 gx-3 col">
                 <div class="row col-cols-2 gx-3 mt-5 bg-secondary">
-                    <div class="box dark border-primary col m-1 p-2">
+                    <div class="box dark mx-2 border-primary col m-1 p-2">
                         <div class="body">
+                            <ul class=" list-unstyled basic-list">
+                                <li>Project Name: <span class="">@Model.Name</span></li>
+                                <li>Description: <span>@Html.Raw(Model.Description)</span></li>
+                            </ul>
                             @* Project Name *@
-                            <h5>@Model.Name</h5>
+                            
                             @* Project Description *@
-                            <p>@Model.Description</p>
+                           
                             <div class="progress-container progress-info m-b-25">
                                 @if(Model.Archived == true)
                                 {
@@ -69,16 +73,12 @@
                                     <span class="progress-badge" style="font-size:small">Not Archived</span>
                                 }
 
-                                <div class="progress">
-                                    @* Razor code block *@
-                                    [Progress Bar code]
 
-                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="box border-primary gx-3 col m-1 p-2">
-                        <div class="box border-primary dark body">
+                        <div class="box mx-2 border-primary dark body">
                             <ul class=" list-unstyled basic-list">
                               @*  <li>Project Manager:</li> <span>@((await _btProjectService.GetProjectManagerAsync(Model.Id)).FullName)</span>*@
                                 <li>Start Date: <span class="">@Model.StartDate</span></li>
@@ -86,7 +86,7 @@
                                 <li>Priority: <span class="">@Model.ProjectPriority.Name</span></li>
                                 @if (Model.Archived == true)
                                 {
-                                     <span class="progress-badge" style="font-size:small">Active</span>
+                                     <span class="progress-badge" style="font-size:small">Inactive</span>
                                 }
                                 else
                                 {
@@ -100,12 +100,12 @@
             </div>
             <div class="col-md-4 col mt-5 ">
                 <div class="box dark">
-                    <div class="box dark m-1 p-2">
+                    <div class="box dark my-1 p-2">
                         <div class="header">
-                            <h2>Project Manager</h2>
+                            <h2 class="mb-1">Project Manager</h2>
                             <hr />
                         </div>
-                        <div class="body" style="overflow-y:auto;height:300px;">
+                        <div class="mt-2 body" style="overflow-y:auto;height:300px;">
                             [Project Manager]
                             @* if() logic for Avatar/Default etc *@
 
@@ -115,12 +115,12 @@
             </div>
             <div class="col-md-4 col mt-5 ">
                 <div class="bg-secondary">
-                    <div class="box dark m-1 p-2">
+                    <div class="box my-1 dark m-1 p-2">
                         <div class="header">
-                            <h2>Project Team</h2>
+                            <h2 class="mb-1">Project Team</h2>
                             <hr />
                         </div>
-                        <div class="body" style="overflow-y:auto;height:300px;">
+                        <div class="mt-2 body" style="overflow-y:auto;height:300px;">
                             <ul class="right_chat list-unstyled mb-0">
 
                                 @foreach (BTUser member in Model.Members)

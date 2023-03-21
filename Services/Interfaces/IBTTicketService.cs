@@ -19,13 +19,41 @@ namespace BugSpy.Services.Interfaces
         public Task<IEnumerable<Ticket>> GetSubmitterRecentTickets(string? userId);
 
 		public Task<IEnumerable<Ticket>> GetSubmitterTicketsByType(string? userId);
+		public Task<IEnumerable<Ticket>> GetInactiveCompanyTicketsLowPriority(int? companyId);
 
-		public Task<BTUser> GetDeveloperAsync(int? ticketId);
 
-		public Task AssignDeveloperAsync(string userId, int? ticketId);
+		public Task<IEnumerable<Ticket>> GetInactiveCompanyTicketsMediumPriority(int? companyId);
+
+
+		public Task<IEnumerable<Ticket>> GetInactiveCompanyTicketsHighPriority(int? companyId);
+
+
+		public Task<IEnumerable<Ticket>> GetInactiveCompanyTicketsUrgentPriority(int? companyId);
+
+
+        public Task<BTUser> GetDeveloperAsync(int? ticketId);
+
+		public Task<IEnumerable<Ticket>> GetActiveCompanyTicketsLowPriority(int? companyId);
+        public Task<IEnumerable<Ticket>> GetActiveCompanyTicketsMediumPriority(int? companyId);
+        public Task<IEnumerable<Ticket>> GetActiveCompanyTicketsHighPriority(int? companyId);
+        public Task<IEnumerable<Ticket>> GetActiveCompanyTicketsUrgentPriority(int? companyId);
+
+        public Task AssignDeveloperAsync(string userId, int? ticketId);
         public Task<Ticket> GetTicketByIdAsync(int? ticketId);
 
-		public Task<IEnumerable<Ticket>> GetSubmitterTicketsByPriority(string? userId);
+
+		public Task<IEnumerable<Project>> GetProjectListAsync(int companyId);
+
+		public Task<IEnumerable<TicketPriority>> GetTicketPriorities();
+
+		public Task<IEnumerable<TicketStatus>> GetTicketStatuses();
+		public Task<IEnumerable<TicketType>> GetTicketTypes();
+
+            public Task<IEnumerable<Ticket>> GetAllCompanyUnassignedTickets(int? companyId);
+
+        public Task<IEnumerable<Ticket>> GetAllCompanyAssignedTickets(int? companyId);
+
+        public Task<IEnumerable<Ticket>> GetSubmitterTicketsByPriority(string? userId);
 
 		public Task<IEnumerable<Ticket>> GetDevTicketsWithTypeEnhancement(string? userId);
 

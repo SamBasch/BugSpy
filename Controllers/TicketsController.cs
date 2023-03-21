@@ -183,45 +183,32 @@ namespace BugSpy.Controllers
         public async Task<IActionResult> AllUnassignedTickets()
         {
             int companyId = User.Identity.GetCompanyId();
-            //string PMUserId = _userManager.GetUserId(User);
-
-            IEnumerable<Ticket> unassignedTickets = await _context.Tickets.Where(t => t.DeveloperUser == null && t.Project.CompanyId == companyId).Include(t => t.Project).Include(t => t.TicketType).Include(t => t.TicketPriority).Include(t => t.TicketStatus).ToListAsync(); 
-
-
-            //IEnumerable<Ticket> unassignedDevTickets =  await _context.Projects.Where(p => p.Members.Any(m => m.Id == developerUserId) && p.Tickets.Any(t => t.DeveloperUser == null))
 
 
 
 
+            IEnumerable<Ticket> unassignedCompanyTickets = await _btTicketService.GetAllCompanyUnassignedTickets(companyId);
 
 
 
-            //IPagedList<Project> projects = await _context.Projects.Where(p => p.Members.Any(m => m.Id == userId)).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
 
-
-            return View(unassignedTickets);
+            return View(unassignedCompanyTickets);
         }
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AllAssignedTickets()
         {
             int companyId = User.Identity.GetCompanyId();
-            //string PMUserId = _userManager.GetUserId(User);
-
-            IEnumerable<Ticket> unassignedTickets =  await _context.Tickets.Where(t => t.DeveloperUser != null && t.Project.CompanyId == companyId).Include(t => t.Project).Include(t => t.TicketType).Include(t => t.TicketPriority).Include(t => t.TicketStatus).ToListAsync();
-
-
-            //IEnumerable<Ticket> unassignedDevTickets =  await _context.Projects.Where(p => p.Members.Any(m => m.Id == developerUserId) && p.Tickets.Any(t => t.DeveloperUser == null))
 
 
 
 
 
+            IEnumerable<Ticket> assignedCompanyTickets = await _btTicketService.GetAllCompanyAssignedTickets(companyId);
 
 
-            //IPagedList<Project> projects = await _context.Projects.Where(p => p.Members.Any(m => m.Id == userId)).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
 
 
-            return View(unassignedTickets);
+            return View(assignedCompanyTickets);
         }
 
 
@@ -246,42 +233,6 @@ namespace BugSpy.Controllers
 
 
 
-            //IEnumerable<Project> projects = _context.Projects
-            //             .Include(p => p.Members)
-            //             .Include(p => p.Tickets)
-            //             .ThenInclude(t => t.DeveloperUser)
-            //             .Where(p => p.Tickets
-            //             .Any(t => t.DeveloperUser.Id == null) && p.Members
-            //             .Any(m => m.Id == PMUserId));
-
-
-
-
-
-
-            //IEnumerable<Project> UnassignedPMTickets = _context.Projects
-            //             .Include(p => p.Tickets)
-            //             .Where(p => p.Members
-            //             .Any(m => m.Id == PMUserId) && p.CompanyId == companyId && p.Tickets
-            //             .Any(t => t.DeveloperUser == null));
-
-
-
-
-
-            //return View(projects);
-
-
-            //IEnumerable<Ticket> unassignedTickets = _context.Tickets.Where(t => t.DeveloperUser == null);
-
-
-            //IEnumerable<Ticket> unassignedDevTickets =  await _context.Projects.Where(p => p.Members.Any(m => m.Id == developerUserId) && p.Tickets.Any(t => t.DeveloperUser == null))
-
-
-
-
-            //IPagedList<Project> projects = await _context.Projects.Where(p => p.Members.Any(m => m.Id == userId)).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
-
 
 
         }
@@ -303,41 +254,6 @@ namespace BugSpy.Controllers
 
 
 
-            //IEnumerable<Project> projects = _context.Projects
-            //             .Include(p => p.Members)
-            //             .Include(p => p.Tickets)
-            //             .ThenInclude(t => t.DeveloperUser)
-            //             .Where(p => p.Tickets
-            //             .Any(t => t.DeveloperUser.Id == null) && p.Members
-            //             .Any(m => m.Id == PMUserId));
-
-
-
-
-
-
-            //IEnumerable<Project> UnassignedPMTickets = _context.Projects
-            //             .Include(p => p.Tickets)
-            //             .Where(p => p.Members
-            //             .Any(m => m.Id == PMUserId) && p.CompanyId == companyId && p.Tickets
-            //             .Any(t => t.DeveloperUser == null));
-
-
-
-
-
-            //return View(projects);
-
-
-            //IEnumerable<Ticket> unassignedTickets = _context.Tickets.Where(t => t.DeveloperUser == null);
-
-
-            //IEnumerable<Ticket> unassignedDevTickets =  await _context.Projects.Where(p => p.Members.Any(m => m.Id == developerUserId) && p.Tickets.Any(t => t.DeveloperUser == null))
-
-
-
-
-            //IPagedList<Project> projects = await _context.Projects.Where(p => p.Members.Any(m => m.Id == userId)).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
 
 
 
@@ -707,8 +623,8 @@ namespace BugSpy.Controllers
 		public async Task<IActionResult> AddCommentToTicket([Bind("Id,Comment,Created,TicketId,UserId")] TicketComment ticketComment)
 		{
 
-		
-			if (ModelState.IsValid)
+            ModelState.Remove("UserId");
+            if (ModelState.IsValid)
 			{
 				ticketComment.UserId = _userManager.GetUserId(User);
 
@@ -723,8 +639,7 @@ namespace BugSpy.Controllers
 
 				return RedirectToAction("Details", "Tickets", new { id = ticketId });
 			}
-			ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", ticketComment.TicketId);
-			ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", ticketComment.UserId);
+
 			return View(ticketComment);
 		}
 
@@ -753,7 +668,6 @@ namespace BugSpy.Controllers
                 return NotFound();
             }
 
-            //Ticket?  ticket = await _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).FirstOrDefaultAsync(t => t.Id == id.Value);
             Ticket? ticket = await _btTicketService.GetTicketByIdAsync(id);
             if (ticket == null)
             {
@@ -774,12 +688,15 @@ namespace BugSpy.Controllers
             int companyId = loggedInUser!.CompanyId;
 
 
-            ViewData["DeveloperUserId"] = new SelectList(_context.Users.Where(u => u.CompanyId == companyId), "Id", "FullName");
-            ViewData["ProjectId"] = new SelectList(_context.Projects.Where(p => p.CompanyId == companyId), "Id", "Name");
-            ViewData["SubmitterUserId"] = new SelectList(_context.Users.Where(u => u.CompanyId == companyId), "Id", "FullName");
-            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name");
-            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name");
-            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name");
+        
+            ViewData["ProjectId"] = new SelectList(await _btTicketService.GetProjectListAsync(companyId), "Id", "Name");
+     
+
+            ViewData["TicketPriorityId"] = new SelectList(await _btTicketService.GetTicketPriorities(), "Id", "Name");
+  
+            ViewData["TicketStatusId"] = new SelectList(await _btTicketService.GetTicketStatuses(), "Id", "Name");
+     
+            ViewData["TicketTypeId"] = new SelectList(await _btTicketService.GetTicketTypes(), "Id", "Name");
             return View();
         }
 
@@ -855,19 +772,26 @@ namespace BugSpy.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            
-            ViewData["DeveloperUserId"] = new SelectList(_context.Users.Where(u => u.CompanyId == companyId), "Id", "FullName", ticket.DeveloperUserId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects.Where(p => p.CompanyId == companyId), "Id", "Name", ticket.ProjectId);
-            ViewData["SubmitterUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.SubmitterUserId);
-            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+
+
+
+            ViewData["ProjectId"] = new SelectList(await _btTicketService.GetProjectListAsync(companyId), "Id", "Name");
+
+
+            ViewData["TicketPriorityId"] = new SelectList(await _btTicketService.GetTicketPriorities(), "Id", "Name");
+
+            ViewData["TicketStatusId"] = new SelectList(await _btTicketService.GetTicketStatuses(), "Id", "Name");
+
+            ViewData["TicketTypeId"] = new SelectList(await _btTicketService.GetTicketTypes(), "Id", "Name");
             return View(ticket);
         }
 
         // GET: Tickets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+
+            int companyId = User.Identity.GetCompanyId();
+
             if (id == null || _context.Tickets == null)
             {
                 return NotFound();
@@ -875,18 +799,21 @@ namespace BugSpy.Controllers
 
             string userId = _userManager.GetUserId(User);
 
-            Ticket? ticket = await _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).FirstOrDefaultAsync(t => t.Id == id.Value);
+            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(id);
 
             if (ticket == null)
             {
                 return NotFound();
             }
             //ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Description", ticket.ProjectId);
-            ViewData["SubmitterUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.SubmitterUserId);
-            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+            ViewData["ProjectId"] = new SelectList(await _btTicketService.GetProjectListAsync(companyId), "Id", "Name");
+
+
+            ViewData["TicketPriorityId"] = new SelectList(await _btTicketService.GetTicketPriorities(), "Id", "Name");
+
+            ViewData["TicketStatusId"] = new SelectList(await _btTicketService.GetTicketStatuses(), "Id", "Name");
+
+            ViewData["TicketTypeId"] = new SelectList(await _btTicketService.GetTicketTypes(), "Id", "Name");
             return View(ticket);
         }
 
@@ -897,6 +824,7 @@ namespace BugSpy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Created,Updated,Archived,ArchivedByProject,ProjectId,TicketTypeId,TicketStatusId,TicketPriorityId,DeveloperUserId,SubmitterUserId")] Ticket ticket)
         {
+            int companyId = User.Identity.GetCompanyId();
             if (id != ticket.Id)
             {
                 return NotFound();
@@ -907,7 +835,7 @@ namespace BugSpy.Controllers
 
                 string userId = _userManager.GetUserId(User);
 
-                int companyId = User.Identity.GetCompanyId();
+             
 
                 Ticket oldTicket = await _btTicketService.GetTicketAsNoTracking(ticket.Id, companyId);
 
@@ -986,12 +914,15 @@ namespace BugSpy.Controllers
 
 				return RedirectToAction(nameof(MyRecentTickets));
             }
-            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
-            ViewData["SubmitterUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.SubmitterUserId);
-            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+
+            ViewData["ProjectId"] = new SelectList(await _btTicketService.GetProjectListAsync(companyId), "Id", "Name");
+
+
+            ViewData["TicketPriorityId"] = new SelectList(await _btTicketService.GetTicketPriorities(), "Id", "Name");
+
+            ViewData["TicketStatusId"] = new SelectList(await _btTicketService.GetTicketStatuses(), "Id", "Name");
+
+            ViewData["TicketTypeId"] = new SelectList(await _btTicketService.GetTicketTypes(), "Id", "Name");
             return View(ticket);
         }
 
@@ -1003,7 +934,7 @@ namespace BugSpy.Controllers
                 return NotFound();
             }
 
-            Ticket? ticket = await _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).FirstOrDefaultAsync(t => t.Id == id.Value);
+            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(id);
 
             if (ticket == null)
             {
@@ -1022,7 +953,7 @@ namespace BugSpy.Controllers
             {
                 return Problem("Entity set 'ApplicationDbContext.Tickets'  is null.");
             }
-            Ticket? ticket = await _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).FirstOrDefaultAsync(t => t.Id == id.Value);
+            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(id);
             if (ticket != null)
             {
                 ticket.Archived = true;

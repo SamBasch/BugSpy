@@ -16,38 +16,7 @@
     <table id="myTable" class="display table table-report mt-n2">
         <thead>
 
-            @*            <a asp-controller="Projects" asp-action="Create">
-            <div type="button" class="btn btn-success w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Create New Project</div>
-            </a>
 
-
-            <a asp-controller="Projects" asp-action="MyRecentTickets">
-            <div type="button" class="btn btn-primary w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Filter by Date</div>
-            </a>
-
-            <a asp-controller="Projects" asp-action="MyTicketsType">
-            <div type="button" class="btn btn-primary w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Filter by Type</div>
-            </a>
-
-            <a asp-controller="Projects" asp-action="MyTicketsPriority">
-            <div type="button" class="btn btn-primary w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Filter by Priority</div>
-            </a>
-
-            <a asp-controller="Projects" asp-action="MyTicketsStatus">
-            <div type="button" class="btn btn-primary w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Filter by Status</div>
-            </a>
-
-            <a asp-controller="Projects" asp-action="MyTicketsTitle">
-            <div type="button" class="btn btn-primary w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Filter by Title</div>
-            </a>
-
-            <a asp-controller="Projects" asp-action="MyTicketsProject">
-            <div type="button" class="btn btn-primary w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Filter by Project</div>
-            </a>*@
-            @*        <td>
-            <img class="img-fluid border rounded-3 m-2" style="max-height: 250px;" src="@_fileService.ConvertByteArrayToFile(item.ImageFileData!, item.ImageFileType!, (int)DefaultImage.ProjectImage)" alt="">
-
-            </td>*@
             <tr>
                 <th class="text-nowrap">PROJECT IMAGE</th>
                 <th class="text-nowrap">PROJECT NAME</th>
@@ -78,11 +47,7 @@
                                 </div>
                                 <div class="px-5 pb-8 text-center">
                                     <button type="button" data-bs-dismiss="modal" class="btn btn-outline-secondary w-24 me-1">Cancel</button>
-@*                                    <form asp-action="Delete">
-                                        <input type="hidden" asp-for="Id" />
-                                        <input type="submit" value="Delete" class="btn btn-danger" /> |
-                                        <a asp-action="Index">Back to List</a>
-                                    </form>*@
+
                                     <a asp-controller="Projects" asp-action="DeleteConfirmed" asp-route-id="@project.Id" class="btn btn-danger w-24">Delete</a>
                               @*      <button type="button" class="btn btn-danger w-24">Delete</button>*@
                                 </div>

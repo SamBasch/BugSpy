@@ -69,7 +69,6 @@ namespace BugSpy.Controllers
                 List<string>? currentRoles = (await _roleService.GetUserRolesAsync(user)).ToList();
 
 
-                //IEnumerable<int> alreadyRoles = (await _roleService.GetUserRolesAsync(user)
 
 
 
@@ -79,11 +78,6 @@ namespace BugSpy.Controllers
 
                     BTUser = user,
 
-                    //UsersList = new MultiSelectList(usersList, "Id", "FullName", currentMembers)
-
-                    //List<string> currentMembers = project.Members.Select(m => m.Id).ToList();
-
-                    //SelectedRoles = currentRoles,
 
 
                     Roles = new MultiSelectList(roles, "Name", "Name", await _roleService.GetUserRolesAsync(user)),
@@ -122,7 +116,7 @@ namespace BugSpy.Controllers
 
             IEnumerable<string>? currentRoles = viewModel.SelectedRoles;
 
-            //List<string>? roles = await _roleService.GetUserRolesAsync(Btuser);
+
 
           await _roleService.RemoveUserFromRolesAsync(Btuser, await _roleService.GetUserRolesAsync(viewModel.BTUser));
 
@@ -131,7 +125,6 @@ namespace BugSpy.Controllers
                 await _roleService.AddUserToRoleAsync(Btuser, role);
             }
 
-            //viewModel.Roles = new MultiSelectList(currentRoles, "Name", "Name", await _roleService.GetUserRolesAsync(viewModel.BTUser));
 
            return RedirectToAction("ManageUserRoles");
            
