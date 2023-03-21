@@ -22,9 +22,13 @@ using System.Collections;
 
 namespace BugSpy.Controllers
 {
-
+    [Authorize]
     public class ProjectsController : Controller
     {
+
+       
+
+
         private readonly ApplicationDbContext _context;
         private readonly IBTFileService _fileService;
         private readonly UserManager<BTUser> _userManager;
