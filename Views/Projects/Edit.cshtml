@@ -101,7 +101,7 @@
 
 
             <div class="text-end mt-5">
-                <button type="button" class="btn btn-outline-secondary w-24 me-1">Cancel</button>
+                <a asp-controller="Projects" asp-action="Details" asp-route-id="@Model.Id" type="button" class="btn btn-outline-secondary w-24 me-1">Cancel</a>
                 <button type="submit" value="Save" class="btn btn-primary w-24">Save</button>
             </div>
         </div>
@@ -109,7 +109,7 @@
 </form>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+  
 </div>
 
 @section Scripts {

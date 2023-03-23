@@ -620,7 +620,7 @@ License: You must have a valid license purchased only from themeforest(the above
             <ul>
 
 
-                @if (User.IsInRole("Admin"))
+@*                @if (User.IsInRole("Admin"))
                 {
                     <li>
                         <a href="javascript:;.html" class="side-menu">
@@ -652,7 +652,7 @@ License: You must have a valid license purchased only from themeforest(the above
                         </ul>
                     </li>
                 }
-
+*@
 
 
 
@@ -673,7 +673,7 @@ License: You must have a valid license purchased only from themeforest(the above
                 {
                     <li>
                         <a href="javascript:;.html" class="side-menu">
-                            <div class="side-menu__icon"> <i data-feather="home"></i> </div>
+                            <div class="side-menu__icon"> <i data-feather="briefcase"></i> </div>
                             <div class="side-menu__title">
                                 Company
                                 <div class="side-menu__sub-icon"> <i data-feather="chevron-down"></i> </div>
@@ -707,7 +707,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                                 <li>
                                     <a asp-controller="Companies" asp-action="ManageUserRoles" class="side-menu">
-                                        <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                        <div class="side-menu__icon"> <i data-feather="users"></i> </div>
                                         <div class="side-menu__title"> Manage User Roles </div>
                                     </a>
                                 </li>
@@ -722,7 +722,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                                 <li>
                                     <a asp-controller="Invites" asp-action="Create" class="side-menu">
-                                        <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                        <div class="side-menu__icon"> <i data-feather="send"></i> </div>
                                         <div class="side-menu__title"> Create Invite </div>
                                     </a>
                                 </li>
@@ -812,7 +812,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                             <li>
                                 <a asp-controller="Projects" asp-action="Create" class="side-menu">
-                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__icon"> <i data-feather="file-plus"></i> </div>
                                     <div class="side-menu__title"> Create New Project </div>
                                 </a>
                             </li>
@@ -825,7 +825,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                             <li>
                                 <a asp-controller="Projects" asp-action="Create" class="side-menu">
-                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__icon"> <i data-feather="file-plus"></i> </div>
                                     <div class="side-menu__title"> Create New Project </div>
                                 </a>
                             </li>
@@ -835,7 +835,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                         <li>
                             <a asp-controller="Projects" asp-action="ProjectsIndex" class="side-menu">
-                                <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                <div class="side-menu__icon"> <i data-feather="inbox"></i> </div>
                                 <div class="side-menu__title"> Company Projects </div>
                             </a>
                         </li>
@@ -844,7 +844,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                         <li>
                             <a asp-controller="Projects" asp-action="ActiveProjectsCardIndex" class="side-menu">
-                                <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                <div class="side-menu__icon"> <i data-feather="inbox"></i> </div>
                                 <div class="side-menu__title"> Company Card Projects </div>
                             </a>
                         </li>
@@ -857,7 +857,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                             <li>
                                 <a asp-controller="Projects" asp-action="ProjectsOverview" class="side-menu">
-                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__icon"> <i data-feather="folder"></i> </div>
                                     <div class="side-menu__title"> My Projects </div>
                                 </a>
                             </li>
@@ -869,7 +869,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                             <li>
                                 <a asp-controller="Projects" asp-action="ProjectsOverview" class="side-menu">
-                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__icon"> <i data-feather="folder"></i> </div>
                                     <div class="side-menu__title"> My Projects </div>
                                 </a>
                             </li>
@@ -882,7 +882,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                             <li>
                                 <a asp-controller="Projects" asp-action="ProjectsOverview" class="side-menu">
-                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__icon"> <i data-feather="folder"></i> </div>
                                     <div class="side-menu__title"> My Projects </div>
                                 </a>
                             </li>
@@ -894,7 +894,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                         <li>
                             <a asp-controller="Projects" asp-action="CompanyArchivedProjects" class="side-menu">
-                                <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                <div class="side-menu__icon"> <i data-feather="archive"></i> </div>
                                 <div class="side-menu__title"> Archived Projects </div>
                             </a>
                         </li>
@@ -1039,7 +1039,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                 <li>
                     <a href="javascript:;.html" class="side-menu">
-                        <div class="side-menu__icon"> <i data-feather="home"></i> </div>
+                        <div class="side-menu__icon"> <i data-feather="file-text"></i> </div>
                         <div class="side-menu__title">
                             Tickets
                             <div class="side-menu__sub-icon"> <i data-feather="chevron-down"></i> </div>
@@ -1102,14 +1102,14 @@ License: You must have a valid license purchased only from themeforest(the above
 
                                      <li>
                             <a asp-controller="Tickets" asp-action="Create" class="side-menu">
-                                <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                <div class="side-menu__icon"> <i data-feather="folder-plus"></i> </div>
                                 <div class="side-menu__title"> Create New Ticket </div>
                             </a>
                         </li>
 
                         <li>
                             <a asp-controller="Tickets" asp-action="TicketsIndex" class="side-menu">
-                                <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                <div class="side-menu__icon"> <i data-feather="inbox"></i> </div>
                                 <div class="side-menu__title"> Company Tickets </div>
                             </a>
                         </li>
@@ -1124,7 +1124,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                             <li>
                                 <a asp-controller="Tickets" asp-action="TabulatorTickets" class="side-menu">
-                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__icon"> <i data-feather="folder"></i> </div>
                                     <div class="side-menu__title"> My Tickets </div>
                                 </a>
                             </li>
@@ -1137,7 +1137,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                             <li>
                                 <a asp-controller="Tickets" asp-action="TabulatorTickets" class="side-menu">
-                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__icon"> <i data-feather="folder"></i> </div>
                                     <div class="side-menu__title"> My Tickets </div>
                                 </a>
                             </li>
@@ -1151,7 +1151,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                             <li>
                                 <a asp-controller="Tickets" asp-action="AssignedPMTickets" class="side-menu">
-                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__icon"> <i data-feather="folder"></i> </div>
                                     <div class="side-menu__title"> My Assigned Tickets </div>
                                 </a>
                             </li>
@@ -1164,7 +1164,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                             <li>
                                 <a asp-controller="Tickets" asp-action="UnAssignedPMTickets" class="side-menu">
-                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__icon"> <i data-feather="folder"></i> </div>
                                     <div class="side-menu__title"> My Unassigned Tickets </div>
                                 </a>
                             </li>
@@ -1179,7 +1179,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                             <li>
                                 <a asp-controller="Tickets" asp-action="AllUnassignedTickets" class="side-menu">
-                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__icon"> <i data-feather="folder"></i> </div>
                                     <div class="side-menu__title"> Unassigned Tickets </div>
                                 </a>
                             </li>
@@ -1189,7 +1189,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                         <li>
                             <a asp-controller="Tickets" asp-action="CompanyArchivedTickets" class="side-menu">
-                                <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                <div class="side-menu__icon"> <i data-feather="archive"></i> </div>
                                 <div class="side-menu__title"> Archived Tickets </div>
                             </a>
                         </li>
@@ -1239,7 +1239,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
               
 
-
+@*
                 <li>
                     <a href="javascript:;.html" class="side-menu">
                         <div class="side-menu__icon"> <i data-feather="home"></i> </div>
@@ -1622,7 +1622,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                 }
 
-            </ul>
+            </ul>*@
         </nav>
         <!-- END: Side Menu -->
         <!-- BEGIN: Content -->
@@ -1722,12 +1722,7 @@ License: You must have a valid license purchased only from themeforest(the above
         </div>
         <!-- END: Content -->
     </div>
-    <!-- BEGIN: Dark Mode Switcher-->
-    <div data-url="side-menu-light-accordion.html" class="dark-mode-switcher cursor-pointer shadow-md position-fixed bottom-0 end-0 box dark-bg-dark-2 border rounded-pill w-40 h-12 d-flex align-items-center justify-content-center z-50 mb-10 me-10">
-        <div class="me-4 text-gray-700 dark-text-gray-300">Dark Mode</div>
-        <div class="dark-mode-switcher__toggle dark-mode-switcher__toggle--active border"></div>
-    </div>
-    <!-- END: Dark Mode Switcher-->
+
     <!-- BEGIN: JS Assets-->
 
     <script src="https://code.jquery.com/jquery-3.6.4.js"></script>

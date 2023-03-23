@@ -108,14 +108,14 @@
 
                     </select>
                 </div>
-          
-
-   
-
-              
 
 
 
+
+
+
+
+                <a asp-controller="Tickets" asp-action="Details" asp-route-id="@Model.Id" type="button" class="btn w-full mt-3 btn-outline-secondary  me-1" style="width:inherit;height:min-content">Cancel</a>
                 <button type="submit" style="width:inherit;height:min-content" value="Save" class="w-full mt-3 btn btn-primary"> Save </button>
                 
             </div>
@@ -155,9 +155,6 @@
 
 
 
-<div>
-    <a asp-action="Tickets Index">Back to List</a>
-</div>
 
 @section Scripts {
     <script src="~/dist/js/ckeditor-classic.js"></script>

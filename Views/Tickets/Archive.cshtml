@@ -43,7 +43,7 @@
         </div>
         <form class="d-flex justify-content-between" asp-action="Delete" asp-route-id="@Model.Id">
             <input hidden asp-for="Id" />
-            <a asp-action="TicketsIndex" asp-controller="Tickets" class="btn mx-3 btn-outline-secondary rounded-pill btnLink">Cancel</a>
+            <a asp-action="Details" asp-controller="Tickets" asp-route-id="@Model.Id" class="btn mx-3 btn-outline-secondary rounded-pill btnLink">Cancel</a>
             <button type="submit" class="btn btn-danger rounded-pill btnLink">Archive</button>
         </form>
     </div>

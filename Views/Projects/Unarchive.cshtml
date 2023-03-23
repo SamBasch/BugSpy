@@ -97,7 +97,7 @@
         </div>
         <form class="d-flex justify-content-between" asp-action="Unarchiver" asp-route-id="@Model.Id">
             <input hidden asp-for="Id" />
-            <a asp-action="ActiveProjectsCardIndex" asp-controller="Projects" class="btn mx-3 btn-outline-secondary rounded-pill btnLink">Cancel</a>
+            <a asp-action="Details" asp-controller="Projects" asp-route-id="@Model.Id" class="btn mx-3 btn-outline-secondary rounded-pill btnLink">Cancel</a>
             <button type="submit" class="btn btn-success rounded-pill btnLink">Unarchive</button>
         </form>
     </div>

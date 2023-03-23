@@ -956,7 +956,7 @@ namespace BugSpy.Controllers
 
 
 
-                return RedirectToAction("Details3", "Tickets", new { id = ticket.Id });
+                return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }
 
             ViewData["ProjectId"] = new SelectList(await _btTicketService.GetProjectListAsync(companyId), "Id", "Name");

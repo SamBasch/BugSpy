@@ -150,6 +150,8 @@
     IEnumerable<TicketHistory> tenTicketHistories = ticketHistories.Take(7);
     IEnumerable<BTUser> teamMebers = await _btTicketService.GetUsersTeamMembers(btUser, companyId);
 
+    int historyCount = tenTicketHistories.Count();
+
 }
 
 
@@ -169,8 +171,8 @@
             <div class="mt-14 mb-3 grid g-col-12 gap-sm-10 intro-y">
                 <div class="g-col-12 g-col-sm-6 g-col-md-4 py-6 ps-sm-5 ps-md-0 ps-lg-5 position-relative text-center text-sm-start">
                     <div class="position-absolute pt-0.5 pt-xxl-0 mt-5 mt-xxl-6 top-0 end-0 dropdown">
-                        <a class="dropdown-toggle block" href="javascript:;" aria-expanded="false" data-bs-toggle="dropdown"> <i data-feather="more-vertical" class="w-5 h-5 text-gray-600"></i> </a>
-                        <div class="dropdown-menu w-40">
+                      @*  <a class="dropdown-toggle block" href="javascript:;" aria-expanded="false" data-bs-toggle="dropdown"> <i data-feather="more-vertical" class="w-5 h-5 text-gray-600"></i> </a>*@
+@*                        <div class="dropdown-menu w-40">
                             <ul class="dropdown-content">
                                 <li>
                                     <a href="" class="dropdown-item"> <i data-feather="file-text" class="w-4 h-4 me-2"></i> Monthly Report </a>
@@ -179,9 +181,9 @@
                                     <a href="" class="dropdown-item"> <i data-feather="file-text" class="w-4 h-4 me-2"></i> Annual Report </a>
                                 </li>
                             </ul>
-                        </div>
+                        </div>*@
                     </div>
-                    <div class="fs-sm fs-xxl-base fw-medium mb-n1"> Hi @btUser.FullName, <span class="text-gray-700 dark-text-gray-500 fw-normal">welcome back!</span> </div>
+                    <div class=" display-3 fs-sm fs-xxl-base fw-medium mb-n1 "> Hi @btUser.FullName, <span class="text-gray-700 dark-text-gray-500 fw-normal">welcome back!</span> </div>
 
                     @if (User.IsInRole(nameof(BTRoles.Admin)))
                     {
@@ -217,13 +219,13 @@
                                     @allCompanyProjectsCount
                                                     }
                             </div>
-                            <a class="text-gray-600 ms-4 ms-xxl-16" href=""> <i data-feather="refresh-ccw" class="w-4 h-4"></i> </a>
+                 @*           <a class="text-gray-600 ms-4 ms-xxl-16" href=""> <i data-feather="refresh-ccw" class="w-4 h-4"></i> </a>*@
                         </div>
                         <div class="mt-5 d-xxl-flex justify-content-xxl-center mt-xxl-0 ms-xxl-n20 w-xxl-14 flex-xxl-none ps-xxl-2.5">
-                            <div class="fw-medium d-inline-flex bg-theme-9 text-white rounded-pill px-2 py-1 fs-xs fs-xxl-sm p-xxl-0 text-xxl-theme-9 bg-xxl-transparent d-xxl-flex align-items-center tooltip cursor-pointer justify-content-xxl-center" title=""> 49 <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                            <div class="fw-medium d-inline-flex bg-theme-9 text-white rounded-pill px-2 py-1 fs-xs fs-xxl-sm p-xxl-0 text-xxl-theme-9 bg-xxl-transparent d-xxl-flex align-items-center tooltip cursor-pointer justify-content-xxl-center" title=""></i> </div>
                         </div>
                     </div>
-                    <div class="text-gray-600 mt-5">Last updated 1 hour ago</div>
+          @*          <div class="text-gray-600 mt-5">Last updated 1 hour ago</div>*@
                     @if (User.IsInRole(nameof(BTRoles.ProjectManager)))
                     {
                         <div class="fs-xxl-base text-theme-9  mt-6 mb-n1"> @pmAssignedTicketsCount Assigned Ticket(s) <span class="fw-medium text-gray-800 dark-text-gray-400"></span> </div>
@@ -435,7 +437,7 @@
                         <div class="bg-white dark-bg-dark-3 position-xl-sticky top-0 px-5 pt-5 pb-6">
                             <div class="d-flex align-items-center">
                                 <div class="fs-lg fw-medium truncate me-5">Summary Report</div>
-                                <a href="" class="ms-auto d-flex align-items-center text-theme-26 dark-text-theme-10"> <i data-feather="refresh-ccw" class="w-4 h-4 me-3"></i> Refresh </a>
+         
                             </div>
                             <ul class="nav nav-pills border border-gray-400 border-dashed dark-border-gray-700 rounded-2 p-1 mt-5 mx-auto" role="tablist">
 
@@ -454,7 +456,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Total Tickets Submitted by You:</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@ticketCount</div>
-                                                <div class="text-theme-6 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="2% Lower than last month"> 2% <i data-feather="chevron-down" class="w-4 h-4 ms-0.5"></i> </div>
+                 
                                             </div>
                                         </div>
 
@@ -463,7 +465,7 @@
                                                 <div class="text-gray-600 dark-text-gray-500">Tickets With High or Urgent Priority</div>
                                                 <div class="mt-1.5 d-flex align-items-center">
                                                     <div class="fs-lg">@urgentTicketCount</div>
-                                                    <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                                       
                                                 </div>
                                             </div>
 
@@ -472,7 +474,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">New Development Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@newDevelopmentTicketCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                                      
                                             </div>
                                         </div>
 
@@ -481,7 +483,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Work Task Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@workTaskTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                                   
                                             </div>
                                         </div>
 
@@ -490,7 +492,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Defect Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@defectTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                         
                                             </div>
                                         </div>
 
@@ -499,7 +501,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Change Request Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@changeRequestTicketCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                        
                                             </div>
                                         </div>
 
@@ -507,7 +509,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Enhancment Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@enchancementTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                       
                                             </div>
                                         </div>
 
@@ -516,7 +518,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">General Task Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@generalTaskTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+               
                                             </div>
                                         </div>
 
@@ -533,7 +535,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Total Tickets Assigned to You:</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@devTicketCount</div>
-                                                <div class="text-theme-6 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="2% Lower than last month"> 2% <i data-feather="chevron-down" class="w-4 h-4 ms-0.5"></i> </div>
+                            
                                             </div>
                                         </div>
 
@@ -542,7 +544,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Tickets With High or Urgent Priority</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@devUrgentTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                            
                                             </div>
                                         </div>
 
@@ -551,7 +553,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">New Development Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@devNewDevelopmentTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                        
                                             </div>
                                         </div>
 
@@ -560,7 +562,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Work Task Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@devWorkTaskTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                           
                                             </div>
                                         </div>
 
@@ -569,7 +571,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Defect Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@devDefectTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+ 
                                             </div>
                                         </div>
 
@@ -578,7 +580,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Change Request Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@devChangeRequestTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                   
                                             </div>
                                         </div>
 
@@ -589,7 +591,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Enhancment Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@devEnchancementTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                                
                                             </div>
                                         </div>
 
@@ -599,7 +601,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">General Task Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@devGeneralTaskTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                     
                                             </div>
                                         </div>
                                     }
@@ -611,7 +613,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Assigned Projects:</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@pmProjectsCount</div>
-                                                <div class="text-theme-6 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="2% Lower than last month"> 2% <i data-feather="chevron-down" class="w-4 h-4 ms-0.5"></i> </div>
+
                                             </div>
                                         </div>
 
@@ -619,7 +621,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Total UnAssigned Tickets:</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@pmUnassignedTicketCount</div>
-                                                <div class="text-theme-6 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="2% Lower than last month"> 2% <i data-feather="chevron-down" class="w-4 h-4 ms-0.5"></i> </div>
+                               
                                             </div>
                                         </div>
 
@@ -627,7 +629,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Total Assigned Tickets: </div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@pmAssignedTicketsCount</div>
-                                                <div class="text-theme-6 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="2% Lower than last month"> 2% <i data-feather="chevron-down" class="w-4 h-4 ms-0.5"></i> </div>
+                      
                                             </div>
                                         </div>
 
@@ -636,7 +638,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Tickets With High or Urgent Priority</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@pmUrgentTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                      
                                             </div>
                                         </div>
 
@@ -645,7 +647,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">New Development Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@pmNewDevelopmentTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                          
                                             </div>
                                         </div>
 
@@ -654,7 +656,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Work Task Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@pmWorkTaskTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                       
                                             </div>
                                         </div>
 
@@ -663,7 +665,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Defect Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@pmDefectTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                                      
                                             </div>
                                         </div>
 
@@ -672,7 +674,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Change Request Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@pmChangeRequestTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                                       
                                             </div>
                                         </div>
 
@@ -683,7 +685,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Enhancment Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@pmEnchancementTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                            
                                             </div>
                                         </div>
 
@@ -693,7 +695,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">General Task Tickets</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@pmGeneralTaskTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                           
                                             </div>
                                         </div>
                                     }
@@ -706,7 +708,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Total Company Projects:</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@allCompanyProjectsCount</div>
-                                                <div class="text-theme-6 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="2% Lower than last month"> 2% <i data-feather="chevron-down" class="w-4 h-4 ms-0.5"></i> </div>
+                           
                                             </div>
                                         </div>
 
@@ -714,7 +716,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Company Active Projects:</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@allCompanyActiveProjectsCount</div>
-                                                <div class="text-theme-6 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="2% Lower than last month"> 2% <i data-feather="chevron-down" class="w-4 h-4 ms-0.5"></i> </div>
+                             
                                             </div>
                                         </div>
 
@@ -722,7 +724,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Company Archived Projects:</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@allCompanyArchivedProjectsCount</div>
-                                                <div class="text-theme-6 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="2% Lower than last month"> 2% <i data-feather="chevron-down" class="w-4 h-4 ms-0.5"></i> </div>
+           
                                             </div>
                                         </div>
 
@@ -730,7 +732,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Total Company Tickets: </div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@allCompanyTicketsCount</div>
-                                                <div class="text-theme-6 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="2% Lower than last month"> 2% <i data-feather="chevron-down" class="w-4 h-4 ms-0.5"></i> </div>
+                   
                                             </div>
                                         </div>
 
@@ -739,7 +741,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Total Active Tickets:</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@allCompanyActiveTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                               
                                             </div>
                                         </div>
 
@@ -748,7 +750,7 @@
                                             <div class="text-gray-600 dark-text-gray-500">Total Archived Tickets:</div>
                                             <div class="mt-1.5 d-flex align-items-center">
                                                 <div class="fs-lg">@allCompanyArchivedTicketsCount</div>
-                                                <div class="text-theme-9 d-flex fs-xs fw-medium tooltip cursor-pointer ms-2" title="0.1% Lower than last month"> 49% <i data-feather="chevron-up" class="w-4 h-4 ms-0.5"></i> </div>
+                                    
                                             </div>
                                         </div>
 
@@ -758,10 +760,6 @@
 
                                    
 
-                                    <button class="btn btn-outline-secondary g-col-12 border-gray-400 border-dashed dark-border-gray-700 position-relative justify-content-start mb-2">
-                                        <span class="truncate me-5">My Portfolio Details</span>
-                                        <span class="w-8 h-8 position-absolute d-flex justify-content-center align-items-center end-0 top-0 bottom-0 my-auto ms-auto me-0.5"> <i data-feather="arrow-right" class="w-4 h-4"></i> </span>
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -892,6 +890,16 @@
                     @*    <a href="" class="ms-auto text-theme-1 dark-text-theme-10 truncate">Show More</a>*@
                     </div>
                     <div class="report-timeline mt-5 position-relative">
+
+                        @if (historyCount == 0)
+                        {
+
+                            <h2 class="fs-lg fw-medium truncate me-5">
+                                No Activity Yet
+                            </h2>
+                        }
+
+
                         @foreach (TicketHistory history in tenTicketHistories)
                         {
                             <div class="intro-x position-relative d-flex align-items-center mb-3">
