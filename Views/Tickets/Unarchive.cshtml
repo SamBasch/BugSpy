@@ -1,0 +1,51 @@
+﻿@model BugSpy.Models.Ticket
+@using BugSpy.Services.Interfaces;
+
+
+
+
+@inject IBTFileService _ImageService
+
+
+<div class="row">
+    <div class="col-12 col-md-8 offset-md-2">
+        <h1 class="display-6">Are you sure?</h1>
+        <p class=" display-6 mt-3 text-lead text-muted">This ticket will be archived.</p>
+        <div class="card dark mt-3 mb-3">
+            <div class="row box dark g-0">
+                <div class="col-md-5">
+                    <div class=" dark card-body">
+                        <h3 class="card-title">Title: @Model.Title</h3>
+
+
+                        <div class="mt-2 card-text">
+                            <span class="fw-bold me-2">Project:</span>@Model.Project.Name
+                        </div>
+                        <div class="card-text">
+                            @if (Model.DeveloperUser != null)
+                            {
+                                <span class="fw-bold me-2">Developer Assigned:</span>
+
+                                @Model.DeveloperUser.FullName
+
+                            }
+                            else
+                            {
+
+                                <span class="text-theme-6 fw-bold me-2">Developer: Unassigned</span>
+                            }
+                        </div>
+                        <div class="card-text">
+                            <span class="fw-bold me-2">Submitter:</span>@Model.SubmitterUser.FullName
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form class="d-flex justify-content-between" asp-action="UnarchiveConfirm" asp-route-id="@Model.Id">
+            <input hidden asp-for="Id" />
+            <a asp-action="TicketsIndex" asp-controller="Tickets" class="btn mx-3 btn-outline-secondary rounded-pill btnLink">Cancel</a>
+            <button type="submit" class="btn btn-success rounded-pill btnLink">Unarchive</button>
+        </form>
+    </div>
+</div>

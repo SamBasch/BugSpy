@@ -115,25 +115,27 @@ namespace BugSpy.Controllers
 
 
 
-
+                Ticket ticket = await _btTicketService.GetTicketByIdAsync(viewModel.Ticket.Id, companyId);
 
 
 				BTUser? btUser = await _userManager.GetUserAsync(User);
 
 
-				Notification? notification = new()
-				{
-					TicketId = viewModel.Ticket.Id,
+                Notification? notification = new()
+                {
+                    TicketId = viewModel.Ticket.Id,
 
-					Title = "Developer Assigned",
+                    Title = "Developer Assigned",
 
-					Message = $"Ticket: {viewModel.Ticket.Title} was assigned by {btUser.FullName}",
+                    Message = $"Ticket: {viewModel.Ticket.Title} was assigned by {btUser.FullName}",
 
-					Created = DataUtility.GetPostGresDate(DateTime.Now),
+                    Created = DataUtility.GetPostGresDate(DateTime.Now),
 
-					SenderId = userId,
+                    SenderId = userId,
 
-					RecipientId = viewModel.DevId,
+                    RecipientId = viewModel.DevId,
+
+                    ProjectId = ticket.ProjectId,
 
 					NotificationTypeId = (await _context.NotificationsTypes.FirstOrDefaultAsync(n => n.Name == nameof(BTNotificationTypes.Ticket)))!.Id,
 
@@ -179,6 +181,18 @@ namespace BugSpy.Controllers
 
 
         }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         [Authorize(Roles = "Admin")]
@@ -681,6 +695,31 @@ namespace BugSpy.Controllers
             return View(ticket);
         }
 
+
+
+
+        public async Task<IActionResult> Details3(int? Id)
+        {
+            int companyId = User.Identity.GetCompanyId();
+
+            if (Id == null)
+            {
+                return NotFound();
+            }
+
+            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(Id, companyId);
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            return View(ticket);
+        }
+
+
+
+
+
         // GET: Tickets/Create
         public async Task<IActionResult> Create()
 
@@ -917,7 +956,7 @@ namespace BugSpy.Controllers
 
 
 
-                return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
+                return RedirectToAction("Details3", "Tickets", new { id = ticket.Id });
             }
 
             ViewData["ProjectId"] = new SelectList(await _btTicketService.GetProjectListAsync(companyId), "Id", "Name");
@@ -948,10 +987,124 @@ namespace BugSpy.Controllers
                 return NotFound();
             }
 
-            return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
+            //return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
 
             return View(ticket);
         }
+
+
+
+
+
+
+        // POST: Tickets/Delete/5
+        [HttpPost, ActionName("EditTicketTitle")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditTicketTitle(int? Id, string? Title )
+        {
+            int companyId = User.Identity.GetCompanyId();
+
+            if (_context.Tickets == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Tickets'  is null.");
+            }
+            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(Id, companyId);
+            if (ticket != null)
+            {
+                ticket.Title = Title;   
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details3", "Tickets", new { id = ticket.Id });
+        }
+
+
+
+
+
+
+        // POST: Tickets/Delete/5
+
+        public async Task<IActionResult> Unarchive(int? Id)
+        {
+
+            int companyId = User.Identity.GetCompanyId();
+
+            if (Id == null)
+            {
+                return NotFound();
+            }
+
+            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(Id, companyId);
+
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            //return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
+
+            return View(ticket);
+        }
+
+
+
+
+
+
+
+
+        // POST: Tickets/Delete/5
+        [HttpPost, ActionName("UnarchiveConfirm")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnarchiveConfirm(int? id)
+        {
+            int companyId = User.Identity.GetCompanyId();
+
+            if (_context.Tickets == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Tickets'  is null.");
+            }
+            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(id, companyId);
+            if (ticket != null)
+            {
+                ticket.Archived = false;
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
+        }
+
+
+
+
+
+
+
+        public async Task<IActionResult> Archive(int? id)
+        {
+            int companyId = User.Identity.GetCompanyId();
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Ticket? ticket = await _btTicketService.GetTicketByIdAsync(id, companyId);
+
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            //return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
+
+            return View(ticket);
+        }
+
+
+
+
 
         // POST: Tickets/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -968,12 +1121,6 @@ namespace BugSpy.Controllers
             if (ticket != null)
             {
                 ticket.Archived = true;
-
-                if(ticket.Project.Archived == true)
-                {
-
-                    ticket.Archived = true;    
-                }
             }
             
             await _context.SaveChangesAsync();

@@ -240,6 +240,50 @@ namespace BugSpy.Services
             return ticketHistories;
         }
 
+
+
+        public async Task<List<TicketHistory>> GetSingularTicketsHistory(int? companyId, int? ticketId)
+        {
+
+
+            List<TicketHistory> ticketHistories = (await _context.TicketHistories.Include(t => t.User).Include(th => th.Ticket).ThenInclude(t => t.Project).Where(t => t.Ticket.Project.CompanyId == companyId && t.TicketId == ticketId).ToListAsync());
+
+            //Company? company = await _context.Companies.Include(c => c.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.History).FirstOrDefaultAsync(c => c.Id == companyId);
+
+
+            //IEnumerable<Ticket> companyTickets = company.Projects.SelectMany(p => p.Tickets.Where(t => t.Archived == false));
+
+
+            //List<TicketHistory> ticketHistories = companyTickets.SelectMany(t => t.History).ToList();
+
+
+
+            return ticketHistories;
+        }
+
+
+
+
+        public async Task<List<TicketHistory>> GetProjectTicketsHistory(int? companyId, int? projectId)
+        {
+
+
+            List<TicketHistory> ticketHistories = (await _context.TicketHistories.Include(t => t.User).Include(th => th.Ticket).ThenInclude(t => t.Project).Where(t => t.Ticket.Project.CompanyId == companyId && t.Ticket.ProjectId == projectId).ToListAsync());
+
+            //Company? company = await _context.Companies.Include(c => c.Projects).ThenInclude(p => p.Tickets).ThenInclude(t => t.History).FirstOrDefaultAsync(c => c.Id == companyId);
+
+
+            //IEnumerable<Ticket> companyTickets = company.Projects.SelectMany(p => p.Tickets.Where(t => t.Archived == false));
+
+
+            //List<TicketHistory> ticketHistories = companyTickets.SelectMany(t => t.History).ToList();
+
+
+
+            return ticketHistories;
+        }
+
+
         public Task<List<TicketHistory>> GetProjectTicketHistoriesAsync(int? projectId, int? companyId)
         {
             throw new NotImplementedException();

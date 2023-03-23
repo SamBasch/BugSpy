@@ -1,0 +1,228 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@inject UserManager<BTUser> _userManager
+@inject IBTProjectService _btProjectService
+@inject IBTFileService _fileService
+@model IEnumerable<BugSpy.Models.Project>
+@using BugSpy.Models.Enums
+@using BugSpy.Services.Interfaces
+
+
+
+
+<div class="intro-y grid columns-12 gap-6 mt-5">
+
+
+
+    @foreach(Project project in Model)
+    {
+        BTUser? projectMember = await _userManager.GetUserAsync(User);
+            
+            BTUser? projectManager = (await _btProjectService.GetProjectManagerAsync(project.Id));
+
+        bool result = await _btProjectService.IsMemberInProject(projectMember, project.Id);
+  
+        <div class="intro-y g-col-12 g-col-md-6 g-col-xl-4 box">
+            <div class="d-flex align-items-center border-bottom border-gray-200 dark-border-dark-5 px-5 py-4">
+                <div class="w-10 h-10 flex-none image-fit">
+                    @if(projectManager != null)
+                    {
+                        <img src="@_fileService.ConvertByteArrayToFile(projectManager!.ImageFileData!, projectManager!.ImageFileType!, (int)DefaultImage.BTUserImage)" class="rounded-2" alt="Post Images" />
+                    } else
+                    {
+                        <img alt="Rubick Bootstrap HTML Admin Template" class="rounded-2" src="~/dist/images/preview-8.jpg">
+                    }
+
+                </div>
+                <div class="ms-3 me-auto">
+                    @if(projectManager != null)
+                    {
+                        <a href="" class="fw-medium">@((await _btProjectService.GetProjectManagerAsync(project.Id)).FullName ?? "Unassigned")</a>
+                    } else
+                    {
+                        <a href="" class="fw-medium">Project Manager Unassigned</a>
+                    }
+
+                    <div class="d-flex fw-medium truncate mt-0.5"> <a class="text-theme-1 dark-text-gray-500 d-inline-block truncate" href="">Project Manager</a>  </div>
+                </div>
+                <div class="dropdown ms-3">
+                    <a href="javascript:;" class="dropdown-toggle w-5 h-5 text-gray-600 dark-text-gray-300" aria-expanded="false" data-bs-toggle="dropdown"> <i data-feather="more-vertical" class="w-4 h-4"></i> </a>
+                    <div class="dropdown-menu w-40">
+                        <ul class="dropdown-content">
+
+
+
+
+                            @if ((User.IsInRole("Admin")) && project.Archived == false)
+                            {
+
+
+                                <li>
+                                    <a asp-action="Edit" asp-route-id="@project.Id" class="dropdown-item"> <i data-feather="edit-2" class="w-4 h-4 me-2"></i> Edit Post </a>
+                                </li>
+
+                                <li class="mb-2">
+                                    <a class=" text-theme-6" asp-controller="Projects" asp-action="Archive" asp-route-id="@project.Id">
+                                        <i data-feather="file-minus" class="w-4 h-4 me-1"></i>
+                                        <div class="side-menu__title"> Archive </div>
+                                    </a>
+                                </li>
+                            }
+
+
+                            @if ((User.IsInRole("Admin")) && project.Archived == true)
+                            {
+
+
+                                <li>
+                                    <a asp-action="Edit" asp-route-id="@project.Id" class="dropdown-item"> <i data-feather="edit-2" class="w-4 h-4 me-2"></i> Edit Post </a>
+                                </li>
+
+                                <li class="mb-2">
+                                    <a class=" text-theme-9" asp-controller="Projects" asp-action="Unarchive" asp-route-id="@project.Id">
+                                        <i data-feather="file-plus" class="w-4 h-4 me-1"></i>
+                                        <div class="side-menu__title"> Unarchive </div>
+                                    </a>
+                                </li>
+                            }
+
+                            @if ((User.IsInRole("ProjectManager")) && result == false && project.Archived == false)
+                            {
+
+                                <li>
+                                    <a asp-action="Edit" asp-route-id="@project.Id" class="dropdown-item"> <i data-feather="edit-2" class="w-4 h-4 me-2"></i> Edit Post </a>
+                                </li>
+
+
+                                <li class="mb-2">
+                                    <a class=" text-theme-6" asp-controller="Projects" asp-action="Archive" asp-route-id="@project.Id">
+                                        <i data-feather="file-minus" class="w-4 h-4 me-1"></i>
+                                        <div class="side-menu__title"> Archive </div>
+                                    </a>
+                                </li>
+
+
+                            }
+
+
+                            @if ((User.IsInRole("ProjectManager")) && result == false && project.Archived == true)
+                            {
+
+                                <li>
+                                    <a asp-action="Edit" asp-route-id="@project.Id" class="dropdown-item"> <i data-feather="edit-2" class="w-4 h-4 me-2"></i> Edit Post </a>
+                                </li>
+
+                                <li class="mb-2">
+                                    <a class=" text-theme-9" asp-controller="Projects" asp-action="Unarchive" asp-route-id="@project.Id">
+                                        <i data-feather="file-plus" class="w-4 h-4 me-1"></i>
+                                        <div class="side-menu__title"> Unarchive </div>
+                                    </a>
+                                </li>
+                            }
+
+
+
+
+             @*               <li>
+                                <a href="" class="dropdown-item"> <i data-feather="edit-2" class="w-4 h-4 me-2"></i> Edit Post </a>
+                            </li>*@
+             @*               <li>
+                                <a href="" class="dropdown-item"> <i data-feather="trash" class="w-4 h-4 me-2"></i> Delete Post </a>
+                            </li>*@
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="p-5">
+                <div class="h-40 h-xxl-56 image-fit">
+                    <img src="@_fileService.ConvertByteArrayToFile(project!.ImageFileData!, project!.ImageFileType!, (int)DefaultImage.ProjectImage)" alt="Post Images" />
+                </div>
+                <a href="" class="d-block fw-medium fs-base mt-5"><span class="fw-medium fs-base">Project Name:</span> @project.Name</a>
+                <div class="fw-medium mt-2">@Html.Raw(project.Description)</div>
+            </div>
+ @*           <div class="d-flex align-items-center px-5 py-3 border-top border-gray-200 dark-border-dark-5">
+                <a href="" class="intro-x w-8 h-8 d-flex align-items-center justify-content-center rounded-circle border border-gray-400 dark-border-dark-5 dark-bg-dark-5 dark-text-gray-300 text-gray-600 me-2 tooltip" title="Bookmark"> <i data-feather="bookmark" class="w-3 h-3"></i> </a>
+                <div class="intro-x d-flex me-2">
+                    <div class="intro-x w-8 h-8 image-fit">
+                        <img alt="Rubick Bootstrap HTML Admin Template" class="rounded-circle border border-white dark-border-dark-3 zoom-in tooltip" src="dist/images/profile-13.jpg" title="Morgan Freeman">
+                    </div>
+                    <div class="intro-x w-8 h-8 image-fit ms-n4">
+                        <img alt="Rubick Bootstrap HTML Admin Template" class="rounded-circle border border-white dark-border-dark-3 zoom-in tooltip" src="dist/images/profile-11.jpg" title="Nicolas Cage">
+                    </div>
+                    <div class="intro-x w-8 h-8 image-fit ms-n4">
+                        <img alt="Rubick Bootstrap HTML Admin Template" class="rounded-circle border border-white dark-border-dark-3 zoom-in tooltip" src="dist/images/profile-1.jpg" title="Charlize Theron">
+                    </div>
+                </div>
+                <a href="" class="intro-x w-8 h-8 d-flex align-items-center justify-content-center rounded-circle bg-theme-14 dark-bg-dark-5 dark-text-gray-300 text-theme-10 ms-auto tooltip" title="Share"> <i data-feather="share-2" class="w-3 h-3"></i> </a>
+                <a href="" class="intro-x w-8 h-8 d-flex align-items-center justify-content-center rounded-circle bg-theme-1 text-white ms-2 tooltip" title="Download PDF"> <i data-feather="share" class="w-3 h-3"></i> </a>
+            </div>*@
+            <div class="px-5 pt-3 pb-5 border-top border-gray-200 dark-border-dark-5">
+                @if(User.IsInRole(nameof(BTRoles.Admin)))
+                {
+
+                    <a asp-controller="Projects" asp-action="AssignPM" asp-route-id="@project.Id" style="width:inherit;height:min-content" class="btn btn-primary py-3 px-4 w-full mt-3 align-top"> <i data-feather="check-square" class="w-4 h-4 me-1"></i>Assign Project Manager</a>
+
+                    <a asp-controller="Projects" asp-action="AssignProjectMembers" asp-route-id="@project.Id" style="width:inherit;height:min-content" class="btn btn-primary py-3 px-4 w-full mt-3 align-top"> <i data-feather="check-square" class="w-4 h-4 me-1"></i>Assign Members</a>
+
+                    
+                }
+
+            @*    <a asp-action="AssignProjectMembers" asp-route-id="@project.Id">
+                    <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                    <div class="side-menu__title"> Assign Project Members </div>
+                </a>*@
+
+                @if ((User.IsInRole("ProjectManager")) && result == false)
+                {
+
+
+
+                    <a asp-controller="Projects" asp-action="AssignProjectMembers" asp-route-id="@project.Id" style="width:inherit;height:min-content" class="btn btn-primary py-3 px-4 w-full mt-3 align-top"> <i data-feather="check-square" class="w-4 h-4 me-1"></i>Assign Members</a>
+
+
+
+                  
+
+
+
+
+                }
+
+
+            </div>
+        </div>
+    }
+
+   
+  
+    <!-- BEGIN: Pagination -->
+    <div class="intro-y g-col-12 d-flex flex-wrap flex-sm-row flex-sm-nowrap align-items-center">
+        <nav class="w-full w-sm-auto me-sm-auto">
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link" href="#"> <i class="w-4 h-4" data-feather="chevrons-left"></i> </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#"> <i class="w-4 h-4" data-feather="chevron-left"></i> </a>
+                </li>
+                <li class="page-item"> <a class="page-link" href="#">...</a> </li>
+                <li class="page-item"> <a class="page-link" href="#">1</a> </li>
+                <li class="page-item active"> <a class="page-link" href="#">2</a> </li>
+                <li class="page-item"> <a class="page-link" href="#">3</a> </li>
+                <li class="page-item"> <a class="page-link" href="#">...</a> </li>
+                <li class="page-item">
+                    <a class="page-link" href="#"> <i class="w-4 h-4" data-feather="chevron-right"></i> </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#"> <i class="w-4 h-4" data-feather="chevrons-right"></i> </a>
+                </li>
+            </ul>
+        </nav>
+        <select class="w-20 form-select box mt-3 mt-sm-0">
+            <option>10</option>
+            <option>25</option>
+            <option>35</option>
+            <option>50</option>
+        </select>
+    </div>
+    <!-- END: Pagination -->
+</div>

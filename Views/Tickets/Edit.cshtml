@@ -4,9 +4,9 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h2 class="fs-lg fw-medium">Editing...</h2>
 
-<h4>Ticket</h4>
+<h2 class="fs-lg fw-medium">Ticket #@Model.Id: @Model.Title</h2>
 <hr />
 
 
@@ -18,118 +18,149 @@
 
 
 
+
+
+
+
+
+
+
+
 <form asp-action="Edit" method="post">
+
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="Created" />
     <input type="hidden" asp-for="Updated" />
     <input type="hidden" asp-for="SubmitterUserId" />
-    <div class="intro-y g-col-12 g-col-lg-8">
-        <label asp-for="Title" class="control-label"></label>
-        <input asp-for="Title" class="form-control" />
-        <span asp-validation-for="Title" class="text-danger"></span>
-        <div class="post intro-y overflow-hidden box mt-5">
-            <ul class="post__tabs nav nav-tabs flex-column flex-sm-row bg-gray-300 dark-bg-dark-2 text-gray-600" role="tablist">
-                <li id="content-tab" class="nav-item" role="presentation">
-                    <button class="tooltip nav-link d-flex justify-content-center align-items-center w-full w-sm-40 py-4 active" title="Fill in the article content" data-bs-toggle="pill" data-bs-target="#content" type="button" role="tab" aria-controls="content-tab" aria-selected="true"> <i data-feather="file-text" class="w-4 h-4 me-2"></i> Content </button>
-                </li>
-                <li id="meta-title-tab" class="nav-item" role="presentation">
-                    <button class="tooltip nav-link d-flex justify-content-center align-items-center w-full w-sm-40 py-4" title="Adjust the meta title" data-bs-toggle="pill" data-bs-target="#meta-title" type="button" role="tab" aria-controls="meta-title-tab" aria-selected="false"> <i data-feather="code" class="w-4 h-4 me-2"></i> Meta Title </button>
-                </li>
-                <li id="keywords-tab" class="nav-item" role="presentation">
-                    <button class="tooltip nav-link d-flex justify-content-center align-items-center w-full w-sm-40 py-4" title="Use search keywords" data-bs-toggle="pill" data-bs-target="#keywords" type="button" role="tab" aria-controls="keywords-tab" aria-selected="false"> <i data-feather="align-left" class="w-4 h-4 me-2"></i> Keywords </button>
-                </li>
-            </ul>
-            <div class="post__content tab-content">
-                <div class="tab-pane p-5 fade show active" id="content" role="tabpanel" aria-labelledby="content-tab">
-                    <div class="border border-gray-200 dark-border-dark-5 rounded-2 p-5">
-                        <div class="fw-medium d-flex align-items-center border-bottom border-gray-200 dark-border-dark-5 pb-5"> <i data-feather="chevron-down" class="w-4 h-4 me-2"></i> Text Content </div>
-                        <div class="mt-5">
-                            <label asp-for="Description" class="control-label"></label>
-                            <textarea asp-for="Description" class="editor form-control">
+    <input type="hidden" asp-for="ProjectId" />
 
-                            </textarea>
-                            <span asp-validation-for="Description" class="text-danger"></span>
+    <!-- BEGIN: Post Content -->
+    <div class="pos intro-y grid columns-12 gap-5 mt-5">
+        <!-- BEGIN: Post Content -->
+        <div class="intro-y g-col-12 g-col-lg-8">
+            <label asp-for="Title" class="control-label">Ticket Title</label>
+            <input asp-for="Title" class=" mt-2 intro-y form-control py-3 px-4 box border-white dark-border-dark-3 pe-10 placeholder-theme-13" placeholder="Ticket Title" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+            @*<input type="text" class="intro-y form-control py-3 px-4 box border-white dark-border-dark-3 pe-10 placeholder-theme-13" placeholder="Title">*@
+            <div class="post intro-y overflow-hidden box mt-5">
+
+                <div class="post__content tab-content">
+                    <div class="tab-pane p-5 fade show active" id="content" role="tabpanel" aria-labelledby="content-tab">
+ 
+                        <div class="intro-y col-12">
+                            <div class="box">
+                                <div class="d-flex flex-column flex-sm-row align-items-center p-5 border-bottom border-gray-200 dark-border-dark-5">
+                                    <h2 class="fw-medium fs-base me-auto">
+                                        Ticket Description
+                                    </h2>
+         
+                                </div>
+                                <div class="p-5" id="classic-editor">
+                                    <div class="preview">
+                                        <textarea asp-for="Description" class="editor">
+                                            
+                                        </textarea>
+                                        <span asp-validation-for="Description" class="text-danger"></span>
+                                    </div>
+                                    <div class="source-code d-none">
+                                        <button data-target="#copy-classic-editor" class="copy-code btn py-1 px-2 btn-outline-secondary"> <i data-feather="file" class="w-4 h-4 me-2"></i> Copy example code </button>
+                                        <div class="overflow-y-auto mt-3 rounded-2">
+                                            <pre class="source-preview" id="copy-classic-editor"> <code class="javascript fs-xs p-0 vh-60 rounded-2 ps-5 pt-8 pb-4 mb-n10 mt-n10"> import ClassicEditor from &quot;ckeditor/ckeditor5-build-classic&quot;; cash(&quot;.editor&quot;).each(function () { const el = this; ClassicEditor.create(el).catch((error) =HTMLCloseTag { console.error(error); }); }); </code> </pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
+
+                    </div>
                 </div>
             </div>
         </div>
+        <!-- END: Post Content -->
+        <!-- BEGIN: Post Info -->
+        <div class="g-col-12 mt-6 g-col-lg-4">
+            <div class="intro-y box p-5">
+  
+
+                <div class="mt-3">
+                    <label asp-for="TicketTypeId" class="form-label">Ticket Type</label>
+                    <select asp-for="TicketTypeId" asp-items="ViewBag.TicketTypeId" data-placeholder="SelectType" class="tom-select w-full" id="post-form-3">
+                        <option></option>
+                    
+                    </select>
+                </div>
+
+                <div class="mt-3">
+                    <label asp-for="TicketStatusId" class="form-label">Ticket Status</label>
+                    <select asp-for="TicketStatusId"  asp-items="ViewBag.TicketStatusId" data-placeholder="Select Status" class="tom-select w-full" id="post-form-3">
+                        <option></option>
+
+                    </select>
+                </div>
+
+
+                <div class="mt-3">
+                    <label asp-for="TicketPriorityId" class="form-label">Ticket Priority</label>
+                    <select asp-for="TicketPriorityId"  asp-items="ViewBag.TicketPriorityId" data-placeholder="Select Priority" class="tom-select w-full" id="post-form-3">
+                        <option></option>
+
+                    </select>
+                </div>
+          
+
+   
+
+              
+
+
+
+                <button type="submit" style="width:inherit;height:min-content" value="Save" class="w-full mt-3 btn btn-primary"> Save </button>
+                
+            </div>
+        </div>
+        <!-- END: Post Info -->
     </div>
-    <!-- END: Post Content -->
-    <!-- BEGIN: Post Info -->
-
-
-    <div class="g-col-12 g-col-lg-4">
-        <div class="intro-y box p-5">
-            <div>
-
-
-                <div class="mb-3">
-                    <label class="form-label">Ticket Type</label>
-                    <div class="form-group dropdown-toggle btn w-full btn-outline-secondary dark-bg-dark-2 dark-border-dark-2 d-flex align-items-center justify-content-start w-full">
-                        @*  <label asp-for="DeveloperUserId" class="control-label"></label>*@
-                        <select asp-for="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId"> </select>
-                        <i class="w-4 h-4 ms-auto" data-feather="chevron-down"></i>
-                    </div>
-                </div>
-
-
-                <div class="mb-3">
-                    <label class="form-label">Ticket Status</label>
-                    <div class="form-group dropdown-toggle btn w-full btn-outline-secondary dark-bg-dark-2 dark-border-dark-2 d-flex align-items-center justify-content-start w-full">
-                        @*  <label asp-for="DeveloperUserId" class="control-label"></label>*@
-                        <select asp-for="TicketStatusId" class="form-control" asp-items="ViewBag.TicketStatusId"> </select>
-                        <i class="w-4 h-4 ms-auto" data-feather="chevron-down"></i>
-                    </div>
-                </div>
-
-
-                <div class="mb-3">
-                    <label class="form-label">Ticket Priority</label>
-                    <div class="form-group dropdown-toggle btn w-full btn-outline-secondary dark-bg-dark-2 dark-border-dark-2 d-flex align-items-center justify-content-start w-full">
-                        @*  <label asp-for="DeveloperUserId" class="control-label"></label>*@
-                        <select asp-for="TicketPriorityId" class="form-control" asp-items="ViewBag.TicketPriorityId"> </select>
-                        <i class="w-4 h-4 ms-auto" data-feather="chevron-down"></i>
-                    </div>
-                </div>
-@*
-                <div class="mb-3">
-                    <label class="form-label">Developer Assign</label>
-                    <div class="form-group dropdown-toggle btn w-full btn-outline-secondary dark-bg-dark-2 dark-border-dark-2 d-flex align-items-center justify-content-start w-full">
-                          <label asp-for="DeveloperUserId" class="control-label"></label>
-                        <select asp-for="DeveloperUserId" class="form-control" asp-items="ViewBag.DeveloperUserId"> </select>
-                        <i class="w-4 h-4 ms-auto" data-feather="chevron-down"></i>
-                    </div>
-                </div>*@
-
-                <div class="mb-3">
-                    <label class="form-label">Project Assign</label>
-                    <div class="form-group dropdown-toggle btn w-full btn-outline-secondary dark-bg-dark-2 dark-border-dark-2 d-flex align-items-center justify-content-start w-full">
-                        @*  <label asp-for="DeveloperUserId" class="control-label"></label>*@
-                        <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId"> </select>
-                        <i class="w-4 h-4 ms-auto" data-feather="chevron-down"></i>
-                    </div>
-                </div>
-
-
-                <div class="form-group">
-                    <input type="submit" value="Edit" class="btn btn-primary" />
-                </div>
-            </div>
-        </div>
-
 </form>
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Tickets Index">Back to List</a>
 </div>
 
 @section Scripts {
+    <script src="~/dist/js/ckeditor-classic.js"></script>
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

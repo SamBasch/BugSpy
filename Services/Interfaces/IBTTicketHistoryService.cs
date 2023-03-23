@@ -13,6 +13,10 @@ namespace BugSpy.Services.Interfaces
 
         Task<List<TicketHistory>> GetProjectTicketHistoriesAsync(int? projectId, int? companyId);
 
+        public Task<List<TicketHistory>> GetProjectTicketsHistory(int? companyId, int? projectId);
+
+        public Task<List<TicketHistory>> GetSingularTicketsHistory(int? companyId, int? ticketId);
+
         Task<List<TicketHistory>> GetCompanyTicketHistoriesAsync(int? companyId);
     }
 }

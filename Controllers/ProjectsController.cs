@@ -125,6 +125,72 @@ namespace BugSpy.Controllers
 
         }
 
+
+        public async Task<IActionResult> ActiveProjectsCardIndex()
+
+
+
+        {
+
+
+
+            int companyId = User.Identity!.GetCompanyId();
+
+
+
+
+            string? userId = _userManager.GetUserId(User);
+
+
+
+
+            IEnumerable<Project> companyProjects = (await _btProjectService.GetAllCompanyProjects(companyId));
+            return View(companyProjects);
+
+
+
+
+
+
+
+
+
+
+        }
+
+    
+        public async Task<IActionResult> CompanyArchivedCardProjects()
+
+
+
+        {
+
+
+
+            int companyId = User.Identity!.GetCompanyId();
+
+
+
+            string? userId = _userManager.GetUserId(User);
+
+
+
+
+
+            IEnumerable<Project> companyProjects = (await _btProjectService.GetAllCompanyArchivedProjects(companyId));
+            return View(companyProjects);
+
+
+
+
+
+
+
+
+
+
+        }
+
         public async Task<IActionResult> CompanyArchivedProjects()
 
 
@@ -339,6 +405,31 @@ namespace BugSpy.Controllers
             return View(project);
         }
 
+
+        // GET: Projects/Details/5
+
+        public async Task<IActionResult> Details2(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            int companyId = User.Identity!.GetCompanyId();
+
+            string? userId = _userManager.GetUserId(User);
+
+
+            Project? project = await _btProjectService.GetProjectByIdAsync(companyId, id);
+
+
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            return View(project);
+        }
 
 
 
@@ -579,6 +670,36 @@ namespace BugSpy.Controllers
         }
 
 
+
+
+
+
+        // GET: Projects/Delete/5
+        [Authorize(Roles = "Admin, ProjectManager")]
+        public async Task<IActionResult> Archive(int? id)
+        {
+
+            int companyId = User.Identity!.GetCompanyId();
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Project? project = await _btProjectService.GetProjectByIdAsync(companyId, id);
+            if (project == null)
+            {
+                return NotFound();
+            }
+            //return RedirectToAction("Details", "Projects", new { id = project.Id });
+            return View(project);
+        }
+
+
+
+
+
+
         // GET: Projects/Delete/5
         [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Delete(int? id)
@@ -596,7 +717,7 @@ namespace BugSpy.Controllers
             {
                 return NotFound();
             }
-            return RedirectToAction("Details", "Projects", new { id = project.Id });
+            //return RedirectToAction("Details", "Projects", new { id = project.Id });
             return View(project);
         }
 
@@ -637,12 +758,31 @@ namespace BugSpy.Controllers
 
 
 
+        // GET: Projects/Delete/5
+        [Authorize(Roles = "Admin, ProjectManager")]
+        public async Task<IActionResult> Unarchive(int? id)
+        {
 
+            int companyId = User.Identity!.GetCompanyId();
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Project? project = await _btProjectService.GetProjectByIdAsync(companyId, id);
+            if (project == null)
+            {
+                return NotFound();
+            }
+            //return RedirectToAction("Details", "Projects", new { id = project.Id });
+            return View(project);
+        }
 
 
 
         // POST: Projects/Delete/5
-        [HttpPost, ActionName("Unarchive")]
+        [HttpPost, ActionName("Unarchiver")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UnarchiveConfirm(int? Id)
         {

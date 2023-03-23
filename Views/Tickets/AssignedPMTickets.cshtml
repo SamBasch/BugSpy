@@ -14,7 +14,7 @@
 
 
 <div class="intro-y g-col-12 overflow-auto overflow-lg-visible">
-    <table id="myTable" class="display table table-report mt-n2">
+    <table id="myTable" class="display table table-responsive table-report mt-n2">
         <thead>
 
 
@@ -24,7 +24,7 @@
                 <th class="text-nowrap">TICKET NAME</th>
                 <th class="text-nowrap">CREATED/UPDATED</th>
                 <th class="text-nowrap">PROJECT</th>
-                <th class="text-nowrap">MEMBERS</th>
+   
                 <th class="text-center text-nowrap">TYPE</th>
                 <th class="text-center text-nowrap">PRIORITY</th>
                 <th class="text-center text-nowrap">STATUS</th>
@@ -66,21 +66,7 @@
                         <a href="" class="fw-medium text-nowrap">@ticket.Project.Name</a>
                     </td>
 
-                    <td>
-                        <div class="d-flex">
-                            <div class="w-10 h-10 image-fit zoom-in">
-                                <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-15.jpg" title="Uploaded at 27 February 2021">
-                            </div>
-                            <div class="w-10 h-10 image-fit zoom-in ms-n5">
-                                <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-6.jpg" title="Uploaded at 17 July 2022">
-                            </div>
-                            <div class="w-10 h-10 image-fit zoom-in ms-n5">
-                                <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-12.jpg" title="Uploaded at 12 November 2021">
-                            </div>
-                        </div>
-
-
-                    </td>
+           
 
 
 
@@ -218,25 +204,147 @@
 
 
 
+                                        @if ((User.IsInRole("Admin")) && ticket.DeveloperUser != null)
+                                        {
 
 
-                                        @if ((User.IsInRole("Admin")))
+
+
+
+
+                                            <li class="mb-2">
+                                                <a asp-controller="Tickets" asp-action="AssignDev" asp-route-id="@ticket.Id">
+                                                    <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                                                    <div class="side-menu__title"> Change Dev </div>
+                                                </a>
+                                            </li>
+
+
+
+
+
+
+
+                                        }
+
+
+
+
+
+
+
+                                        @if ((User.IsInRole("ProjectManager")) && result == false && ticket.DeveloperUser == null)
+                                        {
+
+
+
+
+
+
+                                            <li class="mb-2">
+                                                <a asp-controller="Tickets" asp-action="AssignDev" asp-route-id="@ticket.Id">
+                                                    <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                                                    <div class="side-menu__title"> Assign Dev </div>
+                                                </a>
+                                            </li>
+
+
+
+
+
+
+
+                                        }
+
+                                        @if ((User.IsInRole("ProjectManager")) && result == false && ticket.DeveloperUser != null)
+                                        {
+
+
+
+
+
+
+                                            <li class="mb-2">
+                                                <a asp-controller="Tickets" asp-action="AssignDev" asp-route-id="@ticket.Id">
+                                                    <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                                                    <div class="side-menu__title"> Change Dev </div>
+                                                </a>
+                                            </li>
+
+
+
+
+
+
+
+                                        }
+
+
+
+                                        @if ((User.IsInRole("Admin")) && ticket.DeveloperUser == null)
+                                        {
+
+
+
+
+
+
+                                            <li class="mb-2">
+                                                <a asp-controller="Tickets" asp-action="AssignDev" asp-route-id="@ticket.Id">
+                                                    <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                                                    <div class="side-menu__title"> Assign Dev </div>
+                                                </a>
+                                            </li>
+
+
+
+
+
+
+
+                                        }
+
+
+                                        @if ((User.IsInRole("Admin")) && ticket.Archived == false)
                                         {
 
                                             <li class="mb-2">
-                                                <a class=" text-theme-6" asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">
-                                                    <i data-feather="trash-2" class="w-4 h-4 me-1"></i>
-                                                    <div class="side-menu__title"> Delete </div>
+                                                <a class=" text-theme-6" asp-controller="Tickets" asp-action="Archive" asp-route-id="@ticket.Id">
+                                                    <i data-feather="file-minus" class="w-4 h-4 me-1"></i>
+                                                    <div class="side-menu__title"> Archive </div>
                                                 </a>
                                             </li>
                                         }
 
-                                        @if ((User.IsInRole("ProjectManager")) && result == false)
+
+                                        @if ((User.IsInRole("Admin")) && ticket.Archived == true)
+                                        {
+
+                                            <li class="mb-2">
+                                                <a class=" text-theme-9" asp-controller="Tickets" asp-action="Unarchive" asp-route-id="@ticket.Id">
+                                                    <i data-feather="file-plus" class="w-4 h-4 me-1"></i>
+                                                    <div class="side-menu__title"> Unarchive </div>
+                                                </a>
+                                            </li>
+                                        }
+
+                                        @if ((User.IsInRole("ProjectManager")) && result == false && ticket.Archived == false)
                                         {
                                             <li class="mb-2">
-                                                <a class=" text-theme-6" asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">
-                                                    <i data-feather="trash-2" class="w-4 h-4 me-1"></i>
-                                                    <div class="side-menu__title"> Delete </div>
+                                                <a class=" text-theme-6" asp-controller="Tickets" asp-action="Archive" asp-route-id="@ticket.Id">
+                                                    <i data-feather="file-minus" class="w-4 h-4 me-1"></i>
+                                                    <div class="side-menu__title"> Archive </div>
+                                                </a>
+                                            </li>
+                                        }
+
+
+                                        @if ((User.IsInRole("ProjectManager")) && result == false && ticket.Archived == true)
+                                        {
+                                            <li class="mb-2">
+                                                <a class=" text-theme-9" asp-controller="Tickets" asp-action="Unarchive" asp-route-id="@ticket.Id">
+                                                    <i data-feather="file-plus" class="w-4 h-4 me-1"></i>
+                                                    <div class="side-menu__title"> Unarchive </div>
                                                 </a>
                                             </li>
                                         }

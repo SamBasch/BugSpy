@@ -655,18 +655,582 @@ License: You must have a valid license purchased only from themeforest(the above
 
 
 
-   
 
 
 
-                    
-                
+                <li>
+                    <a asp-controller="Home" asp-action="Index2" class="side-menu">
+                        <div class="side-menu__icon"> <i data-feather="home"></i> </div>
+                        <div class="side-menu__title"> Home </div>
+                    </a>
+                </li>
 
-                   
-                
-                
+
+
+
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <li>
+                        <a href="javascript:;.html" class="side-menu">
+                            <div class="side-menu__icon"> <i data-feather="home"></i> </div>
+                            <div class="side-menu__title">
+                                Company
+                                <div class="side-menu__sub-icon"> <i data-feather="chevron-down"></i> </div>
+                            </div>
+                        </a>
+                        <ul class="">
+
+
+                            @*
+                        <li>
+                        <a asp-controller="Home" asp-action="Index2" class="side-menu">
+                        <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                        <div class="side-menu__title"> Home </div>
+                        </a>
+                        </li>*@
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            @if (User.IsInRole("Admin"))
+                            {
+
+                                <li>
+                                    <a asp-controller="Companies" asp-action="ManageUserRoles" class="side-menu">
+                                        <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                        <div class="side-menu__title"> Manage User Roles </div>
+                                    </a>
+                                </li>
+
+                            }
+
+
+
+
+                            @if (User.IsInRole("Admin"))
+                            {
+
+                                <li>
+                                    <a asp-controller="Invites" asp-action="Create" class="side-menu">
+                                        <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                        <div class="side-menu__title"> Create Invite </div>
+                                    </a>
+                                </li>
+
+                            }
+
+
+
+
+
+                            @*                @if (User.IsInRole("ProjectManager"))
+                        {
+
+                        <li>
+                        <a asp-controller="Tickets" asp-action="AssignedPMTickets" class="side-menu">
+                        <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                        <div class="side-menu__title">  My Project Tickets With Developer </div>
+                        </a>
+                        </li>
+
+                        }
+
+
+                        @if (User.IsInRole("ProjectManager"))
+                        {
+
+                        <li>
+                        <a asp-controller="Tickets" asp-action="UnAssignedPMTickets" class="side-menu">
+                        <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                        <div class="side-menu__title"> My Project Tickets Without Developer </div>
+                        </a>
+                        </li>
+
+                        }*@
+
+
+
+
+
+
+
+
+
+
+
+                        </ul>
+                    </li>
+
+
+
+
+                }
+
               
+
+
+
+
+
+
+
+
+
+                <li>
+                    <a href="javascript:;.html" class="side-menu">
+                        <div class="side-menu__icon"> <i data-feather="home"></i> </div>
+                        <div class="side-menu__title">
+                            Projects
+                            <div class="side-menu__sub-icon"> <i data-feather="chevron-down"></i> </div>
+                        </div>
+                    </a>
+                    <ul class="">
+
+
+@*
+                        <li>
+                            <a asp-controller="Home" asp-action="Index2" class="side-menu">
+                                <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                <div class="side-menu__title"> Home </div>
+                            </a>
+                        </li>*@
+
+
+
+                        @if (User.IsInRole("Admin"))
+                        {
+
+                            <li>
+                                <a asp-controller="Projects" asp-action="Create" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> Create New Project </div>
+                                </a>
+                            </li>
+
+                        }
+
+
+                        @if (User.IsInRole("ProjectManager"))
+                        {
+
+                            <li>
+                                <a asp-controller="Projects" asp-action="Create" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> Create New Project </div>
+                                </a>
+                            </li>
+
+                        }
+
+
+                        <li>
+                            <a asp-controller="Projects" asp-action="ProjectsIndex" class="side-menu">
+                                <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                <div class="side-menu__title"> Company Projects </div>
+                            </a>
+                        </li>
+
+
+
+                        <li>
+                            <a asp-controller="Projects" asp-action="ActiveProjectsCardIndex" class="side-menu">
+                                <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                <div class="side-menu__title"> Company Card Projects </div>
+                            </a>
+                        </li>
+
+
+
+
+                        @if (User.IsInRole("Submitter"))
+                        {
+
+                            <li>
+                                <a asp-controller="Projects" asp-action="ProjectsOverview" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> My Projects </div>
+                                </a>
+                            </li>
+
+                        }
+
+                        @if (User.IsInRole("Developer"))
+                        {
+
+                            <li>
+                                <a asp-controller="Projects" asp-action="ProjectsOverview" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> My Projects </div>
+                                </a>
+                            </li>
+
+                        }
+
+
+                        @if (User.IsInRole("ProjectManager"))
+                        {
+
+                            <li>
+                                <a asp-controller="Projects" asp-action="ProjectsOverview" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> My Projects </div>
+                                </a>
+                            </li>
+
+                        }
+
+
+
+
+                        <li>
+                            <a asp-controller="Projects" asp-action="CompanyArchivedProjects" class="side-menu">
+                                <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                <div class="side-menu__title"> Archived Projects </div>
+                            </a>
+                        </li>
+
+
+
+
+
+
+
+
+
+@*                        <li>
+                            <a asp-controller="Tickets" asp-action="TicketsIndex" class="side-menu">
+                                <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                <div class="side-menu__title"> Company Active Tickets </div>
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a asp-controller="Tickets" asp-action="CompanyArchivedTickets" class="side-menu">
+                                <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                <div class="side-menu__title"> Company Archived Tickets </div>
+                            </a>
+                        </li>*@
+
+
+
+
+@*                        @if (User.IsInRole("Submitter"))
+                        {
+
+                            <li>
+                                <a asp-controller="Tickets" asp-action="TabulatorTickets" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> My Tickets </div>
+                                </a>
+                            </li>
+
+                        }
+
+
+                        @if (User.IsInRole("Developer"))
+                        {
+
+                            <li>
+                                <a asp-controller="Tickets" asp-action="TabulatorTickets" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> My Tickets </div>
+                                </a>
+                            </li>
+
+                        }*@
+
+
+
+
+
+
+
+
+
+
+@*
+                        @if (User.IsInRole("Admin"))
+                        {
+
+                            <li>
+                                <a asp-controller="Tickets" asp-action="AllAssignedTickets" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> All Tickets With Developer </div>
+                                </a>
+                            </li>
+
+                        }
+
+                        @if (User.IsInRole("Admin"))
+                        {
+
+                            <li>
+                                <a asp-controller="Tickets" asp-action="AllUnassignedTickets" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> All Tickets Without Developer </div>
+                                </a>
+                            </li>
+
+                        }*@
+
+
+
+
                         
+
+
+
+
+
+
+
+        @*                @if (User.IsInRole("ProjectManager"))
+                        {
+
+                            <li>
+                                <a asp-controller="Tickets" asp-action="AssignedPMTickets" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title">  My Project Tickets With Developer </div>
+                                </a>
+                            </li>
+
+                        }
+
+
+                        @if (User.IsInRole("ProjectManager"))
+                        {
+
+                            <li>
+                                <a asp-controller="Tickets" asp-action="UnAssignedPMTickets" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> My Project Tickets Without Developer </div>
+                                </a>
+                            </li>
+
+                        }*@
+
+
+
+
+
+
+
+
+
+
+
+                    </ul>
+                </li>
+
+
+
+
+
+                <li>
+                    <a href="javascript:;.html" class="side-menu">
+                        <div class="side-menu__icon"> <i data-feather="home"></i> </div>
+                        <div class="side-menu__title">
+                            Tickets
+                            <div class="side-menu__sub-icon"> <i data-feather="chevron-down"></i> </div>
+                        </div>
+                    </a>
+                    <ul class="">
+
+
+
+
+
+                        @*
+                        <li>
+                        <a asp-controller="Projects" asp-action="ProjectsIndex" class="side-menu">
+                        <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                        <div class="side-menu__title"> Company Projects </div>
+                        </a>
+                        </li>
+
+
+
+                        @if (User.IsInRole("Submitter"))
+                        {
+
+                        <li>
+                        <a asp-controller="Projects" asp-action="ProjectsOverview" class="side-menu">
+                        <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                        <div class="side-menu__title"> My Projects </div>
+                        </a>
+                        </li>
+
+                        }
+
+                        @if (User.IsInRole("Developer"))
+                        {
+
+                        <li>
+                        <a asp-controller="Projects" asp-action="ProjectsOverview" class="side-menu">
+                        <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                        <div class="side-menu__title"> My Projects </div>
+                        </a>
+                        </li>
+
+                        }
+
+
+                        @if (User.IsInRole("ProjectManager"))
+                        {
+
+                        <li>
+                        <a asp-controller="Projects" asp-action="ProjectsOverview" class="side-menu">
+                        <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                        <div class="side-menu__title"> My Projects </div>
+                        </a>
+                        </li>
+
+                        }*@
+
+
+
+                                     <li>
+                            <a asp-controller="Tickets" asp-action="Create" class="side-menu">
+                                <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                <div class="side-menu__title"> Create New Ticket </div>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="Tickets" asp-action="TicketsIndex" class="side-menu">
+                                <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                <div class="side-menu__title"> Company Tickets </div>
+                            </a>
+                        </li>
+
+  
+
+
+
+
+                        @if (User.IsInRole("Submitter"))
+                        {
+
+                            <li>
+                                <a asp-controller="Tickets" asp-action="TabulatorTickets" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> My Tickets </div>
+                                </a>
+                            </li>
+
+                        }
+
+
+                        @if (User.IsInRole("Developer"))
+                        {
+
+                            <li>
+                                <a asp-controller="Tickets" asp-action="TabulatorTickets" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> My Tickets </div>
+                                </a>
+                            </li>
+
+                        }
+
+
+
+                        @if (User.IsInRole("ProjectManager"))
+                        {
+
+                            <li>
+                                <a asp-controller="Tickets" asp-action="AssignedPMTickets" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> My Assigned Tickets </div>
+                                </a>
+                            </li>
+
+                        }
+
+
+                        @if (User.IsInRole("ProjectManager"))
+                        {
+
+                            <li>
+                                <a asp-controller="Tickets" asp-action="UnAssignedPMTickets" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> My Unassigned Tickets </div>
+                                </a>
+                            </li>
+
+                        }
+
+
+
+
+                        @if (User.IsInRole("Admin"))
+                        {
+
+                            <li>
+                                <a asp-controller="Tickets" asp-action="AllUnassignedTickets" class="side-menu">
+                                    <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                    <div class="side-menu__title"> Unassigned Tickets </div>
+                                </a>
+                            </li>
+
+                        }
+
+
+                        <li>
+                            <a asp-controller="Tickets" asp-action="CompanyArchivedTickets" class="side-menu">
+                                <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                                <div class="side-menu__title"> Archived Tickets </div>
+                            </a>
+                        </li>
+
+
+
+
+                        @*                                @if (User.IsInRole("Admin"))
+                        {
+
+                        <li>
+                        <a asp-controller="Tickets" asp-action="AllAssignedTickets" class="side-menu">
+                        <div class="side-menu__icon"> <i data-feather="activity"></i> </div>
+                        <div class="side-menu__title"> All Tickets With Developer </div>
+                        </a>
+                        </li>
+
+                        }*@
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    </ul>
+                </li>
     
 
 

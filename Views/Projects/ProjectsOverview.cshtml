@@ -20,12 +20,12 @@
 
 
             <tr>
-                <th class="text-nowrap">PROJECT IMAGE</th>
+          
                 <th class="text-nowrap">PROJECT NAME</th>
                 <th class="text-nowrap">CREATED</th>
                 <th class="text-nowrap">START</th>
                 <th class="text-nowrap">DUE</th>
-                <th class="text-nowrap">MEMBERS</th>
+         
                 <th class="text-center text-nowrap">PRIORITY</th>
                 <th class="text-center text-nowrap">STATUS</th>
                 <th class="text-center text-nowrap">ACTIONS</th>
@@ -41,10 +41,7 @@
 
 
 
-                    <td>
-                        <img class="img-fluid border rounded-3 m-2" style="max-height: 250px;" src="@_fileService.ConvertByteArrayToFile(project.ImageFileData!, project.ImageFileType!, (int)DefaultImage.ProjectImage)" alt="">
-
-                    </td>
+               
 
 
                     <td class="">
@@ -74,21 +71,7 @@
                    
 
 
-                    <td>
-                        <div class="d-flex">
-                            <div class="w-10 h-10 image-fit zoom-in">
-                                <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-15.jpg" title="Uploaded at 27 February 2021">
-                            </div>
-                            <div class="w-10 h-10 image-fit zoom-in ms-n5">
-                                <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-6.jpg" title="Uploaded at 17 July 2022">
-                            </div>
-                            <div class="w-10 h-10 image-fit zoom-in ms-n5">
-                                <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-12.jpg" title="Uploaded at 12 November 2021">
-                            </div>
-                        </div>
-
-
-                    </td>
+        
 
 @*
 
@@ -241,12 +224,12 @@
                                                     <div class="side-menu__title"> Edit </div>
                                                 </a>
                                             </li>
-                                            <li class="mb-2">
+                                @*            <li class="mb-2">
                                                 <a class=" text-theme-6" asp-action="Details" asp-route-id="@project.Id">
                                                     <i data-feather="trash-2" class="w-4 h-4 me-1"></i>
                                                     <div class="side-menu__title"> Delete </div>
                                                 </a>
-                                            </li>
+                                            </li>*@
                                  
 
                                  
@@ -277,17 +260,63 @@
                                                     <div class="side-menu__title"> Edit </div>
                                                 </a>
                                             </li>
-                                            <li class="mb-2">
+                                    @*        <li class="mb-2">
                                                 <a class=" text-theme-6" asp-action="Details" asp-route-id="@project.Id">
                                                     <i data-feather="trash-2" class="w-4 h-4 me-1"></i>
                                                     <div class="side-menu__title"> Delete </div>
                                                 </a>
-                                            </li>
+                                            </li>*@
 
                                     
 
 
                                     }
+
+
+                                        @if ((User.IsInRole("Admin")) && project.Archived == false)
+                                        {
+
+                                            <li class="mb-2">
+                                                <a class=" text-theme-6" asp-controller="Projects" asp-action="Archive" asp-route-id="@project.Id">
+                                                    <i data-feather="file-minus" class="w-4 h-4 me-1"></i>
+                                                    <div class="side-menu__title"> Archive </div>
+                                                </a>
+                                            </li>
+                                        }
+
+
+                                        @if ((User.IsInRole("Admin")) && project.Archived == true)
+                                        {
+
+                                            <li class="mb-2">
+                                                <a class=" text-theme-9" asp-controller="Projects" asp-action="Unarchive" asp-route-id="@project.Id">
+                                                    <i data-feather="file-plus" class="w-4 h-4 me-1"></i>
+                                                    <div class="side-menu__title"> Unarchive </div>
+                                                </a>
+                                            </li>
+                                        }
+
+                                        @if ((User.IsInRole("ProjectManager")) && result == false && project.Archived == false)
+                                        {
+                                            <li class="mb-2">
+                                                <a class=" text-theme-6" asp-controller="Projects" asp-action="Archive" asp-route-id="@project.Id">
+                                                    <i data-feather="file-minus" class="w-4 h-4 me-1"></i>
+                                                    <div class="side-menu__title"> Archive </div>
+                                                </a>
+                                            </li>
+                                        }
+
+
+                                        @if ((User.IsInRole("ProjectManager")) && result == false && project.Archived == true)
+                                        {
+                                            <li class="mb-2">
+                                                <a class=" text-theme-9" asp-controller="Projects" asp-action="Unarchive" asp-route-id="@project.Id">
+                                                    <i data-feather="file-plus" class="w-4 h-4 me-1"></i>
+                                                    <div class="side-menu__title"> Unarchive </div>
+                                                </a>
+                                            </li>
+                                        }
+
 
 
 

@@ -1,0 +1,111 @@
+﻿@model BugSpy.Models.Project
+@using BugSpy.Services.Interfaces;
+@using BugSpy.Models.Enums;
+
+@inject IBTProjectService _btProjectService
+
+
+@inject IBTFileService _ImageService
+@{
+    ViewData["Title"] = "Delete";
+    BTUser? projectManager = (await _btProjectService.GetProjectManagerAsync(Model.Id));
+
+    int ticketCount  = 0;
+}
+
+@*<div class="row">
+    <div class="col-12 col-md-8 offset-md-2">
+        <h1 class="display-6">Are you sure?</h1>
+        <p class=" display-6 mt-3 text-lead text-muted">This ticket will be archived.</p>
+        <div class="card dark mt-3 mb-3">
+            <div class="row box dark g-0">
+                <div class="col-md-5">
+                    <div class=" dark card-body">
+                        <h3 class="card-title">Project Name: @Model.Name</h3>
+
+
+                        <div class="mt-2 card-text">
+                            <span class="fw-bold me-2">Project:</span>@Model.Name
+                        </div>
+                        <div class="card-text">
+                            @if (Model.DeveloperUser != null)
+                            {
+                                <span class="fw-bold me-2">Developer Assigned:</span>
+
+                                @Model.DeveloperUser.FullName
+
+                            }
+                            else
+                            {
+
+                                <span class="text-theme-6 fw-bold me-2">Developer: Unassigned</span>
+                            }
+                        </div>
+                        <div class="card-text">
+                            <span class="fw-bold me-2">Submitter:</span>@Model.SubmitterUser.FullName
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form class="d-flex justify-content-between" asp-action="Delete" asp-route-id="@Model.Id">
+            <input hidden asp-for="Id" />
+            <a asp-action="TicketsIndex" asp-controller="Tickets" class="btn mx-3 btn-outline-secondary rounded-pill btnLink">Cancel</a>
+            <button type="submit" class="btn btn-danger rounded-pill btnLink">Archive</button>
+        </form>
+    </div>
+</div>
+*@
+
+
+
+
+
+
+
+<div class="row">
+    <div class="col-12 col-md-8 offset-md-2">
+        <h2 class="display-6">Are you sure you want to archive this project? </h2>
+       
+        <div class="card mt-3 mb-3">
+            <div class="row box dark g-0">
+      
+                <div class="col-md-5">
+                    <div class="card-body">
+                        <h3 class=" mt-3 fw-bold me-2 card-title">Project Name: @Model.Name</h3>
+
+                        <div class=" mt-3 card-text">
+                            <span class="fw-bold me-2">Project Manager:</span>                   @if (projectManager != null)
+                            {
+                                <a href="" class="fw-medium">@((await _btProjectService.GetProjectManagerAsync(Model.Id)).FullName ?? "Unassigned")</a>
+                            }
+                            else
+                            {
+                                <a href="" class="text-theme-6 fw-bold">Project Manager Unassigned</a>
+                            }
+                        </div>
+
+                        <div>
+                            
+
+                            @foreach (Ticket ticket in Model.Tickets)
+                            {
+                                ticketCount++;
+
+
+                               
+                            }
+
+                            <h3 class="mt-5" text-dark fw-bold">There Are @ticketCount tickets in this project that will be archived.</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form class="d-flex justify-content-between" asp-action="Delete" asp-route-id="@Model.Id">
+            <input hidden asp-for="Id" />
+            <a asp-action="ActiveProjectsCardIndex" asp-controller="Projects" class="btn mx-3 btn-outline-secondary rounded-pill btnLink">Cancel</a>
+            <button type="submit" class="btn btn-danger rounded-pill btnLink">Archive</button>
+        </form>
+    </div>
+</div>

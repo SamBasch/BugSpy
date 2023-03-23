@@ -2,13 +2,14 @@
 @using X.PagedList;
 @using BugSpy.Services.Interfaces
 @using BugSpy.Models.Enums
-@inject UserManager<BTUser> _userManager
 @using X.PagedList.Mvc.Core;
 @using X.PagedList.Web.Common;
+@inject UserManager<BTUser> _userManager
 @inject IBTProjectService _btProjectService
 @inject IBTFileService _fileService
 @model IEnumerable<BugSpy.Models.Project>
 @{
+
     BTUser? projectMember = await _userManager.GetUserAsync(User);
 }
 
@@ -17,13 +18,14 @@
         <thead>
 
 
+
             <tr>
-           
+            
                 <th class="text-nowrap">PROJECT NAME</th>
                 <th class="text-nowrap">CREATED</th>
                 <th class="text-nowrap">START</th>
                 <th class="text-nowrap">DUE</th>
-           
+         
                 <th class="text-center text-nowrap">PRIORITY</th>
                 <th class="text-center text-nowrap">STATUS</th>
                 <th class="text-center text-nowrap">ACTIONS</th>
@@ -32,29 +34,6 @@
         <tbody>
             @foreach (Project project in Model)
             {
-                <div id="delete-confirmation-modal" class="modal fade" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-body p-0">
-                                <div class="p-5 text-center">
-                                    <i data-feather="x-circle" class="w-16 h-16 text-theme-6 mx-auto mt-3"></i>
-                                    <div class="fs-3xl mt-5">Are you sure?</div>
-                                    <div class="text-gray-600 mt-2">
-                                        Do you really want to delete these records?
-                                        <br>
-                                        This process cannot be undone.
-                                    </div>
-                                </div>
-                                <div class="px-5 pb-8 text-center">
-                                    <button type="button" data-bs-dismiss="modal" class="btn btn-outline-secondary w-24 me-1">Cancel</button>
-
-                                    <a asp-controller="Projects" asp-action="DeleteConfirmed" asp-route-id="@project.Id" class="btn btn-danger w-24">Delete</a>
-                              @*      <button type="button" class="btn btn-danger w-24">Delete</button>*@
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 bool result = await _btProjectService.IsMemberInProject(projectMember, project.Id);
 
@@ -62,19 +41,13 @@
 
 
 
-                  
-
+              
 
                     <td class="">
                         <a href="" class="fw-medium text-nowrap">@project.Name</a>
                         <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Sport &amp; Outdoor</div>
                     </td>
 
-                    @*
-                <td class="">
-                <a href="" class="fw-medium text-nowrap">@project.Description</a>
-                <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Sport &amp; Outdoor</div>
-                </td>*@
 
 
                     <td class="">
@@ -96,12 +69,7 @@
                     </td>
 
 
-                    @*
-                <td class="">
-                <a href="" class="fw-medium text-nowrap">@project.Members</a>
-                </td>*@
 
-        
 
                     @*
 
@@ -129,7 +97,6 @@
                         </td>
 
                     }
-
 
 
 
@@ -255,13 +222,13 @@
                                                     <div class="side-menu__title"> Edit </div>
                                                 </a>
                                             </li>
-            @*                                <li class="mb-2">
+                                            <li class="mb-2">
                                                 <a class=" text-theme-6" asp-action="Details" asp-route-id="@project.Id">
                                                     <i data-feather="trash-2" class="w-4 h-4 me-1"></i>
                                                     <div class="side-menu__title"> Delete </div>
                                                 </a>
                                             </li>
-*@
+
 
 
 
@@ -291,62 +258,20 @@
                                                     <div class="side-menu__title"> Edit </div>
                                                 </a>
                                             </li>
-                         @*                   <li class="mb-2">
+                                            <li class="mb-2">
                                                 <a class=" text-theme-6" asp-action="Details" asp-route-id="@project.Id">
                                                     <i data-feather="trash-2" class="w-4 h-4 me-1"></i>
                                                     <div class="side-menu__title"> Delete </div>
                                                 </a>
-                                            </li>*@
-
-
-
-
-                                        }
-
-
-                                        @if ((User.IsInRole("Admin")) && project.Archived == false)
-                                        {
-
-                                            <li class="mb-2">
-                                                <a class=" text-theme-6" asp-controller="Projects" asp-action="Archive" asp-route-id="@project.Id">
-                                                    <i data-feather="file-minus" class="w-4 h-4 me-1"></i>
-                                                    <div class="side-menu__title"> Archive </div>
-                                                </a>
                                             </li>
+
+
+
+
                                         }
 
 
-                                        @if ((User.IsInRole("Admin")) && project.Archived == true)
-                                        {
 
-                                            <li class="mb-2">
-                                                <a class=" text-theme-9" asp-controller="Projects" asp-action="Unarchive" asp-route-id="@project.Id">
-                                                    <i data-feather="file-plus" class="w-4 h-4 me-1"></i>
-                                                    <div class="side-menu__title"> Unarchive </div>
-                                                </a>
-                                            </li>
-                                        }
-
-                                        @if ((User.IsInRole("ProjectManager")) && result == false && project.Archived == false)
-                                        {
-                                            <li class="mb-2">
-                                                <a class=" text-theme-6" asp-controller="Projects" asp-action="Archive" asp-route-id="@project.Id">
-                                                    <i data-feather="file-minus" class="w-4 h-4 me-1"></i>
-                                                    <div class="side-menu__title"> Archive </div>
-                                                </a>
-                                            </li>
-                                        }
-
-
-                                        @if ((User.IsInRole("ProjectManager")) && result == false && project.Archived == true)
-                                        {
-                                            <li class="mb-2">
-                                                <a class=" text-theme-9" asp-controller="Projects" asp-action="Unarchive" asp-route-id="@project.Id">
-                                                    <i data-feather="file-plus" class="w-4 h-4 me-1"></i>
-                                                    <div class="side-menu__title"> Unarchive </div>
-                                                </a>
-                                            </li>
-                                        }
 
 
 
@@ -663,4 +588,24 @@
 <!-- END: Pagination -->
 </div>
 <!-- BEGIN: Delete Confirmation Modal -->
-
+<div id="delete-confirmation-modal" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="p-5 text-center">
+                    <i data-feather="x-circle" class="w-16 h-16 text-theme-6 mx-auto mt-3"></i>
+                    <div class="fs-3xl mt-5">Are you sure?</div>
+                    <div class="text-gray-600 mt-2">
+                        Do you really want to delete these records?
+                        <br>
+                        This process cannot be undone.
+                    </div>
+                </div>
+                <div class="px-5 pb-8 text-center">
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-outline-secondary w-24 me-1">Cancel</button>
+                    <button type="button" class="btn btn-danger w-24">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

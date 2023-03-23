@@ -21,32 +21,41 @@
 {
 
 
-	<a class="d-flex align-items-center text-theme-9" href="javascript:;" data-bs-toggle="modal" data-bs-target="#unarchive-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> UnArchive </a>
+	<div class="w-40">
+		<a asp-controller="Tickets" asp-action="Unarchive" asp-route-id="@Model.Id" class="d-flex  btn btn-success align-items-center"> <i data-feather="file-plus" class=" w-4 h-4 me-1"></i> Unarchive </a>
+	</div>
 }
 
 @if (User.IsInRole(nameof(BTRoles.Admin)) && Model.Archived == false)
 {
-	<a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Archive </a>
 
+	<div class="w-40">
+		<a asp-controller="Tickets" asp-action="Archive" asp-route-id="@Model.Id" class="d-flex  btn btn-danger align-items-center"> <i data-feather="file-minus" class=" w-4 h-4 me-1"></i> Archive </a>
+	</div>
+	
 
+	
 }
 
 
 @if (User.IsInRole(nameof(BTRoles.ProjectManager)) && result == false && Model.Archived == true)
 {
-
-	<a class="d-flex align-items-center text-theme-9" href="javascript:;" data-bs-toggle="modal" data-bs-target="#unarchive-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> UnArchive </a>
+	<div class="w-40">
+		<a asp-controller="Tickets" asp-action="Unarchive" asp-route-id="@Model.Id" class="d-flex  btn btn-success align-items-center"> <i data-feather="file-plus" class=" w-4 h-4 me-1"></i> Unarchive </a>
+	</div>
 }
 
 @if (User.IsInRole(nameof(BTRoles.ProjectManager)) && result == false && Model.Archived == false)
 {
 
-	<a class="d-flex align-items-center text-theme-6" href="javascript:;" data-bs-toggle="modal" data-bs-target="#delete-confirmation-modal"> <i data-feather="trash-2" class="w-4 h-4 me-1"></i> Archive </a>
+	<div class="w-40">
+		<a asp-controller="Tickets" asp-action="Archive" asp-route-id="@Model.Id" class="d-flex  btn btn-danger align-items-center"> <i data-feather="file-minus" class=" w-4 h-4 me-1"></i> Archive </a>
+	</div>
 }
 
 
 <div>
-	<div classxfont-weighteighteightgetainer-fluid">
+	<div class="xfont-weighteighteightgetainer-fluid">
 		<div class="row gy-2">
 			<div class="col-md-12 col">
 				<div class="row col-cols-2 mt-5 bg-secondary">

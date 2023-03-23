@@ -6,6 +6,7 @@
 @inject IBTProjectService _btProjectService
 @inject IBTTicketHistoryService _historyService
 @inject UserManager<BTUser> _userManager
+@inject IBTFileService _fileService
 @{
 
     int companyId = User.Identity!.GetCompanyId();
@@ -157,13 +158,13 @@
     <div class="grid columns-12 gap-6">
         <div class="g-col-12 g-col-xl-9 g-col-xxl-9 z-10">
             <div class="mt-6 mb-n6 intro-y">
-                <div class="alert alert-dismissible fade show box bg-theme-3 text-white d-flex align-items-center mb-6" role="alert">
+@*                <div class="alert alert-dismissible fade show box bg-theme-3 text-white d-flex align-items-center mb-6" role="alert">
                     <span>
                         Introducing new dashboard! Download now at <a href="javascript:;" class="text-decoration-underline ms-1" target="blank">themeforest.net</a>.
                         <button class="btn border-transparent bg-white bg-opacity-20 text-white dark-bg-dark-1 bg-opacity-30-hover py-0.5 px-2 my-n3 ms-2">Detail</button>
                     </span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"> <i data-feather="x" class="w-4 h-4"></i> </button>
-                </div>
+                </div>*@
             </div>
             <div class="mt-14 mb-3 grid g-col-12 gap-sm-10 intro-y">
                 <div class="g-col-12 g-col-sm-6 g-col-md-4 py-6 ps-sm-5 ps-md-0 ps-lg-5 position-relative text-center text-sm-start">
@@ -329,7 +330,7 @@
 
 
                   
-                        <div class="tab-pane fade show active" id="inactive-users" role="tabpanel" aria-labelledby="inactive-users-tab">
+                        <div class="tab-pane fade active" id="inactive-users" role="tabpanel" aria-labelledby="inactive-users-tab">
                             <div class="position-relative">
                                 <canvas class="mt-8" id="myChartTwo" height="130"></canvas>
                                 <div class="d-flex flex-column justify-content-center align-items-center position-absolute w-full h-full top-0 start-0">
@@ -797,7 +798,7 @@
                                     <th class="text-nowrap">TICKET NAME</th>
                                     <th class="text-nowrap">CREATED/UPDATED</th>
                                     @*              <th class="text-nowrap">PROJECT</th>*@
-                                    <th class="text-nowrap">MEMBERS</th>
+                          
                  
                                     <th class="text-center text-nowrap">TYPE</th>
                    
@@ -838,21 +839,7 @@
                                     <a href="" class="fw-medium text-nowrap">@ticket.Project.Name</a>
                                     </td>*@
 
-                                        <td>
-                                            <div class="d-flex">
-                                                <div class="w-10 h-10 image-fit zoom-in">
-                                                    <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-15.jpg" title="Uploaded at 27 February 2021">
-                                                </div>
-                                                <div class="w-10 h-10 image-fit zoom-in ms-n5">
-                                                    <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-6.jpg" title="Uploaded at 17 July 2022">
-                                                </div>
-                                                <div class="w-10 h-10 image-fit zoom-in ms-n5">
-                                                    <img alt="Rubick Bootstrap HTML Admin Template" class="tooltip rounded-circle" src="dist/images/preview-12.jpg" title="Uploaded at 12 November 2021">
-                                                </div>
-                                            </div>
-
-
-                                        </td>
+                    
 
 
 
@@ -894,7 +881,7 @@
         </div>
     </div>
     <div class="g-col-12 g-col-xxl-3 position-relative z-10">
-        <div class="border-start-xxl border-theme-5 dark-border-dark-3 pb-10 intro-y">
+        <div class="border-start-xxl border-theme-5 dark-border-dark-3 pb-10 intro-y" style="overflow-y: auto">
             <div class="ps-xxl-6 grid columns-12 gap-6">
                 <!-- BEGIN: Recent Activities -->
                 <div class="g-col-12 g-col-md-6 g-col-xl-4 g-col-xxl-12 mt-3">
@@ -910,15 +897,15 @@
                             <div class="intro-x position-relative d-flex align-items-center mb-3">
                                 <div class="report-timeline__image">
                                     <div class="w-10 h-10 flex-none image-fit rounded-circle overflow-hidden">
-                                        <img alt="Rubick Bootstrap HTML Admin Template" src="dist/images/profile-3.jpg">
+                                        <img src="@_fileService.ConvertByteArrayToFile(history.User!.ImageFileData!, history.User!.ImageFileType!, (int)DefaultImage.BTUserImage)" alt="Post Images" />
                                     </div>
                                 </div>
                                 <div class="box px-5 py-3 ms-4 flex-1 zoom-in">
                                     <div class="d-flex align-items-center">
                                         <div class="fw-medium">@history.User.FullName</div>
-                                        <div class="fs-xs text-gray-500 ms-auto">07:00 PM</div>
+                                        <div class="fs-xs text-gray-500 ms-auto">@history.Created</div>
                                     </div>
-                                    <div class="text-gray-600 mt-1">@history.Description</div>
+                                    <div class=" mt-1">@history.Description</div>
                                 </div>
                             </div>
                         }
