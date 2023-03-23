@@ -1,369 +1,824 @@
 ﻿@model BugSpy.Models.Ticket
+@using BugSpy.Extensions;
 @using BugSpy.Models.Enums
 @using BugSpy.Services.Interfaces
 @using Microsoft.AspNetCore.Identity;
 @inject IBTFileService _fileService
 @inject UserManager<BTUser> _userManager
 @inject IBTProjectService _btProjectService
+@inject IBTTicketHistoryService _historyService
 
 @{
-	ViewData["Title"] = "Details";
+    ViewData["Title"] = "Details";
 
-	BTUser? projectMember = await _userManager.GetUserAsync(User);
 
-	bool result = await _btProjectService.IsMemberInProject(projectMember, Model.Project.Id);
+
+    string userId = _userManager.GetUserId(User);
+
+    int ticketPriority = Model.TicketPriorityId;
+
+
+    int companyId = User.Identity!.GetCompanyId();
+
+    BTUser? projectMember = await _userManager.GetUserAsync(User);
+
+    bool result = await _btProjectService.IsMemberInProject(projectMember, Model.Project.Id);
+
+
+    IEnumerable<TicketHistory> ticketHistories = await _historyService.GetSingularTicketsHistory(companyId, Model.Id);
+
+    int historyCount = ticketHistories.Count();
+
+
+
 }
 
-<h1>Ticket Details</h1>
-
-
-@if (User.IsInRole(nameof(BTRoles.Admin)) && Model.Archived == true)
-{
-
-
-	<div class="w-40">
-		<a asp-controller="Tickets" asp-action="Unarchive" asp-route-id="@Model.Id" class="d-flex  btn btn-success align-items-center"> <i data-feather="file-plus" class=" w-4 h-4 me-1"></i> Unarchive </a>
-	</div>
-}
-
-@if (User.IsInRole(nameof(BTRoles.Admin)) && Model.Archived == false)
-{
-
-	<div class="w-40">
-		<a asp-controller="Tickets" asp-action="Archive" asp-route-id="@Model.Id" class="d-flex  btn btn-danger align-items-center"> <i data-feather="file-minus" class=" w-4 h-4 me-1"></i> Archive </a>
-	</div>
-	
-
-	
-}
-
-
-@if (User.IsInRole(nameof(BTRoles.ProjectManager)) && result == false && Model.Archived == true)
-{
-	<div class="w-40">
-		<a asp-controller="Tickets" asp-action="Unarchive" asp-route-id="@Model.Id" class="d-flex  btn btn-success align-items-center"> <i data-feather="file-plus" class=" w-4 h-4 me-1"></i> Unarchive </a>
-	</div>
-}
-
-@if (User.IsInRole(nameof(BTRoles.ProjectManager)) && result == false && Model.Archived == false)
-{
-
-	<div class="w-40">
-		<a asp-controller="Tickets" asp-action="Archive" asp-route-id="@Model.Id" class="d-flex  btn btn-danger align-items-center"> <i data-feather="file-minus" class=" w-4 h-4 me-1"></i> Archive </a>
-	</div>
-}
-
-
-<div>
-	<div class="xfont-weighteighteightgetainer-fluid">
-		<div class="row gy-2">
-			<div class="col-md-12 col">
-				<div class="row col-cols-2 mt-5 bg-secondary">
-					<div class="box border-1 mx-2 dark col m-1 p-2">
-						<div class="card-body mt-2">
-						
-							<h5 class="mt-2">@Model.Title<h5>
-					
-									<p class="mt-2">@Html.Raw(Model.Description)</p>
-							<div class="progress-container progress-info mt-2 m-b-25">
-						
-								<span class="progress-badge" style="font-size:small">Project: @Model.Project.Name</span>
-								<div class="progress mt-3">
-					
-									<div class="progress-bar mt-3" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" style="width: [Percent]%;">
-				
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="box dark col mx-2 m-1 p-2">
-						<div class="card-body">
-							<ul class="list-unstyled mt-2">
-							
-								<li class="mt-2"><strong>Date Entered:</strong> <span class="">  @Model.Created</</span></li>
-							
-								<li class="mt-2"><strong>Deadline:</strong> <span class="">  @Model.Project.EndDate</</span></li>
-					
-								<li class="mt-2"><strong>Type:</strong> <span class="">  @Model.TicketType.Name</span></li>
-						
-								<li class="mt-2"><strong>Priority:</strong> <span class="">  @Model.TicketPriority.Name</span></li>
-							
-								@if(Model.Archived == true)
-								{
-									<li class="mt-2"><strong>Status:</strong> <span class="">Ticket Archived</span></li>
-								} else
-								{
-									<li class="mt-2"><strong>Status:</strong> <span class="">Ticket Active</span></li>
-								}
-
-								@if(Model.DeveloperUser == null)
-								{
-									<li class="mt-2"><strong>Developer:</strong> <span class="">Unassigned</span></li>
-								} else
-								{
-
-									<li class="mt-2"><strong>Developer:</strong> <span class="">@Model.DeveloperUser.FullName</span></li>
-								}
-
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-8 col col-cols-2 mt-5 ">
-				<div class="col">
-					<div class="bg-secondary">
-						<div class="box dark m-1 p-2">
-							<div class="card-header">
-								<h2>Comments</h2>
-							</div>
-							<div class="card-body" style="overflow-y:auto;height:600px;">
-
-								@if (User.Identity.IsAuthenticated && result == false)
-								{
-
-									<div class="comment-respond">
-										<h4 class="title">Post a comment</h4>
-										<form asp-controller="Tickets" asp-action="AddCommentToTicket" method="post">
-
-											<input type="hidden" asp-for="Id" name="TicketId" />
-											<input name="TicketId" value="@Model.Id" type="hidden" />
-											<div class="row row-cols-12">
-												<div class="col-12">
-													<div class="form-group border-bottom border-gray-200 dark-border-dark-5">
-														<textarea class="col-12 editor" id="message" name="Comment"></textarea>
-													</div>
-												</div>
-
-
-												<div class="col-lg-12 mt-3 mb-2 p-2">
-													<div class="form-submit dark">
-														<input name="submit" type="submit" id="submit" class="btn btn-primary w-24" value="Post Comment">
-													</div>
-												</div>
-											</div>
-										</form>
-									</div>
-								}
-								else
-								{
-									<div class="my-5">
-										<p class="display-6">You must be a member of this project to leave a comment!</p>
-									</div>
-
-								}
-								<hr />
-								<h6>Comments</h6>
-								<ul class="right_chat list-unstyled mb-0">
-									@foreach (var ticketComment in Model.Comments)
-									{
-
-
-
-										<li class="mb-5 mt-2 d-block comment">
-											<div class=" d-inline-flex mx-5 comment-body">
-												<div class=" d-inline-flex mx-5  single-comment">
-													<div class="comment-img">
-														<span class="user-img">
-															<img src="@_fileService.ConvertByteArrayToFile(ticketComment.User!.ImageFileData!, ticketComment.User!.ImageFileType!, (int)DefaultImage.BTUserImage)" alt="Post Images" />
-														</span>
-													</div>
-													<div class=" d-block mx-2 px-8 py-4 comment-inner">
-														<h6 class="commenter">
-														
-															
-																	<p >@ticketComment.User!.FullName</p>
-														
-													
-														</h6>
-														<div class=" comment-meta">
-															<div class="d-block time-spent">@ticketComment.Created.ToString("MMM dd, yyyy")</div>
-														</div>
-														<div class=" d-block display-block justify-content-end align-items-end align-items-right comment-text">
-															<p class="d-block b2">
-																@Html.Raw(ticketComment.Comment)
-															</p>
-														</div>
-													</div>
-													@if (User.IsInRole("Admin"))
-													{
-														<div class="d-flex justify-content-end">
-
-
-
-															<a class="mx-3 btn " asp-controller="Comments" asp-action="Delete" asp-route-id="@ticketComment.Id">
-																<i class="fa fa-trash fa-2x"></i>
-															</a>
-
-
-
-														</div>
-													}
-
-												</div>
-											</div>
-
-										</li>
-									}
-								</ul>
-							</div>
-							<div class="card-footer">
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col">
-					<div class="bg-secondary">
-						<div class="box-dark m-1 p-2">
-							<div class="card-header">
-								<h2>Attachments</h2>
-							</div>
-							<div class="card-body" style="overflow-y:auto;height:300px;">
-
-						
-
-								@if (User.Identity.IsAuthenticated && result == false)
-								{
-									<div class="row clearfix">
-										<div>
-											<form asp-action="AddTicketAttachment" asp-controller="Tickets" enctype="multipart/form-data" method="post">
-												<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-												<input type="hidden" asp-for="@Model.Id" name="TicketId">
-												<div class="media-body ml-3">
-													<label>
-														Description
-														<input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="mb-3 form-control" />
-													</label><br />
-													<label class="btn btn-outline-primary btn-sm">
-														<input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" class="form-control-file" />
-													</label>
-													<button type="submit" class=" mx-2 btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
-												</div>
-											</form>
-										</div>
-									</div>
-
-								} else
-								{
-									<p>You must be a member of this project to add attachments!</p>
-								}
+<div class="intro-y d-flex align-items-center mt-8">
+    <h2 class="fs-lg fw-medium me-auto">
+        Ticket Details
+    </h2>
 
 
 
 
-								<hr class="mt-3"/>
-								<h6 class="mt-2">Attachments</h6>
-								<div class="container">
-									<div class="row">
-										@foreach (TicketAttachment item in Model.Attachments)
-										{
-											<div class="col mt-2 col-sm-2">
-												<a asp-action="ShowFile" asp-controller="Tickets" asp-route-Id="@item.Id">
-													<div class="icon">
-														<img src="@_fileService.GetFileIcon(item.FileName)" style="height:50px;width:50px" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="@item.FileName" />
-													</div>
-												</a>
-												<div style="font-size:x-small">
-													<div class="file-name">
-														<strong>@item.Description</strong>
-													</div>
-													<small>Size: @_fileService.FormatFileSize(item.FileData.Length) </small>
-												</div>
-											</div>
-										}
-									</div>
-								</div>
+    @if ((User.IsInRole("Admin")) || Model.SubmitterUserId == userId || Model.DeveloperUserId == userId)
+    {
 
-							</div>
-							<div class="card-footer">
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-4 col mt-5 ">
-				<div class="bg-dark">
-					<div class="card box dark m-1 p-2">
-						<div class="card-header">
-							<h2>History</h2>
-							<hr />
-						</div>
-						<div class="card-body box dark" style="overflow-y:auto;height:1000px;">
-					
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+
+
+
+
+
+        <div class="float-right float-end me-5 w-40">
+            <a asp-controller="Tickets" asp-action="Edit" asp-route-id="@Model.Id" class="d-flex  btn btn-info align-items-center"> <i data-feather="edit-2" class=" w-4 h-4 me-1"></i> Edit </a>
+        </div>
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+    @if ((User.IsInRole("ProjectManager")) && result == false)
+    {
+
+
+
+
+
+
+
+        <div class="float-right float-end me-5 w-40">
+            <a asp-controller="Tickets" asp-action="Edit" asp-route-id="@Model.Id" class="d-flex  btn btn-info align-items-center"> <i data-feather="edit-2" class=" w-4 h-4 me-1"></i> Edit </a>
+        </div>
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+    @if ((User.IsInRole("Admin")) && Model.DeveloperUser != null)
+    {
+
+
+
+
+
+
+
+        <div class="float-right float-end me-5 w-40">
+            <a asp-controller="Tickets" asp-action="AssignDev" asp-route-id="@Model.Id" class="d-flex  btn btn-primary align-items-center"> <i data-feather="user" class=" w-4 h-4 me-1"></i> Change Dev </a>
+        </div>
+
+
+
+
+
+
+
+    }
+
+
+
+
+    @if ((User.IsInRole("Admin")) && Model.DeveloperUser == null)
+    {
+
+
+
+
+
+
+
+        <div class="float-right float-end me-5 w-40">
+            <a asp-controller="Tickets" asp-action="AssignDev" asp-route-id="@Model.Id" class="d-flex  btn btn-primary align-items-center"> <i data-feather="user" class=" w-4 h-4 me-1"></i> Assign Dev </a>
+        </div>
+
+
+
+
+
+
+
+    }
+
+
+
+    @if ((User.IsInRole("ProjectManager")) && result == false && Model.DeveloperUser == null)
+    {
+
+
+
+
+
+
+
+        <div class="float-right float-end me-5 w-40">
+            <a asp-controller="Tickets" asp-action="AssignDev" asp-route-id="@Model.Id" class="d-flex  btn btn-primary align-items-center"> <i data-feather="user" class=" w-4 h-4 me-1"></i> Assign Dev </a>
+        </div>
+
+
+
+
+
+
+
+    }
+
+    @if ((User.IsInRole("ProjectManager")) && result == false && Model.DeveloperUser != null)
+    {
+
+
+
+
+
+
+
+        <div class="float-right float-end me-5 w-40">
+            <a asp-controller="Tickets" asp-action="AssignDev" asp-route-id="@Model.Id" class="d-flex  btn btn-primary align-items-center"> <i data-feather="user" class=" w-4 h-4 me-1"></i> Change Dev </a>
+        </div>
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+    @if (User.IsInRole(nameof(BTRoles.Admin)) && Model.Archived == true)
+    {
+
+
+        <div class="float-right float-end w-40">
+            <a asp-controller="Tickets" asp-action="Unarchive" asp-route-id="@Model.Id" class="d-flex  btn btn-success align-items-center"> <i data-feather="file-plus" class=" w-4 h-4 me-1"></i> Unarchive </a>
+        </div>
+    }
+
+    @if (User.IsInRole(nameof(BTRoles.Admin)) && Model.Archived == false)
+    {
+
+        <div class=" float-right float-end w-40">
+            <a asp-controller="Tickets" asp-action="Archive" asp-route-id="@Model.Id" class="d-flex  btn btn-danger align-items-center"> <i data-feather="file-minus" class=" w-4 h-4 me-1"></i> Archive </a>
+        </div>
+
+
+
+    }
+
+
+    @if (User.IsInRole(nameof(BTRoles.ProjectManager)) && result == false && Model.Archived == true)
+    {
+        <div class=" float-right float-endw-40">
+            <a asp-controller="Tickets" asp-action="Unarchive" asp-route-id="@Model.Id" class="d-flex  btn btn-success align-items-center"> <i data-feather="file-plus" class=" w-4 h-4 me-1"></i> Unarchive </a>
+        </div>
+    }
+
+    @if (User.IsInRole(nameof(BTRoles.ProjectManager)) && result == false && Model.Archived == false)
+    {
+
+        <div class=" float-right float-end w-40">
+            <a asp-controller="Tickets" asp-action="Archive" asp-route-id="@Model.Id" class="d-flex  btn btn-danger align-items-center"> <i data-feather="file-minus" class=" w-4 h-4 me-1"></i> Archive </a>
+        </div>
+    }
+
+</div>
+<!-- BEGIN: Profile Info -->
+<div></div>
+
+
+
+
+
+
+
+
+
+
+
+<div class="grid columns-12 gap-6 mt-5">
+    <!-- BEGIN: FAQ Menu -->
+    <div href="" class="intro-y g-col-12 g-col-lg-4 box py-10 border-2 border-theme-1 dark-border-theme-1">
+        <i data-feather="file-text" class="d-block w-12 h-12 text-theme-1 dark-text-theme-10 mx-auto"></i>
+        <h1 class="truncate fs-lg fw-medium text-center mt-sm-10 white-space-sm-wrap">Ticket #@Model.Id: @Model.Title</h1>
+        <div class="text-gray-600 mt-2 w-3/4 text-center mx-auto">Ticket Title</div>
+    </div>
+    <div href="" class="intro-y g-col-12 g-col-lg-4 box py-10">
+        <i data-feather="flag" class="d-block w-12 h-12 text-theme-1 dark-text-theme-10 mx-auto"></i>
+        @* <h3 class="fw-medium text-center fs-base mt-3">Ticket Priority</h3>*@
+        <div class=" mt-2 w-3/4 text-center mx-auto">
+
+            <div class="g-col-6">
+
+                <h3 class="fw-medium text-center fs-base mt-3">Ticket Priority</h3>
+                <h2 class="truncate fs-lg fw-medium text-center white-space-sm-wrap">  @Model.TicketPriority.Name </h2>
+
+                @*                @switch (ticketPriority)
+                {
+
+                case 1:
+                <div class="py-6 px-7 text-center rounded-pill text-white badge badge-pill badge-success important" style=" width: 75px; height: 30px; background-color: green; border-radius: 25px; ">Low</div>
+                break;
+
+                case 2:
+                <div class="py-6 px-7 text-center rounded-pill text-white badge badge-pill badge-success important" style=" width: 75px; height: 30px; background-color: yellow; border-radius: 25px; ">Medium</div>
+                break;
+
+
+                case 3:
+                <div class="py-6 px-7 text-center rounded-pill text-white badge badge-pill badge-success important" style=" width: 75px; height: 30px; background-color: orange; border-radius: 25px; ">High</div>
+                break;
+
+
+                case 4:
+                <div class="py-6 px-7 text-center rounded-pill text-white badge badge-pill badge-success important" style=" width: 75px; height: 30px; background-color: red; border-radius: 25px; ">Urgent</div>
+                break;
+                }*@
+
+                <h3 class="fw-medium text-center fs-base mt-3">Ticket Status</h3>
+                <h2 class="truncate fs-lg fw-medium text-center white-space-sm-wrap">  @Model.TicketStatus.Name </h2>
+
+                <h3 class="fw-medium text-center fs-base mt-3">Ticket Type</h3>
+                <h2 class="truncate fs-lg fw-medium text-center white-space-sm-wrap"> @Model.TicketType.Name </h2>
+
+            </div>
+
+
+
+
+        </div>
+    </div>
+    <div href="" class="intro-y g-col-12 g-col-lg-4 box py-10">
+        <i data-feather="clock" class="d-block w-12 h-12 text-theme-1 dark-text-theme-10 mx-auto"></i>
+
+        <div class="g-col-6 text-center mt-sm-10">
+            <h3 class="fs-lg fw-small truncate">Assigned Developer:</h3>
+            @if (Model.DeveloperUser != null)
+            {
+                <h2 class="fs-lg fw-medium truncate">@Model.DeveloperUser.FullName</h2>
+            }
+            else
+            {
+                <h2 class="fs-lg text-theme-6 fw-medium truncate">Unassigned</h2>
+            }
+
+            @*                <div class="text-gray-600">DevOps Engineer</div>*@
+            <div class="w-0 h-0 w-sm-24 h-sm-0 flex-none w-lg-0 h-lg-0 image-fit position-relative">
+            </div>
+
+        </div>
+
+
+        <div class="text-gray-600 mt-2 w-3/4 text-center mx-auto"></div>
+    </div>
 </div>
 
 
 
 
 
-<div id="delete-confirmation-modal" class="modal fade" tabindex="-1" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-body p-0">
-				<div class="p-5 text-center">
-					<i data-feather="x-circle" class="w-16 h-16 text-theme-6 mx-auto mt-3"></i>
-					<div class="fs-3xl mt-5">Are you sure?</div>
-					<div class="text-gray-600 mt-2">
-						Do you really want to archive these records?
-						<br>
 
-					</div>
-				</div>
-				<div class="px-5 pb-8 text-center">
-					<button type="button" data-bs-dismiss="modal" class="btn btn-outline-secondary w-24 me-1">Cancel</button>
-					<form asp-action="Delete">
-						<input type="hidden" asp-for="Id" />
-						<input type="submit" value="Delete" class="btn btn-danger" /> |
-					</form>
-	
-				</div>
-			</div>
-		</div>
-	</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*<div class="intro-y box px-5 pt-5 mt-5">
+
+    <div class="d-flex flex-column flex-lg-row border-bottom border-gray-200 dark-border-dark-5 pb-5 mx-n5">
+
+
+        <div class="d-flex flex-1 px-5 align-items-center justify-content-center justify-content-lg-center">
+
+
+                 @if ((User.IsInRole("Admin")) || Model.SubmitterUserId == userId || Model.DeveloperUserId == userId) {
+
+                <div class="align-items-start justify-content-right">
+                    <a data-bs-toggle="modal" data-bs-target="#TitleModal">   <i clickable data-feather="edit-2" class="fs-lg  fw-medium w-5 h-5 me-2"></i></a>
+                </div>
+                 }
+
+
+                  @if ((User.IsInRole("ProjectManager")) && result == false) {
+
+                <div class="align-items-start justify-content-right">
+                    <a>  <i data-feather="edit-2" class="fs-lg  fw-medium w-5 h-5 me-2"></i></a>
+                </div>
+
+                  }
+
+
+
+
+            <div class="">
+                <h2 class="fs-lg fw-medium truncate">Ticket #@Model.Id: @Model.Title</h2>
+
+            <div class="w-0 h-0 w-sm-24 h-sm-0 flex-none w-lg-0 h-lg-0 image-fit position-relative">
+
+                 </div>
+
+            </div>
+        </div>
+
+
+
+
+
+        <div class="mt-6 grid-columns-12 mt-lg-0 flex-1 dark-text-gray-300 px-5 border-start border-end border-gray-200 dark-border-dark-5 border-top border-top-lg-0 pt-5 pt-lg-0">
+
+
+
+
+            <div class="d-flex g-cols-12 g-cols-sm-6 flex-column justify-content-center align-items-center  mt-1">
+                <div class="align-items-end justify-content-end">
+                   <a></a> <i data-feather="edit-2" class="fs-lg  fw-medium w-5 h-5 me-2"></i>
+                </div>
+
+                <h3 class=" fs-lg fw-small text-center  mt-lg-3">Ticket Priority:</h3>
+                <h2 class="truncate fs-lg fw-medium text-center white-space-sm-wrap d-flex align-items-center">  @Model.TicketPriority.Name </h2>
+                <hr />
+
+            </div>
+
+            <div class="d-flex  g-cols-12 g-cols-sm-6 flex-column justify-content-center align-items-center  mt-1">
+                <h3 class=" fs-lg fw-small text-center  mt-lg-3"> Ticket Status:</h3>
+                <h2 class="truncate fs-lg fw-medium text-center white-space-sm-wrap d-flex align-items-center">  @Model.TicketStatus.Name </h2>
+                <hr />
+
+
+
+            </div>
+            <div class="d-flex  g-cols-12 flex-column justify-content-center align-items-center  mt-1">
+                <h3 class=" fs-lg fw-small text-center  mt-lg-3">Ticket Type:</h3>
+                <h2 class="truncate fs-lg fw-medium text-center white-space-sm-wrap d-flex align-items-center"> </i> @Model.TicketType.Name </h2>
+                <hr />
+
+
+            </div>
+
+
+        </div>
+
+
+        <div class="d-flex flex-1 mt-lg-0 align-items-center justify-content-center justify-content-lg-center  dark-text-gray-300 px-5 border-start border-end border-gray-200 dark-border-dark-5 border-top border-top-lg-0 pt-5 pt-lg-0">
+            <div class="d-flex flex-1 px-5 align-items-center justify-content-center justify-content-lg-center">
+
+
+
+
+
+
+
+                <div class="align-items-start justify-content-right">
+                    <i data-feather="edit-2" class="fs-lg  fw-medium w-5 h-5 me-2"></i>
+                </div>
+
+
+
+
+                <div class="">
+                    <h3 class="fs-lg fw-small truncate">Assigned Developer:</h3>
+                    @if (Model.DeveloperUser != null)
+                    {
+                        <h2 class="fs-lg fw-medium truncate">@Model.DeveloperUser.FullName</h2>
+                    }
+                    else
+                    {
+                        <h2 class="fs-lg text-theme-6 fw-medium truncate">Unassigned</h2>
+                    }
+
+
+                    <div class="w-0 h-0 w-sm-24 h-sm-0 flex-none w-lg-0 h-lg-0 image-fit position-relative">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>*@
+
 </div>
+<!-- END: Profile Info -->
+<div class="intro-y tab-content mt-5">
+    <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+        <div class="grid columns-12 gap-6">
+            <!-- BEGIN: Top Categories -->
+            <div class="intro-y box g-col-12 g-col-lg-6">
+                <div class="d-flex align-items-center p-5 border-bottom border-gray-200 dark-border-dark-5">
+                    <h2 class="fs-lg fw-medium truncate me-5">Ticket Description</h2>
+                    <div class="dropdown ms-auto">
+                        <a class="dropdown-toggle w-5 h-5 d-block" href="javascript:;" aria-expanded="false" data-bs-toggle="dropdown"> <i data-feather="edit-2" class="w-5 h-5 text-gray-600 dark-text-gray-300"></i> </a>
+                        <div class="dropdown-menu w-40">
+                            <ul class="dropdown-content">
+                                <li>
+                                    <a href="" class="dropdown-item"> <i data-feather="plus" class="w-4 h-4 me-2"></i> Add Category </a>
+                                </li>
+                                <li>
+                                    <a href="" class="dropdown-item"> <i data-feather="settings" class="w-4 h-4 me-2"></i> Settings </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-5">
+                    <p class="fw-medium"> @Html.Raw(Model.Description)</p>
+                </div>
+            </div>
+            <!-- END: Top Categories -->
+            <!-- BEGIN: Work In Progress -->
+            <div class="intro-y box g-col-12 g-col-lg-6">
+                <div class="bg-secondary">
+                    <div class="box-dark m-1 p-2">
+                        <div class="card-header">
+                            <h2 class="fs-lg fw-medium truncate me-5">Ticket Attachments</h2>
+                        </div>
+                        <div class="card-body" style="overflow-y:auto;height:300px;">
 
 
-<div id="unarchive-confirmation-modal" class="modal fade" tabindex="-1" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-body p-0">
-				<div class="p-5 text-center">
-					<i data-feather="x-circle" class="w-16 h-16 text-theme-6 mx-auto mt-3"></i>
-					<div class="fs-3xl mt-5">Are you sure?</div>
-					<div class="text-gray-600 mt-2">
-						Do you want to unarchive these records?
-						<br>
 
-					</div>
-				</div>
-				<div class="px-5 pb-8 text-center">
-					<button type="button" data-bs-dismiss="modal" class="btn btn-outline-secondary w-24 me-1">Cancel</button>
-					<form asp-action="Unarchive">
-						<input type="hidden" asp-for="Id" />
-						<input type="submit" value="Unarchive" class="btn btn-success" />
-					</form>
+                            @if (User.Identity.IsAuthenticated && result == false || User.IsInRole(nameof(BTRoles.Admin)))
+                            {
+                                <div class="row clearfix">
+                                    <div>
+                                        <form asp-action="AddTicketAttachment" asp-controller="Tickets" enctype="multipart/form-data" method="post">
+                                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                            <input type="hidden" asp-for="@Model.Id" name="TicketId">
+                                            <div class="media-body ml-3">
+                                                <label>
+                                                    Description
+                                                    <input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="mb-3 form-control" />
+                                                </label><br />
+                                                <label class="btn btn-outline-primary btn-sm">
+                                                    <input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" class="form-control-file" />
+                                                </label>
+                                                <button type="submit" class=" mx-2 btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
 
-	
-				</div>
-			</div>
-		</div>
-	</div>
+                            }
+                            else
+                            {
+                                <p>You must be a member of this project to add attachments!</p>
+                            }
+
+
+
+
+                            <hr class="mt-3" />
+                            <h6 class="mt-2">Attachments</h6>
+                            <div class="container">
+                                <div class="row">
+                                    @foreach (TicketAttachment item in Model.Attachments)
+                                    {
+                                        <div class="col mt-2 col-sm-2">
+                                            <a asp-action="ShowFile" asp-controller="Tickets" asp-route-Id="@item.Id">
+                                                <div class="icon">
+                                                    <img src="@_fileService.GetFileIcon(item.FileName)" style="height:50px;width:50px" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="@item.FileName" />
+                                                </div>
+                                            </a>
+                                            <div style="font-size:x-small">
+                                                <div class="file-name">
+                                                    <strong>@item.Description</strong>
+                                                </div>
+                                                <small>Size: @_fileService.FormatFileSize(item.FileData.Length) </small>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="card-footer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BEGIN: General Statistic -->
+            <div class="intro-y box g-col-12">
+                <div class="d-flex align-items-center px-5 py-5 py-sm-3 border-bottom border-gray-200 dark-border-dark-5">
+                    <h2 class="fw-medium fs-base me-auto">
+                        Team Center
+                    </h2>
+                    <div class="dropdown ms-auto d-sm-none">
+                        <a class="dropdown-toggle w-5 h-5 d-block" href="javascript:;" aria-expanded="false" data-bs-toggle="dropdown"> <i data-feather="more-horizontal" class="w-5 h-5 text-gray-600 dark-text-gray-300"></i> </a>
+                        <div class="dropdown-menu w-40">
+                            <ul class="dropdown-content">
+                                @*                   <li>
+                                <a href="javascript:;" class="dropdown-item"> <i data-feather="file" class="w-4 h-4 me-2"></i> Download XML </a>*@
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    @*                <button class="btn btn-outline-secondary d-none d-sm-flex"> <i data-feather="file" class="w-4 h-4 me-2"></i> Download XML </button>*@
+                </div>
+                <div class="grid columns-1 columns-xxl-7 gap-6 p-5" style="overflow-y:auto">
+                    <div class="g-col-xxl-2" style="overflow-y:auto">
+                        <div style="overflow-y:auto" class="grid columns-2 gap-6">
+                            <div class="g-col-12 g-col-xxl-3 position-relative z-10" style="overflow-y:auto">
+                                <div class="border-start-xxl border-theme-5 dark-border-dark-3 pb-10 intro-y" style="overflow-y:auto">
+                                    <div class="ps-xxl-6 overflow-y-auto  grid columns-12 gap-6" style="max-height: 600px; min-height: 400px">
+                                        <!-- BEGIN: Recent Activities -->
+                                        <div class="g-col-12 g-col-md-6 g-col-xl-4 g-col-xxl-12 mt-3" style="overflow-y:auto">
+                                            <div class="intro-x d-flex align-items-center h-10" style="overflow-y:auto">
+                                                <h2 class="fs-lg fw-medium truncate me-5">
+                                                    Ticket History
+                                                </h2>
+                                                @*    <a href="" class="ms-auto text-theme-1 dark-text-theme-10 truncate">Show More</a>*@
+                                            </div>
+                                            <div class="report-timeline  mt-5 position-relative" style="overflow-y:auto">
+
+                                                @if (historyCount == 0)
+                                                {
+
+                                                    <h2 class="fs-lg fw-medium truncate me-5">
+                                                        No Activity Yet
+                                                    </h2>
+                                                }
+
+
+                                                @foreach (TicketHistory history in ticketHistories)
+                                                {
+                                                    <div class="intro-x position-relative d-flex align-items-center mb-3">
+                                                        <div class="report-timeline__image">
+                                                            <div class="w-10 h-10 flex-none image-fit rounded-circle overflow-hidden">
+                                                                <img src="@_fileService.ConvertByteArrayToFile(history.User!.ImageFileData!, history.User!.ImageFileType!, (int)DefaultImage.BTUserImage)" alt="Post Images" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="box px-5 py-3 ms-4 flex-1 zoom-in">
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="fw-medium">@history.User.FullName</div>
+                                                                <div class="fs-xs text-gray-500 ms-auto">@history.Created</div>
+                                                            </div>
+                                                            <div class=" mt-1">@history.Description</div>
+                                                        </div>
+                                                    </div>
+                                                }
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="g-col-xxl-5 w-full">
+                        <div class="bg-secondary">
+                            <div class="box dark m-1 p-2">
+                                <div class="card-header">
+                                    <h2 class="fs-lg fw-medium truncate me-5">Ticket Discussion</h2>
+                                </div>
+                                <div class="card-body" style="overflow-y:auto;height:600px;">
+
+                                    @if (User.Identity.IsAuthenticated && result == false || User.IsInRole(nameof(BTRoles.Admin)))
+                                    {
+
+                                        <div class="comment-respond">
+                                            <h4 class="title">Post a comment</h4>
+                                            <form asp-controller="Tickets" asp-action="AddCommentToTicket" method="post">
+
+                                                <input type="hidden" asp-for="Id" name="TicketId" />
+                                                <input name="TicketId" value="@Model.Id" type="hidden" />
+                                                <div class="row row-cols-12">
+                                                    <div class="col-12">
+                                                        <div class="w-full d-flex align-items-center mt-3">
+
+                                                            <div class="flex-1 position-relative text-gray-700">
+                                                                <textarea type="text" class="form-control form-control border-transparent bg-gray-200 dark-bg-dark-2 pe-10 placeholder-theme-13" id="message" name="Comment" placeholder="Post a comment..."></textarea>
+                                                                <i data-feather="send" class="w-4 h-4 primary position-absolute my-auto top-0 bottom-0 me-3 end-0"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="col-lg-12 mt-3 mb-2 p-2">
+                                                        <div class="form-submit dark">
+                                                            <input name="submit" type="submit" id="submit" class="btn p-5 btn-primary w-24" value="Post Comment">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+
+
+
+
+                                        @*                                        <div class="w-full d-flex align-items-center mt-3">
+                                    <div class="w-8 h-8 flex-none image-fit me-3">
+                                    <img alt="Rubick Bootstrap HTML Admin Template" class="rounded-circle" src="dist/images/profile-13.jpg">
+                                    </div>
+                                    <div class="flex-1 position-relative text-gray-700">
+                                    <textarea type="text" class="form-control form-control-rounded border-transparent bg-gray-200 dark-bg-dark-2 pe-10 placeholder-theme-13" id="message" name="Comment" placeholder="Post a comment..."></textarea>
+                                    <i data-feather="send" class="w-4 h-4 primary position-absolute my-auto top-0 bottom-0 me-3 end-0"></i>
+                                    </div>
+                                    </div>*@
+
+
+
+
+
+
+                                    }
+                                    else
+                                    {
+                                        <div class="my-5">
+                                            <p class="display-6">You must be a member of this project to leave a comment!</p>
+                                        </div>
+
+                                    }
+                                    <hr />
+                                    <h6>Comments</h6>
+                                    <ul class="right_chat list-unstyled mb-0">
+                                        @foreach (var ticketComment in Model.Comments)
+                                        {
+
+
+
+                                            <li class="mb-5 mt-2 d-block comment">
+                                                <div class=" d-inline-flex mx-5 comment-body">
+                                                    <div class=" d-inline-flex mx-5  single-comment">
+                                                        <div class="comment-img">
+                                                            <span class="user-img">
+                                                                <img src="@_fileService.ConvertByteArrayToFile(ticketComment.User!.ImageFileData!, ticketComment.User!.ImageFileType!, (int)DefaultImage.BTUserImage)" alt="Post Images" />
+                                                            </span>
+                                                        </div>
+                                                        <div class=" d-block mx-2 px-8 py-4 comment-inner">
+                                                            <h6 class="commenter">
+
+
+                                                                <p>@ticketComment.User!.FullName</p>
+
+
+                                                            </h6>
+                                                            <div class=" comment-meta">
+                                                                <div class="d-block time-spent">@ticketComment.Created.ToString("MMM dd, yyyy")</div>
+                                                            </div>
+                                                            <div class=" d-block display-block justify-content-end align-items-end align-items-right comment-text">
+                                                                <p class="d-block b2">
+                                                                    @Html.Raw(ticketComment.Comment)
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        @if (User.IsInRole("Admin"))
+                                                        {
+                                                            <div class="d-flex justify-content-end">
+
+
+
+                                                                <a class="mx-3 btn " asp-controller="Comments" asp-action="Delete" asp-route-id="@ticketComment.Id">
+                                                                    <i class="fa fa-trash fa-2x"></i>
+                                                                </a>
+
+
+
+                                                            </div>
+                                                        }
+
+                                                    </div>
+                                                </div>
+
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                                <div class="card-footer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END: General Statistic -->
+        </div>
+    </div>
 </div>
+            </div>
 
 
 
+
+
+
+<div id="TitleModal" class=" modal hide fade" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="p-5 text-center">
+                    <i data-feather="text" class="w-16 h-16  mx-auto mt-3"></i>
+                    <div class="fs-3xl mt-5">Choose Title for @Model.Title</div>
+                    <div class="text-gray-600 mt-2">
+                        please type a new title
+                        <br>
+
+                    </div>
+                </div>
+                <div class="px-5 pb-8 text-center">
+                    @*      <button type="button" data-bs-dismiss="modal" class="btn btn-outline-secondary w-24 me-1">Cancel</button>*@
+                    <div class="box dark ">
+                        <form asp-action="EditTicketTitle" method="post" class="d-flex flex-column">
+                            <input type="hidden" asp-for="Id" />
+
+                            <div class="mt-3">
+
+                                <input class=" mt-2 intro-y form-control py-3 px-4 box border-white dark-border-dark-3 pe-10 placeholder-theme-13" asp-for="Title" type="text" />
+
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+
+
+
+
+
+
+                            <button type="submit" class="btn mt-3 btn-primary mt-3 my-3">Save</button>
+                            <button data-bs-dismiss="modal" class="btn ripple btn-secondary mt-3 pd-x-30">Cancel</button>
+
+                        </form>
+                    </div>
+                    @*                    <a asp-controller="Projects" asp-action="DeleteConfirmed" asp-route-id="@project.Id" class="btn btn-danger w-24">Delete</a>*@
+                    @*      <button type="button" class="btn btn-danger w-24">Delete</button>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 @section Scripts {
-	@{
-		<script src="~/dist/js/ckeditor-classic.js"></script>
-		await Html.RenderPartialAsync("_ValidationScriptsPartial");
-	}
+    @{
+
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        <script src="~/dist/js/ckeditor-classic.js"></script>
+
+    }
 }
+
+
+
+
+
+
+
+
+
+

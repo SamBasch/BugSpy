@@ -1,0 +1,494 @@
+﻿@model BugSpy.Models.Project
+@using BugSpy.Services.Interfaces
+@using BugSpy.Models.Enums
+@using Microsoft.AspNetCore.Identity;
+@inject IBTFileService _fileService
+@inject UserManager<BTUser> _userManager
+@inject IBTProjectService _btProjectService
+@{
+    ViewData["Title"] = "Details";
+
+    BTUser? projectMember = await _userManager.GetUserAsync(User);
+
+    bool result = await _btProjectService.IsMemberInProject(projectMember, Model.Id);
+    string userId = _userManager.GetUserId(User);
+}
+ 
+  
+
+
+
+
+<h1>Details</h1>
+
+
+
+<div class="content">
+
+    @if (User.IsInRole(nameof(BTRoles.Admin)) && Model.Archived == true)
+    {
+
+
+        <div class="w-40">
+            <a asp-controller="Projects" asp-action="Unarchive" asp-route-id="@Model.Id" class="d-flex  btn btn-success align-items-center"> <i data-feather="file-plus" class=" w-4 h-4 me-1"></i> Unarchive </a>
+        </div>
+    }
+
+    @if (User.IsInRole(nameof(BTRoles.Admin)) && Model.Archived == false)
+    {
+
+        <div class="w-40">
+            <a asp-controller="Projects" asp-action="Archive" asp-route-id="@Model.Id" class="d-flex  btn btn-danger align-items-center"> <i data-feather="file-minus" class=" w-4 h-4 me-1"></i> Archive </a>
+        </div>
+
+
+
+    }
+
+
+    @if (User.IsInRole(nameof(BTRoles.ProjectManager)) && result == false && Model.Archived == true)
+    {
+        <div class="w-40">
+            <a asp-controller="Projects" asp-action="Unarchive" asp-route-id="@Model.Id" class="d-flex  btn btn-success align-items-center"> <i data-feather="file-plus" class=" w-4 h-4 me-1"></i> Unarchive </a>
+        </div>
+    }
+
+    @if (User.IsInRole(nameof(BTRoles.ProjectManager)) && result == false && Model.Archived == false)
+    {
+
+        <div class="w-40">
+            <a asp-controller="Projects" asp-action="Archive" asp-route-id="@Model.Id" class="d-flex  btn btn-danger align-items-center"> <i data-feather="file-minus" class=" w-4 h-4 me-1"></i> Archive </a>
+        </div>
+    }
+
+    <div class="container-fluid">
+        <div class="row gy-2">
+            <div class="col-md-12 gx-3 col">
+                <div class="row col-cols-2 gx-3 mt-5 bg-secondary">
+                    <div class="box dark mx-2 border-primary col m-1 p-2">
+                        <div class="body">
+                            <ul class=" list-unstyled basic-list">
+                                <li>Project Name: <span class="">@Model.Name</span></li>
+                                <li>Description: <span>@Html.Raw(Model.Description)</span></li>
+                            </ul>
+                            @* Project Name *@
+                            
+                            @* Project Description *@
+                           
+                            <div class="progress-container progress-info m-b-25">
+                                @if(Model.Archived == true)
+                                {
+                                    <span class="progress-badge" style="font-size:small">Archived</span>
+                                } else
+                                {
+                                    <span class="progress-badge" style="font-size:small">Not Archived</span>
+                                }
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box border-primary gx-3 col m-1 p-2">
+                        <div class="box mx-2 border-primary dark body">
+                            <ul class=" list-unstyled basic-list">
+                              @*  <li>Project Manager:</li> <span>@((await _btProjectService.GetProjectManagerAsync(Model.Id)).FullName)</span>*@
+                                <li>Start Date: <span class="">@Model.StartDate</span></li>
+                                <li>Deadline: <span class="">@Model.EndDate</span></li>
+                                <li>Priority: <span class="">@Model.ProjectPriority.Name</span></li>
+                                @if (Model.Archived == true)
+                                {
+                                     <span class="progress-badge" style="font-size:small">Inactive</span>
+                                }
+                                else
+                                {
+                                    <span class="progress-badge" style="font-size:small">Active</span>
+                                }
+                 
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col mt-5 ">
+                <div class="box dark">
+                    <div class="box dark my-1 p-2">
+                        <div class="header">
+                            <h2 class="mb-1">Project Manager</h2>
+                            <hr />
+                        </div>
+                        <div class="mt-2 body" style="overflow-y:auto;height:300px;">
+                            [Project Manager]
+                            @* if() logic for Avatar/Default etc *@
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col mt-5 ">
+                <div class="bg-secondary">
+                    <div class="box my-1 dark m-1 p-2">
+                        <div class="header">
+                            <h2 class="mb-1">Project Team</h2>
+                            <hr />
+                        </div>
+                        <div class="mt-2 body" style="overflow-y:auto;height:300px;">
+                            <ul class="right_chat list-unstyled mb-0">
+
+                                @foreach (BTUser member in Model.Members)
+                                {
+
+                                    <p>@member.FullName</p>
+
+                                }
+                                @* Logic for avatars *@
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col mt-5 ">
+                <div class="bg-dark">
+                    <div class="card m-1 p-2">
+                        <div class="header">
+                            <h2>Project Activity</h2>
+                            <hr />
+                        </div>
+                        <div class="body" style="overflow-y:auto;height:300px;background-color:antiquewhite">
+                            @* Project Activity loop *@
+                            [Project Activity  e.g. Ticket History]
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col">
+                <div class="mt-5 bg-secondary">
+                    <div class="box dark m-1 p-2">
+                        <div class="header">
+                            <h2>Tickets</h2>
+                        </div>
+                        <div class="body">
+                            <div class="table-responsive" style="overflow-y:auto;height:600px;">
+                                <table id ="myTable" class=" display table table-report mt-n2">
+                                    <thead>
+@*
+                                        <a asp-controller="Tickets" asp-action="Create">
+                                            <div type="button" class="btn btn-success w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Create New Ticket</div>
+                                        </a>*@
+
+
+                                        <form asp-controller="Tickets" asp-action="Create" method="post">
+
+                                            <input type="hidden" asp-for="@Model.Id" name="ProjectId" />
+
+                                            @*
+                                            <i clickable data-feather="check-square" class="w-4 h-4 me-1">*@
+                                            <input clickable name="submit" type="submit" id="submit" value="Create Ticket">
+                                            @*              </i>*@
+
+
+
+
+                                        </form>
+
+
+                                        <tr>
+
+                                            <th class="text-nowrap">TICKET NAME</th>
+                                            <th class="text-nowrap">CREATED/UPDATED</th>
+                              @*              <th class="text-nowrap">PROJECT</th>*@
+                                        
+                                            <a asp-controller="Tickets" asp-action="MyTicketsType">
+                                            <th class="text-center text-nowrap">TYPE</th>
+                                            </a>
+                                            <th class="text-center text-nowrap">PRIORITY</th>
+                                            <th class="text-center text-nowrap">STATUS</th>
+                                            <th class="text-center text-nowrap">ACTIONS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (Ticket ticket in Model.Tickets)
+                                        {
+                                            <tr class="intro-x">
+                                                <td class="">
+                                                    <a href="" class="fw-medium text-nowrap">@ticket.Title</a>
+                                                    <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Sport &amp; Outdoor</div>
+                                                </td>
+
+                                                @if (ticket.Updated != null)
+                                                {
+                                                    <td class="">
+                                                        <div href="" class="fw-medium text-nowrap"> @ticket.Updated?.ToString("MMM dd, yyyy")</div>
+                                                        <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Updated Date</div>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+
+                                                    <td class="">
+                                                        <a href="" class="fw-medium text-nowrap"> @ticket.Created.ToString("MMM dd, yyyy")</a>
+                                                        <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Creation Date</div>
+                                                    </td>
+                                                }
+
+
+                                    @*            <td class="">
+                                                    <a href="" class="fw-medium text-nowrap">@ticket.Project.Name</a>
+                                                </td>*@
+
+
+
+
+                                                <td class="text-center">
+                                                    <a href="" class="fw-medium text-nowrap">@ticket.TicketType.Name</a>
+                                                </td>
+
+                                                <td class="text-center">
+                                                    <a href="" class="fw-medium text-nowrap">@ticket.TicketPriority.Name</a>
+                                                </td>
+
+
+
+
+                                                @if (ticket.Archived == false)
+                                                {
+                                                    <td class="w-40">
+                                                        <div class="d-flex align-items-center justify-content-center text-theme-9"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Active </div>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td class="w-40">
+                                                        <div class="d-flex align-items-center justify-content-center text-theme-6"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Inactive </div>
+                                                    </td>
+
+                                                }
+
+
+
+
+                                                <td class="table-report__action w-56">
+                                                    <div class="d-flex justify-content-center align-items-center">
+
+
+
+
+
+                                                        <nav class="side-nav p-4">
+                                                            <ul>
+                                                                <a href="javascript:;.html" class="side-menu p-3">
+
+                                                                    <div class="side-menu__title">
+                                                                        Actions
+                                                                        <div class="side-menu__sub-icon"> <i data-feather="chevron-down"></i> </div>
+                                                                    </div>
+                                                                </a>
+
+
+                                                                <ul class="p-3">
+
+
+
+
+                                                                    <li class="mb-2">
+                                                                        <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">
+                                                                            <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                                                                            <div class="side-menu__title"> Details </div>
+                                                                        </a>
+                                                                    </li>
+
+
+
+
+
+
+
+
+
+                                                                    @if ((User.IsInRole("Admin")) || ticket.SubmitterUserId == userId || ticket.DeveloperUserId == userId)
+                                                                    {
+
+
+
+
+
+
+                                                                        <li class="mb-2">
+                                                                            <a asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id">
+                                                                                <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                                                                                <div class="side-menu__title"> Edit </div>
+                                                                            </a>
+                                                                        </li>
+
+
+
+
+
+
+
+                                                                    }
+
+                                                                    @if ((User.IsInRole("ProjectManager")) && result == false)
+                                                                    {
+
+
+
+
+
+
+                                                                        <li class="mb-2">
+                                                                            <a asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id">
+                                                                                <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                                                                                <div class="side-menu__title"> Edit </div>
+                                                                            </a>
+                                                                        </li>
+
+
+
+
+
+
+
+                                                                    }
+
+
+
+                                                                    @if ((User.IsInRole("Admin")))
+                                                                    {
+
+                                                                        <li class="mb-2">
+                                                                            <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">
+                                                                                <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                                                                                <div class="side-menu__title"> Delete </div>
+                                                                            </a>
+                                                                        </li>
+                                                                    }
+
+                                                                    @if ((User.IsInRole("ProjectManager")) && result == false)
+                                                                    {
+                                                                        <li class="mb-2">
+                                                                            <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">
+                                                                                <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                                                                                <div class="side-menu__title"> Delete </div>
+                                                                            </a>
+                                                                        </li>
+                                                                    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                </ul>
+
+                                                            </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                        }
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="delete-confirmation-modal" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="p-5 text-center">
+                    <i data-feather="x-circle" class="w-16 h-16 text-theme-6 mx-auto mt-3"></i>
+                    <div class="fs-3xl mt-5">Are you sure?</div>
+                    <div class="text-gray-600 mt-2">
+                        Do you really want to archive these records?
+                        <br>
+                     
+                    </div>
+                </div>
+                <div class="px-5 pb-8 text-center">
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-outline-secondary w-24 me-1">Cancel</button>
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="submit" value="Delete" class="btn btn-danger" /> |
+                    </form>
+@*                    <a asp-controller="Projects" asp-action="DeleteConfirmed" asp-route-id="@project.Id" class="btn btn-danger w-24">Delete</a>*@
+                    @*      <button type="button" class="btn btn-danger w-24">Delete</button>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="unarchive-confirmation-modal" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="p-5 text-center">
+                    <i data-feather="x-circle" class="w-16 h-16 text-theme-6 mx-auto mt-3"></i>
+                    <div class="fs-3xl mt-5">Are you sure?</div>
+                    <div class="text-gray-600 mt-2">
+                        Do you want to unarchive these records?
+                        <br>
+                   
+                    </div>
+                </div>
+                <div class="px-5 pb-8 text-center">
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-outline-secondary w-24 me-1">Cancel</button>
+                    <form asp-action="Unarchive">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="submit" value="Unarchive" class="btn btn-success" /> 
+                    </form>
+
+                    <form asp-action="UnarchiveWithTickets">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="submit" value="Unarchive project and project Tickets" class="btn btn-info" /> |
+                    </form>
+                    @*                    <a asp-controller="Projects" asp-action="DeleteConfirmed" asp-route-id="@project.Id" class="btn btn-danger w-24">Delete</a>*@
+                    @*      <button type="button" class="btn btn-danger w-24">Delete</button>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

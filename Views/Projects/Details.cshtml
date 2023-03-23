@@ -1,300 +1,655 @@
 ﻿@model BugSpy.Models.Project
-@using BugSpy.Services.Interfaces
+@using BugSpy.Extensions;
 @using BugSpy.Models.Enums
+@using BugSpy.Services.Interfaces
 @using Microsoft.AspNetCore.Identity;
 @inject IBTFileService _fileService
 @inject UserManager<BTUser> _userManager
 @inject IBTProjectService _btProjectService
+@inject IBTTicketHistoryService _historyService
+@inject IBTRolesService _rolesService
+
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Details2";
+
+    Layout = "/Views/Shared/_Layout.cshtml";
+
+    BTUser? projectManager = (await _btProjectService.GetProjectManagerAsync(Model.Id));
+    string userId = _userManager.GetUserId(User);
+
+
+    int projectPriority = Model.ProjectPriorityId;
+
+    int companyId = User.Identity!.GetCompanyId();
 
     BTUser? projectMember = await _userManager.GetUserAsync(User);
 
     bool result = await _btProjectService.IsMemberInProject(projectMember, Model.Id);
-    string userId = _userManager.GetUserId(User);
+
+
+    IEnumerable<TicketHistory> ticketHistories = await _historyService.GetProjectTicketsHistory(companyId, Model.Id);
+    int historyCount = ticketHistories.Count();
 }
- 
-  
+
+<div class="intro-y d-flex align-items-center mt-8">
+    <h2 class="fs-lg fw-medium me-auto">
+        Project Details
+    </h2>
 
 
-
-
-<h1>Details</h1>
-
-
-
-<div class="content">
-
-    @if (User.IsInRole(nameof(BTRoles.Admin)) && Model.Archived == true)
+    @if ((User.IsInRole("Admin")))
     {
 
-
-        <div class="w-40">
-            <a asp-controller="Projects" asp-action="Unarchive" asp-route-id="@Model.Id" class="d-flex  btn btn-success align-items-center"> <i data-feather="file-plus" class=" w-4 h-4 me-1"></i> Unarchive </a>
+        <div class="float-right float-end me-5 w-40">
+            <a asp-controller="Projects" asp-action="Edit" asp-route-id="@Model.Id" class="d-flex  btn btn-info align-items-center"> <i data-feather="edit-2" class=" w-4 h-4 me-1"></i> Edit </a>
         </div>
+
+
+        <div class="float-right float-end me-5 w-40">
+            <a asp-controller="Projects" asp-action="AssignPM" asp-route-id="@Model.Id" class="d-flex  btn btn-warning align-items-center"> <i data-feather="coffee" class=" w-4 h-4 me-1"></i> Assign PM </a>
+        </div>
+
+
+        <div class="float-right float-end me-5 w-40">
+            <a asp-controller="Projects" asp-action="AssignProjectMembers" asp-route-id="@Model.Id" class="d-flex  btn btn-primary align-items-center"> <i data-feather="users" class=" w-4 h-4 me-1"></i> Assign Members </a>
+        </div>
+
+
+
+
+
+
+
+
     }
 
-    @if (User.IsInRole(nameof(BTRoles.Admin)) && Model.Archived == false)
+
+    @if ((User.IsInRole("ProjectManager")) && result == false)
     {
 
+        <div class="float-right float-end me-5 w-40">
+            <a asp-controller="Projects" asp-action="AssignProjectMembers" asp-route-id="@Model.Id" class="d-flex  btn btn-primary align-items-center"> <i data-feather="users" class=" w-4 h-4 me-1"></i> Assign Members </a>
+        </div>
+
+
+        <div class="float-right float-end me-5 w-40">
+            <a asp-controller="Projects" asp-action="Edit" asp-route-id="@Model.Id" class="d-flex  btn btn-info align-items-center"> <i data-feather="edit-2" class=" w-4 h-4 me-1"></i> Edit </a>
+        </div>
+
+    }
+
+    @if ((User.IsInRole("Admin")) && Model.Archived == false)
+    {
         <div class="w-40">
             <a asp-controller="Projects" asp-action="Archive" asp-route-id="@Model.Id" class="d-flex  btn btn-danger align-items-center"> <i data-feather="file-minus" class=" w-4 h-4 me-1"></i> Archive </a>
         </div>
 
 
 
+
     }
 
 
-    @if (User.IsInRole(nameof(BTRoles.ProjectManager)) && result == false && Model.Archived == true)
+    @if ((User.IsInRole("Admin")) && Model.Archived == true)
     {
+
         <div class="w-40">
             <a asp-controller="Projects" asp-action="Unarchive" asp-route-id="@Model.Id" class="d-flex  btn btn-success align-items-center"> <i data-feather="file-plus" class=" w-4 h-4 me-1"></i> Unarchive </a>
         </div>
+
+
     }
 
-    @if (User.IsInRole(nameof(BTRoles.ProjectManager)) && result == false && Model.Archived == false)
+
+    @if ((User.IsInRole("ProjectManager")) && result == false && Model.Archived == false)
     {
 
         <div class="w-40">
             <a asp-controller="Projects" asp-action="Archive" asp-route-id="@Model.Id" class="d-flex  btn btn-danger align-items-center"> <i data-feather="file-minus" class=" w-4 h-4 me-1"></i> Archive </a>
         </div>
+
     }
 
-    <div class="container-fluid">
-        <div class="row gy-2">
-            <div class="col-md-12 gx-3 col">
-                <div class="row col-cols-2 gx-3 mt-5 bg-secondary">
-                    <div class="box dark mx-2 border-primary col m-1 p-2">
-                        <div class="body">
-                            <ul class=" list-unstyled basic-list">
-                                <li>Project Name: <span class="">@Model.Name</span></li>
-                                <li>Description: <span>@Html.Raw(Model.Description)</span></li>
+
+
+    @if ((User.IsInRole("ProjectManager")) && result == false && Model.Archived == true)
+    {
+
+        <div class="w-40">
+            <a asp-controller="Projects" asp-action="Unarchive" asp-route-id="@Model.Id" class="d-flex  btn btn-success align-items-center"> <i data-feather="file-plus" class=" w-4 h-4 me-1"></i> Unarchive </a>
+        </div>
+
+    }
+
+
+
+
+</div>
+<!-- BEGIN: Profile Info -->
+
+
+
+
+
+
+
+
+<div class="grid columns-12 gap-6 mt-5">
+    <!-- BEGIN: FAQ Menu -->
+    <div href="" class="intro-y g-col-12 g-col-lg-4 box py-10 border-2 border-theme-1 dark-border-theme-1">
+        <i data-feather="book-open" class="d-block w-12 h-12 text-theme-1 dark-text-theme-10 mx-auto"></i>
+        <h2 class="fw-medium text-center fs-base mt-3">Project #@Model.Id: @Model.Name</h2>
+        <div class="text-gray-600 mt-2 w-3/4 text-center mx-auto">Project Title</div>
+    </div>
+    <div href="" class="intro-y g-col-12 g-col-lg-4 box py-10">
+        <i data-feather="flag" class="d-block w-12 h-12 text-theme-1 dark-text-theme-10 mx-auto"></i>
+        <h3 class="fw-medium text-center fs-base mt-3">Project Priority</h3>
+
+
+
+        <h2 class="truncate fs-lg fw-medium text-center white-space-sm-wrap ">  @Model.ProjectPriority.Name </h2>
+
+    </div>
+    <div href="" class="intro-y g-col-12 g-col-lg-4 box py-10">
+        <i data-feather="clock" class="d-block w-12 h-12 text-theme-1 dark-text-theme-10 mx-auto"></i>
+        <div class=" intro-x g-col-6">
+            <h2 class=" fw-medium text-center fs-base mx-30 mt-3">Start Date: @Model.StartDate</h2>
+            <h2 class=" fw-medium text-center fs-base mt-3">End Date: @Model.EndDate</h2>
+        </div>
+
+
+        <div class="text-gray-600 mt-2 w-3/4 text-center mx-auto"></div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+@*
+<div class="intro-y box px-5 pt-5 mt-5">
+
+    <div class="d-flex flex-column flex-lg-row border-bottom border-gray-200 dark-border-dark-5 pb-5 mx-n5">
+
+
+        <div class="d-flex flex-1 px-5 align-items-center justify-content-center justify-content-lg-center">
+
+
+
+
+
+
+
+            <div class="">
+                <h2 class="fs-lg fw-medium truncate">Project #@Model.Id: @Model.Name</h2>
+
+                <div class="w-0 h-0 w-sm-24 h-sm-0 flex-none w-lg-0 h-lg-0 image-fit position-relative">
+                </div>
+
+            </div>
+        </div>
+
+
+
+
+
+        <div class="mt-6 grid-columns-12 mt-lg-0 flex-1 dark-text-gray-300 px-5 border-start border-end border-gray-200 dark-border-dark-5 border-top border-top-lg-0 pt-5 pt-lg-0">
+
+
+
+
+            <div class="d-flex g-cols-12 g-cols-sm-6 flex-column justify-content-center align-items-center  mt-1">
+
+
+                <h3 class=" fs-lg fw-small text-center  mt-lg-3">Project Priority:</h3>
+                <h2 class="truncate fs-lg fw-medium text-center white-space-sm-wrap d-flex align-items-center">  @Model.ProjectPriority.Name </h2>
+                <hr />
+
+            </div>
+
+
+
+
+        </div>
+
+
+        <div class="d-flex flex-1 mt-lg-0 align-items-center justify-content-center justify-content-lg-center  dark-text-gray-300 px-5 border-start border-end border-gray-200 dark-border-dark-5 border-top border-top-lg-0 pt-5 pt-lg-0">
+            <div class="d-flex flex-1 px-5 align-items-center justify-content-center justify-content-lg-center">
+
+
+
+
+
+
+
+
+
+
+                <div class="">
+                    <h3 class="fs-lg fw-small truncate">Assigned Manager:</h3>
+                    if (projectManager != null)
+                    {
+                        <a href="" class="fw-medium">@((await _btProjectService.GetProjectManagerAsync(Model.Id)).FullName ?? "Unassigned")</a>
+                    }
+                    else
+                    {
+                        <a href="" class="text-theme-6 fw-medium"> Unassigned</a>
+                    }
+
+
+                    <div class="w-0 h-0 w-sm-24 h-sm-0 flex-none w-lg-0 h-lg-0 image-fit position-relative">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>*@
+@*    <ul class="nav nav-link-tabs flex-column flex-sm-row justify-content-center justify-content-lg-start" role="tablist">
+    <li id="dashboard-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link px-0 me-sm-8 active" data-bs-toggle="pill" data-bs-target="#dashboard" role="tab" aria-controls="dashboard-tab" aria-selected="true">Dashboard</a> </li>
+    <li id="account-and-profile-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link px-0 me-sm-8" data-bs-toggle="pill" data-bs-target="#account-and-profile" role="tab" aria-controls="account-and-profile-tab" aria-selected="false">Account & Profile</a> </li>
+    <li id="activities-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link px-0 me-sm-8" data-bs-toggle="pill" data-bs-target="#activities" role="tab" aria-controls="activities-tab" aria-selected="false">Activities</a> </li>
+    <li id="tasks-tab" class="nav-item" role="presentation"> <a href="javascript:;" class="nav-link px-0 me-sm-8" data-bs-toggle="pill" data-bs-target="#tasks" role="tab" aria-controls="tasks-tab" aria-selected="false">Tasks</a> </li>
+    </ul>*@
+</div>
+<!-- END: Profile Info -->
+<div class="intro-y tab-content mt-5">
+    <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+        <div class="grid columns-12 gap-6">
+            <!-- BEGIN: Top Categories -->
+            <div class="intro-y box g-col-12 g-col-lg-6">
+                <div class="d-flex align-items-center p-5 border-bottom border-gray-200 dark-border-dark-5">
+                    <h2 class="fs-lg fw-medium truncate me-5">Project Description</h2>
+                    <div class="dropdown ms-auto">
+                        <a class="dropdown-toggle w-5 h-5 d-block" href="javascript:;" aria-expanded="false" data-bs-toggle="dropdown"> <i data-feather="edit-2" class="w-5 h-5 text-gray-600 dark-text-gray-300"></i> </a>
+                        <div class="dropdown-menu w-40">
+                            <ul class="dropdown-content">
+                                <li>
+                                    <a href="" class="dropdown-item"> <i data-feather="plus" class="w-4 h-4 me-2"></i> Add Category </a>
+                                </li>
+                                <li>
+                                    <a href="" class="dropdown-item"> <i data-feather="settings" class="w-4 h-4 me-2"></i> Settings </a>
+                                </li>
                             </ul>
-                            @* Project Name *@
-                            
-                            @* Project Description *@
-                           
-                            <div class="progress-container progress-info m-b-25">
-                                @if(Model.Archived == true)
-                                {
-                                    <span class="progress-badge" style="font-size:small">Archived</span>
-                                } else
-                                {
-                                    <span class="progress-badge" style="font-size:small">Not Archived</span>
-                                }
+                        </div>
+                    </div>
+                </div>
+                <div class="p-5">
+                    <p class="fw-medium"> @Html.Raw(Model.Description)</p>
+                </div>
+            </div>
+            <!-- END: Top Categories -->
+            <!-- BEGIN: Work In Progress -->
+            <div class="intro-y box g-col-12 g-col-lg-6">
+                <div class="bg-secondary">
+                    <div class="box-dark m-1 p-2">
+                        <div class="card-header">
+                            <h2 class="fs-lg fw-medium truncate me-5">Project Members</h2>
+                        </div>
+                        <div class="card-body" style="overflow-y:auto;height:300px;">
 
 
+
+                            @*                            @if (User.Identity.IsAuthenticated && result == false || User.IsInRole(nameof(BTRoles.Admin)))
+                            {
+                            <div class="row clearfix">
+                            <div>
+                            <form asp-action="AddTicketAttachment" asp-controller="Tickets" enctype="multipart/form-data" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input type="hidden" asp-for="@Model.Id" name="TicketId">
+                            <div class="media-body ml-3">
+                            <label>
+                            Description
+                            <input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="mb-3 form-control" />
+                            </label><br />
+                            <label class="btn btn-outline-primary btn-sm">
+                            <input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" class="form-control-file" />
+                            </label>
+                            <button type="submit" class=" mx-2 btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
+                            </div>
+                            </form>
+                            </div>
+                            </div>
+
+                            }
+                            else
+                            {
+                            <p>You must be a member of this project to add attachments!</p>
+                            }*@
+
+
+
+
+                            <hr class="mt-3" />
+
+                            <div class="container">
+                                <div class="row">
+
+
+                                    @if (projectManager != null)
+                                    {
+
+                                        <div class="intro-y mb-3 g-col-12 g-col-md-6">
+                                            <div class="box">
+                                                <div class="d-flex flex-column flex-lg-row align-items-center p-5">
+                                                    <div class="w-24 h-24 w-lg-12 h-lg-12 image-fit me-lg-1">
+                                                        <i data-feather="phone-call" class="d-block w-4 h-4 text-theme-1 mt-4 dark-text-theme-10 mx-auto"></i>
+                                                    </div>
+                                                    <div class="ms-lg-2 me-lg-auto text-center text-lg-start mt-3 mt-lg-0">
+                                                        <a href="" class="fw-medium">@projectManager.FullName</a>
+                                                        <div class="text-gray-600 fs-xs mt-0.5">Project Manager</div>
+                                                    </div>
+                                                    <div class="d-flex mt-4 mt-lg-0">
+                                                        <div class="py-2 px-3 rounded-pill text-white background-success">Project Manager</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr />
+
+
+                                    }
+                                    else
+                                    {
+
+
+
+                                    }
+
+
+                                    @foreach (BTUser member in Model.Members)
+                                    {
+
+                                        bool subResult = await _rolesService.IsUserInRoleAsync(member, (nameof(BTRoles.Submitter)));
+
+                                        bool devResult = await _rolesService.IsUserInRoleAsync(member, (nameof(BTRoles.Developer)));
+
+
+                                        bool roleResult = await _rolesService.IsUserInRoleAsync(member, (nameof(BTRoles.ProjectManager)));
+
+
+                                        @if (roleResult == true)
+                                        {
+                                            <div></div>
+                                        }
+                                        else
+                                        {
+                                            <div class="intro-y g-col-12 g-col-md-6">
+                                                <div class=" mt-3 box dark">
+                                                    <div class="d-flex flex-column flex-lg-row align-items-center p-5">
+                                                        <div class="w-24 h-24 w-lg-12 h-lg-12 image-fit me-lg-1">
+                                                            @if (subResult == true)
+                                                            {
+                                                                <i data-feather="users" class="d-block w-4 h-4 text-theme-1 dark-text-theme-10 mt-4 mx-auto"></i>
+                                                            }
+
+
+                                                            @if (devResult == true)
+                                                            {
+                                                                <i data-feather="user" class="d-block w-4 h-4 text-theme-1 dark-text-theme-10 mt-4 mx-auto"></i>
+                                                            }
+
+                                                        </div>
+                                                        <div class="ms-lg-2 me-lg-auto text-center text-lg-start mt-3 mt-lg-0">
+                                                            <a href="" class="fw-medium">@member.FullName</a>
+
+                                                        </div>
+                                                        <div class="d-flex mt-4 mt-lg-0">
+                                                            @if (subResult == true)
+                                                            {
+                                                                <div class="py-2 px-3 rounded-pill text-white background-info">Submitter</div>
+                                                            }
+
+
+                                                            @if (devResult == true)
+                                                            {
+                                                                <div class="py-2 px-3 rounded-pill text-white background-info">Developer</div>
+                                                            }
+
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+
+
+
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="card-footer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BEGIN: General Statistic -->
+            <div class="intro-y box g-col-12">
+                <div class="d-flex align-items-center px-5 py-5 py-sm-3 border-bottom border-gray-200 dark-border-dark-5">
+                    <h2 class="fw-medium fs-base me-auto">
+                        Project Details
+                    </h2>
+                    <div class="dropdown ms-auto d-sm-none">
+                        <a class="dropdown-toggle w-5 h-5 d-block" href="javascript:;" aria-expanded="false" data-bs-toggle="dropdown"> <i data-feather="more-horizontal" class="w-5 h-5 text-gray-600 dark-text-gray-300"></i> </a>
+                        <div class="dropdown-menu w-40">
+                            <ul class="dropdown-content">
+                                @*                   <li>
+                                <a href="javascript:;" class="dropdown-item"> <i data-feather="file" class="w-4 h-4 me-2"></i> Download XML </a>*@
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    @*                <button class="btn btn-outline-secondary d-none d-sm-flex"> <i data-feather="file" class="w-4 h-4 me-2"></i> Download XML </button>*@
+                </div>
+                <div class="grid columns-1 columns-xxl-7 gap-6 p-5" style="overflow-y:auto">
+                    <div class="g-col-xxl-2" style="overflow-y:auto">
+                        <div style="overflow-y:auto" class="grid columns-2 gap-6">
+                            <div class="g-col-12 g-col-xxl-3 position-relative z-10" style="overflow-y:auto">
+                                <div class="border-start-xxl border-theme-5 dark-border-dark-3 pb-10 intro-y" style="overflow-y:auto">
+                                    <div class="ps-xxl-6 overflow-y-auto  grid columns-12 gap-6" style="max-height: 600px; min-height: 400px">
+                                        <!-- BEGIN: Recent Activities -->
+                                        <div class="g-col-12 g-col-md-6 g-col-xl-4 g-col-xxl-12 mt-3" style="overflow-y:auto">
+                                            <div class="intro-x d-flex align-items-center h-10" style="overflow-y:auto">
+                                                <h2 class="fs-lg fw-medium truncate me-5">
+                                                    Project History
+                                                </h2>
+                                                @*    <a href="" class="ms-auto text-theme-1 dark-text-theme-10 truncate">Show More</a>*@
+                                            </div>
+                                            <div class="report-timeline  mt-5 position-relative" style="overflow-y:auto">
+
+                                                @if (historyCount == 0)
+                                                {
+
+                                                    <h2 class="fs-lg fw-medium truncate me-5">
+                                                        No Activity Yet
+                                                    </h2>
+                                                }
+
+                                                @foreach (TicketHistory history in ticketHistories)
+                                                {
+                                                    <div class="intro-x position-relative d-flex align-items-center mb-3">
+                                                        <div class="report-timeline__image">
+                                                            <div class="w-10 h-10 flex-none image-fit rounded-circle overflow-hidden">
+                                                                <img src="@_fileService.ConvertByteArrayToFile(history.User!.ImageFileData!, history.User!.ImageFileType!, (int)DefaultImage.BTUserImage)" alt="Post Images" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="box px-5 py-3 ms-4 flex-1 zoom-in">
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="fw-medium">@history.User.FullName</div>
+                                                                <div class="fs-xs text-gray-500 ms-auto">@history.Created</div>
+                                                            </div>
+                                                            <div class=" mt-1">@history.Description</div>
+                                                        </div>
+                                                    </div>
+                                                }
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="box border-primary gx-3 col m-1 p-2">
-                        <div class="box mx-2 border-primary dark body">
-                            <ul class=" list-unstyled basic-list">
-                              @*  <li>Project Manager:</li> <span>@((await _btProjectService.GetProjectManagerAsync(Model.Id)).FullName)</span>*@
-                                <li>Start Date: <span class="">@Model.StartDate</span></li>
-                                <li>Deadline: <span class="">@Model.EndDate</span></li>
-                                <li>Priority: <span class="">@Model.ProjectPriority.Name</span></li>
-                                @if (Model.Archived == true)
-                                {
-                                     <span class="progress-badge" style="font-size:small">Inactive</span>
-                                }
-                                else
-                                {
-                                    <span class="progress-badge" style="font-size:small">Active</span>
-                                }
-                 
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col mt-5 ">
-                <div class="box dark">
-                    <div class="box dark my-1 p-2">
-                        <div class="header">
-                            <h2 class="mb-1">Project Manager</h2>
-                            <hr />
-                        </div>
-                        <div class="mt-2 body" style="overflow-y:auto;height:300px;">
-                            [Project Manager]
-                            @* if() logic for Avatar/Default etc *@
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col mt-5 ">
-                <div class="bg-secondary">
-                    <div class="box my-1 dark m-1 p-2">
-                        <div class="header">
-                            <h2 class="mb-1">Project Team</h2>
-                            <hr />
-                        </div>
-                        <div class="mt-2 body" style="overflow-y:auto;height:300px;">
-                            <ul class="right_chat list-unstyled mb-0">
-
-                                @foreach (BTUser member in Model.Members)
-                                {
-
-                                    <p>@member.FullName</p>
-
-                                }
-                                @* Logic for avatars *@
-                            </ul>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 col mt-5 ">
-                <div class="bg-dark">
-                    <div class="card m-1 p-2">
-                        <div class="header">
-                            <h2>Project Activity</h2>
-                            <hr />
-                        </div>
-                        <div class="body" style="overflow-y:auto;height:300px;background-color:antiquewhite">
-                            @* Project Activity loop *@
-                            [Project Activity  e.g. Ticket History]
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-12 col">
-                <div class="mt-5 bg-secondary">
-                    <div class="box dark m-1 p-2">
-                        <div class="header">
-                            <h2>Tickets</h2>
-                        </div>
-                        <div class="body">
-                            <div class="table-responsive" style="overflow-y:auto;height:600px;">
-                                <table id ="myTable" class=" display table table-report mt-n2">
-                                    <thead>
-@*
-                                        <a asp-controller="Tickets" asp-action="Create">
-                                            <div type="button" class="btn btn-success w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Create New Ticket</div>
-                                        </a>*@
+                    <div class="g-col-xxl-5 w-full">
+                        <h3 class="fw-medium">Project Tickets</h3>
+                        <div class="table-responsive" style="overflow-y:auto;height:600px;">
+                            <table id="myTable" class=" display table table-report mt-n2">
+                                <thead>
+                                    @*
+                                    <a asp-controller="Tickets" asp-action="Create">
+                                    <div type="button" class="btn btn-success w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Create New Ticket</div>
+                                    </a>*@
 
 
-                                        <form asp-controller="Tickets" asp-action="Create" method="post">
+                                    <form asp-controller="Tickets" asp-action="Create" method="post">
 
-                                            <input type="hidden" asp-for="@Model.Id" name="ProjectId" />
-
-                                            @*
-                                            <i clickable data-feather="check-square" class="w-4 h-4 me-1">*@
-                                            <input clickable name="submit" type="submit" id="submit" value="Create Ticket">
-                                            @*              </i>*@
+                                        <input type="hidden" asp-for="@Model.Id" name="ProjectId" />
 
 
 
 
-                                        </form>
 
 
-                                        <tr>
+                                    </form>
 
-                                            <th class="text-nowrap">TICKET NAME</th>
-                                            <th class="text-nowrap">CREATED/UPDATED</th>
-                              @*              <th class="text-nowrap">PROJECT</th>*@
-                                        
-                                            <a asp-controller="Tickets" asp-action="MyTicketsType">
-                                            <th class="text-center text-nowrap">TYPE</th>
-                                            </a>
-                                            <th class="text-center text-nowrap">PRIORITY</th>
-                                            <th class="text-center text-nowrap">STATUS</th>
-                                            <th class="text-center text-nowrap">ACTIONS</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (Ticket ticket in Model.Tickets)
-                                        {
-                                            <tr class="intro-x">
+
+                                    <tr>
+
+                                        <th class="text-nowrap">TICKET NAME</th>
+                                        <th class="text-nowrap">CREATED/UPDATED</th>
+
+
+                                        <a asp-controller="Tickets" asp-action="MyTicketsType">
+                                        <th class="text-center text-nowrap">TYPE</th>
+                                        </a>
+                                        <th class="text-center text-nowrap">PRIORITY</th>
+                                        <th class="text-center text-nowrap">STATUS</th>
+                                        <th class="text-center text-nowrap">ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (Ticket ticket in Model.Tickets)
+                                    {
+                                        <tr class="intro-x">
+                                            <td class="">
+                                                <a href="" class="fw-medium text-nowrap">@ticket.Title</a>
+                                                <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Sport &amp; Outdoor</div>
+                                            </td>
+
+                                            @if (ticket.Updated != null)
+                                            {
                                                 <td class="">
-                                                    <a href="" class="fw-medium text-nowrap">@ticket.Title</a>
-                                                    <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Sport &amp; Outdoor</div>
+                                                    <div href="" class="fw-medium text-nowrap"> @ticket.Updated?.ToString("MMM dd, yyyy")</div>
+                                                    <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Updated Date</div>
+                                                </td>
+                                            }
+                                            else
+                                            {
+
+                                                <td class="">
+                                                    <a href="" class="fw-medium text-nowrap"> @ticket.Created.ToString("MMM dd, yyyy")</a>
+                                                    <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Creation Date</div>
+                                                </td>
+                                            }
+
+
+                                            @*            <td class="">
+                                        <a href="" class="fw-medium text-nowrap">@ticket.Project.Name</a>
+                                        </td>*@
+
+
+
+
+                                            <td class="text-center">
+                                                <a href="" class="fw-medium text-nowrap">@ticket.TicketType.Name</a>
+                                            </td>
+
+                                            <td class="text-center">
+                                                <a href="" class="fw-medium text-nowrap">@ticket.TicketPriority.Name</a>
+                                            </td>
+
+
+
+
+                                            @if (ticket.Archived == false)
+                                            {
+                                                <td class="w-40">
+                                                    <div class="d-flex align-items-center justify-content-center text-theme-9"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Active </div>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td class="w-40">
+                                                    <div class="d-flex align-items-center justify-content-center text-theme-6"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Inactive </div>
                                                 </td>
 
-                                                @if (ticket.Updated != null)
-                                                {
-                                                    <td class="">
-                                                        <div href="" class="fw-medium text-nowrap"> @ticket.Updated?.ToString("MMM dd, yyyy")</div>
-                                                        <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Updated Date</div>
-                                                    </td>
-                                                }
-                                                else
-                                                {
-
-                                                    <td class="">
-                                                        <a href="" class="fw-medium text-nowrap"> @ticket.Created.ToString("MMM dd, yyyy")</a>
-                                                        <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Creation Date</div>
-                                                    </td>
-                                                }
-
-
-                                    @*            <td class="">
-                                                    <a href="" class="fw-medium text-nowrap">@ticket.Project.Name</a>
-                                                </td>*@
+                                            }
 
 
 
 
-                                                <td class="text-center">
-                                                    <a href="" class="fw-medium text-nowrap">@ticket.TicketType.Name</a>
-                                                </td>
-
-                                                <td class="text-center">
-                                                    <a href="" class="fw-medium text-nowrap">@ticket.TicketPriority.Name</a>
-                                                </td>
-
-
-
-
-                                                @if (ticket.Archived == false)
-                                                {
-                                                    <td class="w-40">
-                                                        <div class="d-flex align-items-center justify-content-center text-theme-9"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Active </div>
-                                                    </td>
-                                                }
-                                                else
-                                                {
-                                                    <td class="w-40">
-                                                        <div class="d-flex align-items-center justify-content-center text-theme-6"> <i data-feather="check-square" class="w-4 h-4 me-2"></i> Inactive </div>
-                                                    </td>
-
-                                                }
-
-
-
-
-                                                <td class="table-report__action w-56">
-                                                    <div class="d-flex justify-content-center align-items-center">
+                                            <td class="table-report__action w-56">
+                                                <div class="d-flex justify-content-center align-items-center">
 
 
 
 
 
-                                                        <nav class="side-nav p-4">
-                                                            <ul>
-                                                                <a href="javascript:;.html" class="side-menu p-3">
+                                                    <nav class="side-nav p-4">
+                                                        <ul>
+                                                            <a href="javascript:;.html" class="side-menu p-3">
 
-                                                                    <div class="side-menu__title">
-                                                                        Actions
-                                                                        <div class="side-menu__sub-icon"> <i data-feather="chevron-down"></i> </div>
-                                                                    </div>
-                                                                </a>
+                                                                <div class="side-menu__title">
+                                                                    Actions
+                                                                    <div class="side-menu__sub-icon"> <i data-feather="chevron-down"></i> </div>
+                                                                </div>
+                                                            </a>
 
 
-                                                                <ul class="p-3">
+                                                            <ul class="p-3">
+
+
+
+
+                                                                <li class="mb-2">
+                                                                    <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">
+                                                                        <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                                                                        <div class="side-menu__title"> Details </div>
+                                                                    </a>
+                                                                </li>
+
+
+
+
+
+
+
+
+
+                                                                @if ((User.IsInRole("Admin")) || ticket.SubmitterUserId == userId || ticket.DeveloperUserId == userId)
+                                                                {
+
+
 
 
 
 
                                                                     <li class="mb-2">
-                                                                        <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">
+                                                                        <a asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id">
                                                                             <i data-feather="check-square" class="w-4 h-4 me-1"></i>
-                                                                            <div class="side-menu__title"> Details </div>
+                                                                            <div class="side-menu__title"> Edit </div>
                                                                         </a>
                                                                     </li>
 
@@ -304,45 +659,22 @@
 
 
 
+                                                                }
 
-
-                                                                    @if ((User.IsInRole("Admin")) || ticket.SubmitterUserId == userId || ticket.DeveloperUserId == userId)
-                                                                    {
-
-
-
-
-
-
-                                                                        <li class="mb-2">
-                                                                            <a asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id">
-                                                                                <i data-feather="check-square" class="w-4 h-4 me-1"></i>
-                                                                                <div class="side-menu__title"> Edit </div>
-                                                                            </a>
-                                                                        </li>
+                                                                @if ((User.IsInRole("ProjectManager")) && result == false)
+                                                                {
 
 
 
 
 
 
-
-                                                                    }
-
-                                                                    @if ((User.IsInRole("ProjectManager")) && result == false)
-                                                                    {
-
-
-
-
-
-
-                                                                        <li class="mb-2">
-                                                                            <a asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id">
-                                                                                <i data-feather="check-square" class="w-4 h-4 me-1"></i>
-                                                                                <div class="side-menu__title"> Edit </div>
-                                                                            </a>
-                                                                        </li>
+                                                                    <li class="mb-2">
+                                                                        <a asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id">
+                                                                            <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                                                                            <div class="side-menu__title"> Edit </div>
+                                                                        </a>
+                                                                    </li>
 
 
 
@@ -350,30 +682,30 @@
 
 
 
-                                                                    }
+                                                                }
 
 
 
-                                                                    @if ((User.IsInRole("Admin")))
-                                                                    {
+                                                                @if ((User.IsInRole("Admin")))
+                                                                {
 
-                                                                        <li class="mb-2">
-                                                                            <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">
-                                                                                <i data-feather="check-square" class="w-4 h-4 me-1"></i>
-                                                                                <div class="side-menu__title"> Delete </div>
-                                                                            </a>
-                                                                        </li>
-                                                                    }
+                                                                    <li class="mb-2">
+                                                                        <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">
+                                                                            <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                                                                            <div class="side-menu__title"> Delete </div>
+                                                                        </a>
+                                                                    </li>
+                                                                }
 
-                                                                    @if ((User.IsInRole("ProjectManager")) && result == false)
-                                                                    {
-                                                                        <li class="mb-2">
-                                                                            <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">
-                                                                                <i data-feather="check-square" class="w-4 h-4 me-1"></i>
-                                                                                <div class="side-menu__title"> Delete </div>
-                                                                            </a>
-                                                                        </li>
-                                                                    }
+                                                                @if ((User.IsInRole("ProjectManager")) && result == false)
+                                                                {
+                                                                    <li class="mb-2">
+                                                                        <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">
+                                                                            <i data-feather="check-square" class="w-4 h-4 me-1"></i>
+                                                                            <div class="side-menu__title"> Delete </div>
+                                                                        </a>
+                                                                    </li>
+                                                                }
 
 
 
@@ -391,11 +723,10 @@
 
 
 
-
-                                                                </ul>
 
                                                             </ul>
 
+                                                        </ul>
 
 
 
@@ -414,81 +745,42 @@
 
 
 
-                                                    </div>
-                                                </td>
-                                            </tr>
 
-                                        }
-                                </table>
-                            </div>
+                                                </div>
+                                            </td>
+                                        </tr>
 
+                                    }
+                            </table>
                         </div>
                     </div>
-
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-
-<div id="delete-confirmation-modal" class="modal fade" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body p-0">
-                <div class="p-5 text-center">
-                    <i data-feather="x-circle" class="w-16 h-16 text-theme-6 mx-auto mt-3"></i>
-                    <div class="fs-3xl mt-5">Are you sure?</div>
-                    <div class="text-gray-600 mt-2">
-                        Do you really want to archive these records?
-                        <br>
-                     
-                    </div>
-                </div>
-                <div class="px-5 pb-8 text-center">
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-outline-secondary w-24 me-1">Cancel</button>
-                    <form asp-action="Delete">
-                        <input type="hidden" asp-for="Id" />
-                        <input type="submit" value="Delete" class="btn btn-danger" /> |
-                    </form>
-@*                    <a asp-controller="Projects" asp-action="DeleteConfirmed" asp-route-id="@project.Id" class="btn btn-danger w-24">Delete</a>*@
-                    @*      <button type="button" class="btn btn-danger w-24">Delete</button>*@
-                </div>
-            </div>
+            <!-- END: General Statistic -->
         </div>
     </div>
 </div>
 
 
 
-<div id="unarchive-confirmation-modal" class="modal fade" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body p-0">
-                <div class="p-5 text-center">
-                    <i data-feather="x-circle" class="w-16 h-16 text-theme-6 mx-auto mt-3"></i>
-                    <div class="fs-3xl mt-5">Are you sure?</div>
-                    <div class="text-gray-600 mt-2">
-                        Do you want to unarchive these records?
-                        <br>
-                   
-                    </div>
-                </div>
-                <div class="px-5 pb-8 text-center">
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-outline-secondary w-24 me-1">Cancel</button>
-                    <form asp-action="Unarchive">
-                        <input type="hidden" asp-for="Id" />
-                        <input type="submit" value="Unarchive" class="btn btn-success" /> 
-                    </form>
 
-                    <form asp-action="UnarchiveWithTickets">
-                        <input type="hidden" asp-for="Id" />
-                        <input type="submit" value="Unarchive project and project Tickets" class="btn btn-info" /> |
-                    </form>
-                    @*                    <a asp-controller="Projects" asp-action="DeleteConfirmed" asp-route-id="@project.Id" class="btn btn-danger w-24">Delete</a>*@
-                    @*      <button type="button" class="btn btn-danger w-24">Delete</button>*@
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
+
+
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+
+
+
+
+
+
+
+
+
