@@ -731,8 +731,17 @@ namespace BugSpy.Controllers
             int companyId = loggedInUser!.CompanyId;
 
 
-        
-            ViewData["ProjectId"] = new SelectList(await _btTicketService.GetProjectListAsync(companyId), "Id", "Name");
+
+            if (User.IsInRole(nameof(BTRoles.Admin)))
+            {
+                ViewData["ProjectId"] = new SelectList(await _btTicketService.GetProjectListAsync(companyId), "Id", "Name");
+
+            }  else
+            {
+                ViewData["ProjectId"] = new SelectList(await _btProjectService.GetSignedInUserProjects(companyId, loggedInUser.Id), "Id", "Name");
+            }
+
+            
      
 
             ViewData["TicketPriorityId"] = new SelectList(await _btTicketService.GetTicketPriorities(), "Id", "Name");

@@ -1,4 +1,6 @@
 ﻿@model BugSpy.Models.Ticket
+@using BugSpy.Services.Interfaces
+@inject IBTProjectService _projectService
 
 
 <h2 class="fs-lg fw-medium">Create Ticket...</h2>
@@ -6,6 +8,9 @@
 
 @{
     ViewData["Title"] = "Create";
+
+
+
 }
 
 

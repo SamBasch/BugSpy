@@ -25,11 +25,13 @@ namespace BugSpy.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IBTRolesService _roleService;
         private readonly UserManager<BTUser> _userManager;
-        public CompaniesController(ApplicationDbContext context, IBTRolesService roleService, UserManager<BTUser> userManager)
+        private readonly IBTCompanyService _companyService;
+        public CompaniesController(ApplicationDbContext context, IBTRolesService roleService, UserManager<BTUser> userManager, IBTCompanyService companyService)
         {
             _context = context;
             _roleService = roleService;
             _userManager = userManager;
+            _companyService = companyService;
         }
 
         // GET: Companies
@@ -146,8 +148,8 @@ namespace BugSpy.Controllers
                 return NotFound();
             }
 
-            var company = await _context.Companies
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Company? company = await _companyService.GetCompanyInfoAsync(id);
+
             if (company == null)
             {
                 return NotFound();

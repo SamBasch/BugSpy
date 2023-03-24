@@ -3,13 +3,21 @@
 @using BugSpy.Services.Interfaces
 @using X.PagedList.Mvc.Core;
 @using X.PagedList.Web.Common;
+@using BugSpy.Models.Enums
 @inject UserManager<BTUser> _userManager
 @model IEnumerable<BugSpy.Models.Ticket>
 @inject IBTProjectService _btProjectService
+@inject IBTRolesService _roleService
 @{
     BTUser? projectMember = await _userManager.GetUserAsync(User);
 
     string userId = _userManager.GetUserId(User);
+
+
+    bool subResult = await _roleService.IsUserInRoleAsync(projectMember, nameof(BTRoles.Submitter));
+
+    bool devResult = await _roleService.IsUserInRoleAsync(projectMember, nameof(BTRoles.Developer));
+
 
   
 }
@@ -17,6 +25,21 @@
 
 
 <div class="intro-y g-col-12 overflow-auto overflow-lg-visible">
+
+    @if(subResult == true)
+    {
+        <div class="d-flex justify-content-center ">
+            <h3 class="mb-3 justify-content-center align-items-center display-6 fw-medium">My Submitted Tickets</h3>
+        </div>
+    } else
+    {
+        <div class="d-flex justify-content-center ">
+            <h3 class="mb-3 justify-content-center align-items-center display-6 fw-medium">My Assigned Tickets</h3>
+        </div>
+    }
+
+
+
     <table id="myTable" class="display table-responsive table table-report mt-n2">
         <thead>
 
@@ -48,7 +71,7 @@
                <tr class="intro-x">
                 <td class="">
                     <a href="" class="fw-medium text-nowrap">@ticket.Title</a>
-                    <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Sport &amp; Outdoor</div>
+        
                 </td>
 
                     @if(ticket.Updated != null)

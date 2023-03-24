@@ -32,7 +32,7 @@
 }
 
 <div class="intro-y d-flex align-items-center mt-8">
-    <h2 class="fs-lg fw-medium me-auto">
+    <h2 class="display-5 fw-medium me-auto">
         Project Details
     </h2>
 
@@ -147,7 +147,48 @@
 
 
 
-        <h2 class="truncate fs-lg fw-medium text-center white-space-sm-wrap ">  @Model.ProjectPriority.Name </h2>
+
+
+
+        <div class=" mt-2 w-3/4 text-center mx-auto">
+
+            <div class="g-col-6">
+
+                @switch (projectPriority)
+                {
+                    case 1:
+                        <h2 class=" btn btn-success rounded-pill truncate fs-lg fw-medium text-center white-space-sm-wrap">  @Model.ProjectPriority.Name </h2>
+                        break;
+
+                    case 2:
+                        <h2 class=" btn btn-info rounded-pill truncate fs-lg fw-medium text-center white-space-sm-wrap">  @Model.ProjectPriority.Name </h2>
+                        break;
+
+                    case 3:
+                        <h2 class=" btn btn-warning rounded-pill truncate fs-lg fw-medium text-center white-space-sm-wrap">  @Model.ProjectPriority.Name </h2>
+                        break;
+
+
+                    case 4:
+                        <h2 class=" btn btn-danger rounded-pill truncate fs-lg fw-medium text-center white-space-sm-wrap">  @Model.ProjectPriority.Name </h2>
+                        break;
+                }
+            </div>
+
+            </div>
+
+
+
+
+
+
+
+ 
+
+
+
+
+    @*    <h2 class="truncate fs-lg fw-medium text-center white-space-sm-wrap ">  @Model.ProjectPriority.Name </h2>*@
 
     </div>
     <div href="" class="intro-y g-col-12 g-col-lg-4 box py-10">
@@ -268,16 +309,16 @@
                 <div class="d-flex align-items-center p-5 border-bottom border-gray-200 dark-border-dark-5">
                     <h2 class="fs-lg fw-medium truncate me-5">Project Description</h2>
                     <div class="dropdown ms-auto">
-                        <a class="dropdown-toggle w-5 h-5 d-block" href="javascript:;" aria-expanded="false" data-bs-toggle="dropdown"> <i data-feather="edit-2" class="w-5 h-5 text-gray-600 dark-text-gray-300"></i> </a>
+                @*        <a class="dropdown-toggle w-5 h-5 d-block" href="javascript:;" aria-expanded="false" data-bs-toggle="dropdown"> <i data-feather="edit-2" class="w-5 h-5 text-gray-600 dark-text-gray-300"></i> </a>*@
                         <div class="dropdown-menu w-40">
-                            <ul class="dropdown-content">
+@*                            <ul class="dropdown-content">
                                 <li>
                                     <a href="" class="dropdown-item"> <i data-feather="plus" class="w-4 h-4 me-2"></i> Add Category </a>
                                 </li>
                                 <li>
                                     <a href="" class="dropdown-item"> <i data-feather="settings" class="w-4 h-4 me-2"></i> Settings </a>
                                 </li>
-                            </ul>
+                            </ul>*@
                         </div>
                     </div>
                 </div>
@@ -503,7 +544,9 @@
                         </div>
                     </div>
                     <div class="g-col-xxl-5 w-full">
-                        <h3 class="fw-medium">Project Tickets</h3>
+                        <div class="d-flex justify-content-center ">
+                            <h3 class="mb-3 justify-content-center align-items-center display-6 fw-medium">Project Tickets</h3>
+                        </div>
                         <div class="table-responsive" style="overflow-y:auto;height:600px;">
                             <table id="myTable" class=" display table table-report mt-n2">
                                 <thead>
@@ -626,7 +669,7 @@
 
 
                                                                 <li class="mb-2">
-                                                                    <a asp-action="Details" asp-route-id="@ticket.Id">
+                                                                    <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">
                                                                         <i data-feather="check-square" class="w-4 h-4 me-1"></i>
                                                                         <div class="side-menu__title"> Details </div>
                                                                     </a>

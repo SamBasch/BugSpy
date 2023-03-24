@@ -332,7 +332,7 @@
 
 
                   
-                        <div class="tab-pane fade active" id="inactive-users" role="tabpanel" aria-labelledby="inactive-users-tab">
+                        <div class="tab-pane fade " id="inactive-users" role="tabpanel" aria-labelledby="inactive-users-tab">
                             <div class="position-relative">
                                 <canvas class="mt-8" id="myChartTwo" height="130"></canvas>
                                 <div class="d-flex flex-column justify-content-center align-items-center position-absolute w-full h-full top-0 start-0">
@@ -777,17 +777,20 @@
             <!-- BEGIN: Weekly Top Products -->
             <div class="g-col-12 mt-6">
                 <div class="intro-y d-block d-sm-flex align-items-center h-10">
-                    <h2 class="fs-lg fw-medium truncate me-5">
+@*                    <h2 class="fs-lg fw-medium truncate me-5">
                         Most Recent Company Tickets
-                    </h2>
+                    </h2>*@
                     <div class="d-flex align-items-center ms-sm-auto mt-3 mt-sm-0">
 @*                        <button class="btn box d-flex align-items-center text-gray-700 dark-text-gray-300"> <i data-feather="file-text" class="d-none d-sm-block w-4 h-4 me-2"></i> Export to Excel </button>
                         <button class="ms-3 btn box d-flex align-items-center text-gray-700 dark-text-gray-300"> <i data-feather="file-text" class="d-none d-sm-block w-4 h-4 me-2"></i> Export to PDF </button>*@
                     </div>
                 </div>
                 <div class="intro-y overflow-auto overflow-lg-visible mt-8 mt-sm-0">
+                    <div class="d-flex justify-content-center ">
+                        <h3 class="mb-3 justify-content-center align-items-center display-6 fw-medium">  Most Recent Company Tickets</h3>
+                    </div>
                     <div class="table-responsive overflow-y-xl-auto" style="overflow-y:auto;height:600px;">
-                        <table class="table table-report mt-n2">
+                        <table id="myTable" class=" display table table-report mt-n2">
                             <thead>
 
 
@@ -808,6 +811,9 @@
                             <tbody>
                                 @foreach (Ticket ticket in recentCompanyTickets)
                                 {
+
+
+                                    int priorityId = ticket.TicketPriorityId;
 
                                     
                                       <tr class="intro-x">
@@ -845,9 +851,39 @@
                                             <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">@ticket.TicketType.Name</a>
                                         </td>
 
+                                       
+
+                                        @switch (priorityId)
+                                        {
+
+                                        case 1:
                                         <td class="text-center">
-                                            <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">@ticket.TicketPriority.Name</a>
+                                            <a class="fw-medium text-nowrap"><span class="text-theme-9">@ticket.TicketPriority.Name</span></a>
                                         </td>
+                                        break;
+
+                                        case 2:
+                                        <td class="text-center">
+                                            <a class="fw-medium text-nowrap"><span class="text-theme-31">@ticket.TicketPriority.Name</span></a>
+                                        </td>
+                                        break;
+
+
+                                        case 3:
+                                        <td class="text-center">
+                                            <a class="fw-medium text-nowrap"><span class="text-theme-32">@ticket.TicketPriority.Name</span></a>
+                                        </td>
+                                        break;
+
+
+                                        case 4:
+                                        <td class="text-center">
+                                            <a class="fw-medium text-nowrap"><span class="text-theme-6">@ticket.TicketPriority.Name</span></a>
+                                        </td>
+                                        break;
+
+
+                                        }
 
 
 

@@ -1,4 +1,5 @@
-﻿@using BugSpy.Services.Interfaces
+﻿@using BugSpy.Extensions;
+@using BugSpy.Services.Interfaces
 @using BugSpy.Models.Enums;
 @using Microsoft.AspNetCore.Identity;
 @inject UserManager<BTUser> _userManager
@@ -6,6 +7,8 @@
 
 @{
     BTUser? btUser = await _userManager.GetUserAsync(User);
+
+    int companyId = User.Identity!.GetCompanyId();
 }
 
 
@@ -669,8 +672,6 @@ License: You must have a valid license purchased only from themeforest(the above
 
 
 
-                @if (User.IsInRole("Admin"))
-                {
                     <li>
                         <a href="javascript:;.html" class="side-menu">
                             <div class="side-menu__icon"> <i data-feather="briefcase"></i> </div>
@@ -695,6 +696,15 @@ License: You must have a valid license purchased only from themeforest(the above
 
 
 
+
+                           
+                        
+                                <li>
+                                    <a asp-controller="Companies" asp-action="Details" asp-route-id="@companyId" class="side-menu">
+                                        <div class="side-menu__icon"> <i data-feather="book"></i> </div>
+                                        <div class="side-menu__title"> Company Overview </div>
+                                    </a>
+                                </li>
 
 
 
@@ -774,7 +784,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
 
 
-                }
+               
 
               
 
@@ -788,7 +798,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
                 <li>
                     <a href="javascript:;.html" class="side-menu">
-                        <div class="side-menu__icon"> <i data-feather="home"></i> </div>
+                        <div class="side-menu__icon"> <i data-feather="clipboard"></i> </div>
                         <div class="side-menu__title">
                             Projects
                             <div class="side-menu__sub-icon"> <i data-feather="chevron-down"></i> </div>
@@ -841,13 +851,13 @@ License: You must have a valid license purchased only from themeforest(the above
                         </li>
 
 
-
+@*
                         <li>
                             <a asp-controller="Projects" asp-action="ActiveProjectsCardIndex" class="side-menu">
                                 <div class="side-menu__icon"> <i data-feather="inbox"></i> </div>
                                 <div class="side-menu__title"> Company Card Projects </div>
                             </a>
-                        </li>
+                        </li>*@
 
 
 
@@ -1231,9 +1241,16 @@ License: You must have a valid license purchased only from themeforest(the above
 
                     </ul>
                 </li>
-    
 
 
+                <hr />
+
+                <li>
+                    <a asp-area="Identity" asp-page="/Account/Logout" class="side-menu">
+                        <div class="side-menu__icon"> <i data-feather="log-out"></i> </div>
+                        <div class="side-menu__title"> Log Out </div>
+                    </a>
+                </li>
 
 
 
@@ -1641,7 +1658,10 @@ License: You must have a valid license purchased only from themeforest(the above
 
                 @if(User.Identity.IsAuthenticated)
                 {
+
+                    <h2 class="me-3">@btUser.FullName</h2>
                     <div class="intro-x dropdown w-8 h-8">
+                      
                         <div class="dropdown-toggle w-8 h-8 rounded-pill overflow-hidden shadow-lg image-fit zoom-in" role="button" aria-expanded="false" data-bs-toggle="dropdown">
                             <img src="@_fileService.ConvertByteArrayToFile(btUser!.ImageFileData!, btUser!.ImageFileType!, (int)DefaultImage.BTUserImage)" alt="Post Images" />
                         </div>

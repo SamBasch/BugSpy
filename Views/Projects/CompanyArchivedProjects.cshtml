@@ -14,6 +14,10 @@
 }
 
 <div class="intro-y g-col-12 overflow-auto overflow-lg-visible">
+    <div class="d-flex justify-content-center ">
+        <h3 class="mb-3 justify-content-center align-items-center display-6 fw-medium">All Archived Projects</h3>
+    </div>
+
     <table id="myTable" class="display table table-report mt-n2">
         <thead>
 
@@ -35,6 +39,8 @@
             @foreach (Project project in Model)
             {
 
+                int priorityId = project.ProjectPriorityId;
+
                 bool result = await _btProjectService.IsMemberInProject(projectMember, project.Id);
 
                 <tr class="intro-x">
@@ -45,7 +51,7 @@
 
                     <td class="">
                         <a href="" class="fw-medium text-nowrap">@project.Name</a>
-                        <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Sport &amp; Outdoor</div>
+              
                     </td>
 
 
@@ -77,9 +83,37 @@
                 <a href="" class="fw-medium text-nowrap">@ticket.TicketType.Name</a>
                 </td>*@
 
-                    <td class="text-center">
-                        <a href="" class="fw-medium text-nowrap">@project.ProjectPriority.Name</a>
-                    </td>
+                    @switch (priorityId)
+                    {
+
+                        case 1:
+                            <td class="text-center">
+                                <a class="fw-medium text-nowrap"><span class="text-theme-9">@project.ProjectPriority.Name</span></a>
+                            </td>
+                            break;
+
+                        case 2:
+                            <td class="text-center">
+                                <a class="fw-medium text-nowrap"><span class="text-theme-31">@project.ProjectPriority.Name</span></a>
+                            </td>
+                            break;
+
+
+                        case 3:
+                            <td class="text-center">
+                                <a class="fw-medium text-nowrap"><span class="text-theme-32">@project.ProjectPriority.Name</span></a>
+                            </td>
+                            break;
+
+
+                        case 4:
+                            <td class="text-center">
+                                <a class="fw-medium text-nowrap"><span class="text-theme-6">@project.ProjectPriority.Name</span></a>
+                            </td>
+                            break;
+
+
+                    }
 
 
 

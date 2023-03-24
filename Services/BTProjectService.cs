@@ -202,7 +202,7 @@ namespace BugSpy.Services
 
             try
             {
-                IEnumerable<Project> projects = await _context.Projects.Where(p => p.CompanyId == companyId).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
+                IEnumerable<Project> projects = await _context.Projects.Where(p => p.CompanyId == companyId && p.Archived == false).Include(p => p.Members).Include(p => p.Tickets).Include(p => p.Company).Include(p => p.ProjectPriority).ToListAsync();
 
                 return projects.OrderByDescending(p => p.Created);
             }
