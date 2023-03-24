@@ -101,7 +101,7 @@ namespace BugSpy.Services.Interfaces
 		public Task<IEnumerable<Ticket>> GetSubmitterTicketsWithTypeWorkTask(string? userId);
 		public Task<IEnumerable<Ticket>> GetSubmitterTicketsWithTypeDefect(string? userId);
 
-		public Task<IEnumerable<Ticket>> GetRecentCompanyTickets();
+		public Task<IEnumerable<Ticket>> GetRecentCompanyTickets(int? companyId);
 
 
         public Task<IEnumerable<Ticket>> GetSubmitterTicketsByStatus(string? userId);

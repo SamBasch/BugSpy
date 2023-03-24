@@ -19,19 +19,19 @@
     bool devResult = await _roleService.IsUserInRoleAsync(projectMember, nameof(BTRoles.Developer));
 
 
-  
+
 }
 
 
 
 <div class="intro-y g-col-12 overflow-auto overflow-lg-visible">
 
-  
-        <div class="d-flex justify-content-center ">
-            <h3 class="mb-3 justify-content-center align-items-center display-6 fw-medium">My Submitted Tickets</h3>
-        </div>
-   
-    
+
+    <div class="d-flex justify-content-center ">
+        <h3 class="mb-3 justify-content-center align-items-center display-6 fw-medium"> Tickets Assigned To Me</h3>
+    </div>
+
+
 
 
 
@@ -49,7 +49,7 @@
                 <th clickable class="text-nowrap">TICKET NAME</th>
                 <th class="text-nowrap">CREATED/UPDATED</th>
                 <th class="text-nowrap">PROJECT</th>
-      
+
                 <th class="text-center text-nowrap">TYPE</th>
                 <th class="text-center text-nowrap">PRIORITY</th>
                 <th class="text-center text-nowrap">STATUS</th>
@@ -57,25 +57,26 @@
             </tr>
         </thead>
         <tbody>
-            @foreach(Ticket ticket in Model)
+            @foreach (Ticket ticket in Model)
             {
 
                 int priorityId = ticket.TicketPriorityId;
 
                 bool result = await _btProjectService.IsMemberInProject(projectMember, ticket?.ProjectId);
-               <tr class="intro-x">
-                <td class="">
-                    <a href="" class="fw-medium text-nowrap">@ticket.Title</a>
-        
-                </td>
+                <tr class="intro-x">
+                    <td class="">
+                        <a href="" class="fw-medium text-nowrap">@ticket.Title</a>
 
-                    @if(ticket.Updated != null)
+                    </td>
+
+                    @if (ticket.Updated != null)
                     {
                         <td class="">
                             <div href="" class="fw-medium text-nowrap"> @ticket.Updated?.ToString("MMM dd, yyyy")</div>
                             <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Updated Date</div>
                         </td>
-                    } else
+                    }
+                    else
                     {
 
                         <td class="">
@@ -98,9 +99,9 @@
 
 
 
-                    @switch(priorityId)
+                    @switch (priorityId)
                     {
-                        
+
                         case 1:
                             <td class="text-center">
                                 <a class="fw-medium text-nowrap"><span class="text-theme-9">@ticket.TicketPriority.Name</span></a>
@@ -415,16 +416,12 @@
 
             }
         </tbody>
-  </table>
+    </table>
 
-<!-- END: Data List -->
-<!-- BEGIN: Pagination -->
-
-
-
-
-<!-- END: Pagination -->
-                </div>
+    <!-- END: Data List -->
+    <!-- BEGIN: Pagination -->
+    <!-- END: Pagination -->
+</div>
 <!-- BEGIN: Delete Confirmation Modal -->
 <div id="delete-confirmation-modal" class="modal fade" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">

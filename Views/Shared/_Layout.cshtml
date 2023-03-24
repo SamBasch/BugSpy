@@ -261,29 +261,29 @@ License: You must have a valid license purchased only from themeforest(the above
 
 
 
-                    @if (User.IsInRole("Submitter"))
-                    {
+                    
 
                         <li>
                             <a asp-controller="Tickets" asp-action="TabulatorTickets" class="menu">
                                 <div class="menu__icon"> <i data-feather="folder"></i> </div>
-                                <div class="menu__title"> My Tickets </div>
+                                <div class="menu__title"> My Submitted Tickets </div>
                             </a>
                         </li>
+}
 
-                    }
+          
+
+
 
 
                     @if (User.IsInRole("Developer"))
                     {
-
                         <li>
-                            <a asp-controller="Tickets" asp-action="TabulatorTickets" class="menu">
-                                <div class="menu__icon"> <i data-feather="folder"></i> </div>
-                                <div class="menu__title"> My Tickets </div>
+                            <a asp-controller="Tickets" asp-action="MyAssignedTickets" class="side-menu">
+                                <div class="side-menu__icon"> <i data-feather="folder"></i> </div>
+                                <div class="side-menu__title"> My Assigned Tickets </div>
                             </a>
                         </li>
-
                     }
 
 
@@ -868,30 +868,33 @@ License: You must have a valid license purchased only from themeforest(the above
 
 
 
-                        @if (User.IsInRole("Submitter"))
-                        {
-
+                      
                             <li>
                                 <a asp-controller="Tickets" asp-action="TabulatorTickets" class="side-menu">
                                     <div class="side-menu__icon"> <i data-feather="folder"></i> </div>
-                                    <div class="side-menu__title"> My Tickets </div>
+                                    <div class="side-menu__title"> My Submitted Tickets </div>
                                 </a>
                             </li>
 
-                        }
+
 
 
                         @if (User.IsInRole("Developer"))
                         {
-
                             <li>
-                                <a asp-controller="Tickets" asp-action="TabulatorTickets" class="side-menu">
+                                <a asp-controller="Tickets" asp-action="MyAssignedTickets" class="side-menu">
                                     <div class="side-menu__icon"> <i data-feather="folder"></i> </div>
-                                    <div class="side-menu__title"> My Tickets </div>
+                                    <div class="side-menu__title"> My Assigned Tickets </div>
                                 </a>
                             </li>
-
                         }
+
+           
+
+                        
+
+
+                 
 
 
 

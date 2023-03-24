@@ -275,7 +275,7 @@ namespace BugSpy.Controllers
 
         }
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> TicketsInProject(int? Id)
         {
 
@@ -290,7 +290,7 @@ namespace BugSpy.Controllers
 
 
 
-
+       
         public async Task<IActionResult> TabulatorTickets()
         {
 
@@ -300,33 +300,87 @@ namespace BugSpy.Controllers
 
             string? userId = _userManager.GetUserId(User);
 
-            if (User.IsInRole("Submitter"))
-            {
 
-                IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetSubmitterRecentTickets(userId));
-                return View(recentSubmitterTickets);
-            }
-            else if (User.IsInRole("Developer"))
-            {
-                IEnumerable<Ticket> recentDeveloperTickets = (await _btTicketService.GetDeveloperRecentTickets(userId));
-                return View(recentDeveloperTickets);
-            }
-            else if(User.IsInRole("Admin"))
-            {
-                IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetAllCompanyTickets(companyId));
 
-                return View(recentSubmitterTickets);
-            } else
-            {
-                IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetAllCompanyTickets(companyId));
+            IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetSubmitterRecentTickets(userId));
+            return View(recentSubmitterTickets);
 
-                return View(recentSubmitterTickets);
-            }
+            //if (User.IsInRole("Submitter"))
+            //{
+
+            //    IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetSubmitterRecentTickets(userId));
+            //    return View(recentSubmitterTickets);
+            //}
+            //if (User.IsInRole("Developer"))
+            //{
+            //    IEnumerable<Ticket> recentDeveloperTickets = (await _btTicketService.GetDeveloperRecentTickets(userId));
+            //    return View(recentDeveloperTickets);
+            //}
+            //else if (User.IsInRole("Admin"))
+            //{
+            //    IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetAllCompanyTickets(companyId));
+
+            //    return View(recentSubmitterTickets);
+            //}
+            //else
+            //{
+            //    IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetAllCompanyTickets(companyId));
+
+            //    return View(recentSubmitterTickets);
+            //}
 
 
 
 
         }
+
+
+
+
+        [Authorize(Roles = "Developer")]
+        public async Task<IActionResult> MyAssignedTickets()
+        {
+
+            int companyId = User.Identity!.GetCompanyId();
+
+
+
+            string? userId = _userManager.GetUserId(User);
+
+
+
+            IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetDeveloperRecentTickets(userId));
+            return View(recentSubmitterTickets);
+
+            //if (User.IsInRole("Submitter"))
+            //{
+
+            //    IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetSubmitterRecentTickets(userId));
+            //    return View(recentSubmitterTickets);
+            //}
+            //if (User.IsInRole("Developer"))
+            //{
+            //    IEnumerable<Ticket> recentDeveloperTickets = (await _btTicketService.GetDeveloperRecentTickets(userId));
+            //    return View(recentDeveloperTickets);
+            //}
+            //else if (User.IsInRole("Admin"))
+            //{
+            //    IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetAllCompanyTickets(companyId));
+
+            //    return View(recentSubmitterTickets);
+            //}
+            //else
+            //{
+            //    IEnumerable<Ticket> recentSubmitterTickets = (await _btTicketService.GetAllCompanyTickets(companyId));
+
+            //    return View(recentSubmitterTickets);
+            //}
+
+
+
+
+        }
+
 
 
 
@@ -350,6 +404,9 @@ namespace BugSpy.Controllers
         }
 
 
+
+
+ 
         public async Task<IActionResult> CompanyArchivedTickets()
         {
 
@@ -373,7 +430,7 @@ namespace BugSpy.Controllers
 
 
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> MyRecentTickets(int? pageNum)
         {
 
@@ -417,6 +474,8 @@ namespace BugSpy.Controllers
 
         }
 
+
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> MyTicketsType(int? pageNum)
         {
 
@@ -450,7 +509,7 @@ namespace BugSpy.Controllers
 
         }
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> MyTicketsPriority(int? pageNum)
         {
 
@@ -484,7 +543,7 @@ namespace BugSpy.Controllers
 
         }
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> MyTicketsStatus(int? pageNum)
         {
 
@@ -516,7 +575,7 @@ namespace BugSpy.Controllers
 
         }
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> MyTicketsTitle(int? pageNum)
         {
 
@@ -550,7 +609,7 @@ namespace BugSpy.Controllers
 
         }
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> MyTicketsProject(int? pageNum)
         {
 
@@ -822,7 +881,7 @@ namespace BugSpy.Controllers
                     await _notificationService.SendAdminEmailNotficiationAsync(notification, "New Ticket Added", companyId);
 
                 }
-                return RedirectToAction(nameof(TabulatorTickets));
+                return RedirectToAction(nameof(TicketsIndex));
             }
 
 
@@ -980,6 +1039,7 @@ namespace BugSpy.Controllers
         }
 
         // GET: Tickets/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             int companyId = User.Identity.GetCompanyId();
@@ -1031,7 +1091,7 @@ namespace BugSpy.Controllers
 
 
 
-
+        [Authorize(Roles = "Admin")]
         // POST: Tickets/Delete/5
 
         public async Task<IActionResult> Unarchive(int? Id)
@@ -1062,7 +1122,7 @@ namespace BugSpy.Controllers
 
 
 
-
+        [Authorize(Roles = "Admin")]
         // POST: Tickets/Delete/5
         [HttpPost, ActionName("UnarchiveConfirm")]
         [ValidateAntiForgeryToken]
@@ -1089,7 +1149,7 @@ namespace BugSpy.Controllers
 
 
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Archive(int? id)
         {
             int companyId = User.Identity.GetCompanyId();
@@ -1114,7 +1174,7 @@ namespace BugSpy.Controllers
 
 
 
-
+        [Authorize(Roles = "Admin")]
         // POST: Tickets/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
