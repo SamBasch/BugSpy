@@ -859,5 +859,5 @@ namespace BugSpy.Controllers
         {
           return (_context.Projects?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-    }M
+    }
 }
