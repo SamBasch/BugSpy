@@ -38,9 +38,7 @@
     <table id="myTable" class="display table-responsive table table-report mt-n2">
         <thead>
 
-            <a asp-controller="Tickets" asp-action="Create">
-                <div type="button" class="btn btn-success w-full w-sm-16 mt-2 mt-sm-0 ms-sm-1">Create New Ticket</div>
-            </a>
+
 
 
 
@@ -50,7 +48,7 @@
                 <th class="text-nowrap">CREATED/UPDATED</th>
                 <th class="text-nowrap">PROJECT</th>
       
-                <th class="text-center text-nowrap">TYPE</th>
+                <th class="text-center text-nowrap">ASSIGNED TO</th>
                 <th class="text-center text-nowrap">PRIORITY</th>
                 <th class="text-center text-nowrap">STATUS</th>
                 <th class="text-center text-nowrap">ACTIONS</th>
@@ -63,9 +61,14 @@
                 int priorityId = ticket.TicketPriorityId;
 
                 bool result = await _btProjectService.IsMemberInProject(projectMember, ticket?.ProjectId);
+
+                
+         
+
+                
                <tr class="intro-x">
                 <td class="">
-                    <a href="" class="fw-medium text-nowrap">@ticket.Title</a>
+                    <div href="" class="fw-medium text-nowrap">@ticket.Title</div>
         
                 </td>
 
@@ -79,22 +82,30 @@
                     {
 
                         <td class="">
-                            <a href="" class="fw-medium text-nowrap"> @ticket.Created.ToString("MMM dd, yyyy")</a>
+                            <div href="" class="fw-medium text-nowrap"> @ticket.Created.ToString("MMM dd, yyyy")</div>
                             <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Creation Date</div>
                         </td>
                     }
 
 
                     <td class="">
-                        <a href="" class="fw-medium text-nowrap">@ticket.Project.Name</a>
+                        <div href="" class="fw-medium text-nowrap">@ticket.Project.Name</div>
                     </td>
 
 
 
-
-                    <td class="text-center">
-                        <a href="" class="fw-medium text-nowrap">@ticket.TicketType.Name</a>
-                    </td>
+                    @if (ticket.DeveloperUser == null)
+                    {
+                        <td class="text-center">
+                            <div class="fw-medium text-nowrap"><span class="text-theme-6">Unassigned</span></div>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="text-center">
+                            <div class="fw-medium text-nowrap"><span>@ticket.DeveloperUser.FullName</span></div>
+                        </td>
+                    }
 
 
 
@@ -103,27 +114,27 @@
                         
                         case 1:
                             <td class="text-center">
-                                <a class="fw-medium text-nowrap"><span class="text-theme-9">@ticket.TicketPriority.Name</span></a>
+                                <div class="fw-medium text-nowrap"><span class="text-theme-9">@ticket.TicketPriority.Name</span></div>
                             </td>
                             break;
 
                         case 2:
                             <td class="text-center">
-                                <a class="fw-medium text-nowrap"><span class="text-theme-31">@ticket.TicketPriority.Name</span></a>
+                                <div class="fw-medium text-nowrap"><span class="text-theme-31">@ticket.TicketPriority.Name</span></div>
                             </td>
                             break;
 
 
                         case 3:
                             <td class="text-center">
-                                <a class="fw-medium text-nowrap"><span class="text-theme-32">@ticket.TicketPriority.Name</span></a>
+                                <div class="fw-medium text-nowrap"><span class="text-theme-32">@ticket.TicketPriority.Name</span></div>
                             </td>
                             break;
 
 
                         case 4:
                             <td class="text-center">
-                                <a class="fw-medium text-nowrap"><span class="text-theme-6">@ticket.TicketPriority.Name</span></a>
+                                <div class="fw-medium text-nowrap"><span class="text-theme-6">@ticket.TicketPriority.Name</span></div>
                             </td>
                             break;
 

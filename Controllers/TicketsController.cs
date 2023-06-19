@@ -693,8 +693,8 @@ namespace BugSpy.Controllers
 
 
 
-		[HttpPost]
-		[ValidateAntiForgeryToken]
+        [HttpPost, ActionName("AddCommentToTicket")]
+        [ValidateAntiForgeryToken]
 		public async Task<IActionResult> AddCommentToTicket([Bind("Id,Comment,Created,TicketId,UserId")] TicketComment ticketComment)
 		{
 

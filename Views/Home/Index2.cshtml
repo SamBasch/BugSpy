@@ -160,28 +160,12 @@
     <div class="grid columns-12 gap-6">
         <div class="g-col-12 g-col-xl-9 g-col-xxl-9 z-10">
             <div class="mt-6 mb-n6 intro-y">
-@*                <div class="alert alert-dismissible fade show box bg-theme-3 text-white d-flex align-items-center mb-6" role="alert">
-                    <span>
-                        Introducing new dashboard! Download now at <a href="javascript:;" class="text-decoration-underline ms-1" target="blank">themeforest.net</a>.
-                        <button class="btn border-transparent bg-white bg-opacity-20 text-white dark-bg-dark-1 bg-opacity-30-hover py-0.5 px-2 my-n3 ms-2">Detail</button>
-                    </span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"> <i data-feather="x" class="w-4 h-4"></i> </button>
-                </div>*@
+
             </div>
             <div class="mt-14 mb-3 grid g-col-12 gap-sm-10 intro-y">
                 <div class="g-col-12 g-col-sm-6 g-col-md-4 py-6 ps-sm-5 ps-md-0 ps-lg-5 position-relative text-center text-sm-start">
                     <div class="position-absolute pt-0.5 pt-xxl-0 mt-5 mt-xxl-6 top-0 end-0 dropdown">
-                      @*  <a class="dropdown-toggle block" href="javascript:;" aria-expanded="false" data-bs-toggle="dropdown"> <i data-feather="more-vertical" class="w-5 h-5 text-gray-600"></i> </a>*@
-@*                        <div class="dropdown-menu w-40">
-                            <ul class="dropdown-content">
-                                <li>
-                                    <a href="" class="dropdown-item"> <i data-feather="file-text" class="w-4 h-4 me-2"></i> Monthly Report </a>
-                                </li>
-                                <li>
-                                    <a href="" class="dropdown-item"> <i data-feather="file-text" class="w-4 h-4 me-2"></i> Annual Report </a>
-                                </li>
-                            </ul>
-                        </div>*@
+
                     </div>
                     <div class=" display-3 fs-sm fs-xxl-base fw-medium mb-n1 "> Hi @btUser.FullName, <span class="text-gray-700 dark-text-gray-500 fw-normal">welcome back!</span> </div>
 
@@ -219,13 +203,13 @@
                                     @allCompanyProjectsCount
                                                     }
                             </div>
-                 @*           <a class="text-gray-600 ms-4 ms-xxl-16" href=""> <i data-feather="refresh-ccw" class="w-4 h-4"></i> </a>*@
+
                         </div>
                         <div class="mt-5 d-xxl-flex justify-content-xxl-center mt-xxl-0 ms-xxl-n20 w-xxl-14 flex-xxl-none ps-xxl-2.5">
                             <div class="fw-medium d-inline-flex bg-theme-9 text-white rounded-pill px-2 py-1 fs-xs fs-xxl-sm p-xxl-0 text-xxl-theme-9 bg-xxl-transparent d-xxl-flex align-items-center tooltip cursor-pointer justify-content-xxl-center" title=""></i> </div>
                         </div>
                     </div>
-          @*          <div class="text-gray-600 mt-5">Last updated 1 hour ago</div>*@
+
                     @if (User.IsInRole(nameof(BTRoles.ProjectManager)))
                     {
                         <div class="fs-xxl-base text-theme-9  mt-6 mb-n1"> @pmAssignedTicketsCount Assigned Ticket(s) <span class="fw-medium text-gray-800 dark-text-gray-400"></span> </div>
@@ -236,14 +220,10 @@
                         <div class="fs-xxl-base text-theme-9  mt-6 mb-n1"> @allCompanyActiveProjectsCount Active Project(s) <span class="fw-medium text-gray-800 dark-text-gray-400"></span> </div>
                         <div class="fs-xxl-base text-theme-6  mt-6 mb-n1"> @allCompanyArchivedProjectsCount Archived Project(s) <span class="fw-medium text-gray-800 dark-text-gray-400"></span> </div>
                     }
-             @*       <div class="fs-xxl-base text-theme-9  mt-6 mb-n1"> @pmAssignedTicketsCount Assigned Ticket(s) <span class="fw-medium text-gray-800 dark-text-gray-400"></span> </div>*@
-           
+
 
                     <div class="mt-14 mt-xxl-24 dropdown">
-@*                        <button class="dropdown-toggle btn btn-rounded-primary w-44 w-xxl-52 px-4 position-relative justify-content-start" aria-expanded="false" data-bs-toggle="dropdown">
-                            Download Reports
-                            <span class="w-8 h-8 position-absolute d-flex justify-content-center align-items-center end-0 top-0 bottom-0 my-auto ms-auto me-1"> <i data-feather="chevron-down" class="w-4 h-4"></i> </span>
-                        </button>*@
+
                         <div class="dropdown-menu w-44 w-xxl-52">
                             <ul class="dropdown-content">
                                 <li>
@@ -257,22 +237,7 @@
                     </div>
                 </div>
                 <div class="g-row-start-2 g-row-start-md-auto g-col-12 g-col-md-4 py-6 border-black dark-border-dark-3 border-opacity-10 border-top border-top-md-0 border-start-md border-end-md border-dashed px-10 px-sm-28 px-md-5 mx-n5">
-@*                    <div class="d-flex flex-wrap align-items-center">
-                        <div class="d-flex align-items-center w-full w-sm-auto justify-content-center justify-content-sm-start me-auto mb-5 mb-xxl-0">
-                            <div class="w-2 h-2 bg-theme-1 rounded-circle mt-n4"></div>
-                            <div class="ms-3.5">
-                                <div class="position-relative fs-xl fs-xxl-2xl fw-medium lh-6 lh-xxl-5 ps-3.5 ps-xxl-4"> <span class="position-absolute fs-base fs-xxl-xl top-0 start-0 mt-xxl-n1.5">$</span> 47,578.77 </div>
-                                <div class="text-gray-600 dark-text-gray-600 mt-2">Yearly budget</div>
-                            </div>
-                        </div>
-                        <select class="form-select bg-transparent border-black border-opacity-10 dark-bg-transparent dark-border-opacity-100 dark-border-dark-5 mx-auto mx-sm-0 py-1.5 px-3 w-auto mt-n2">
-                            <option value="daily">Daily</option>
-                            <option value="weekly">Weekly</option>
-                            <option value="monthly">Monthly</option>
-                            <option value="yearly">Yearly</option>
-                            <option value="custom-date">Custom Date</option>
-                        </select>
-                    </div>*@
+
                     <div class="mt-10 text-gray-700 dark-text-gray-500">Monthly Completed Tickets</div>
                     <canvas class="mt-6" id="myChartThree" height="267"></canvas>
                 </div>
@@ -296,8 +261,7 @@
                             <div class="position-relative">
                                 <canvas class="mt-8" id="myChartOne" height="130"></canvas>
                                 <div class="d-flex flex-column justify-content-center align-items-center position-absolute w-full h-full top-0 start-0">
-                             @*       <div class="fs-xl fs-xxl-2xl fw-medium">2.501</div>
-                                    <div class="text-gray-600 dark-text-gray-600 mt-0.5">Active Users</div>*@
+           
                                 </div>
                             </div>
                     
@@ -336,8 +300,7 @@
                             <div class="position-relative">
                                 <canvas class="mt-8" id="myChartTwo" height="130"></canvas>
                                 <div class="d-flex flex-column justify-content-center align-items-center position-absolute w-full h-full top-0 start-0">
-                                    @*         <div class="fs-xl fs-xxl-2xl fw-medium">2.501</div>
-                                    <div class="text-gray-600 dark-text-gray-600 mt-0.5">Active Users</div>*@
+     
                                 </div>
                             </div>
                             <div class="mx-auto w-10/12 w-xxl-2/3 mt-8">
@@ -774,15 +737,12 @@
     <div class="g-col-12 g-col-xxl-9">
         <div class="grid columns-12 gap-6">
 
-            <!-- BEGIN: Weekly Top Products -->
+
             <div class="g-col-12 mt-6">
                 <div class="intro-y d-block d-sm-flex align-items-center h-10">
-@*                    <h2 class="fs-lg fw-medium truncate me-5">
-                        Most Recent Company Tickets
-                    </h2>*@
+
                     <div class="d-flex align-items-center ms-sm-auto mt-3 mt-sm-0">
-@*                        <button class="btn box d-flex align-items-center text-gray-700 dark-text-gray-300"> <i data-feather="file-text" class="d-none d-sm-block w-4 h-4 me-2"></i> Export to Excel </button>
-                        <button class="ms-3 btn box d-flex align-items-center text-gray-700 dark-text-gray-300"> <i data-feather="file-text" class="d-none d-sm-block w-4 h-4 me-2"></i> Export to PDF </button>*@
+
                     </div>
                 </div>
                 <div class="intro-y overflow-auto overflow-lg-visible mt-8 mt-sm-0">
@@ -798,7 +758,7 @@
 
                                     <th class="text-nowrap">TICKET NAME</th>
                                     <th class="text-nowrap">CREATED/UPDATED</th>
-                                    @*              <th class="text-nowrap">PROJECT</th>*@
+
                           
                  
                                     <th class="text-center text-nowrap">TYPE</th>
@@ -818,14 +778,14 @@
                                     
                                       <tr class="intro-x">
                                         <td class="">
-                                            <a class="fw-medium text-nowrap">  @ticket.Title </a>
+                                            <div class="fw-medium text-nowrap">  @ticket.Title </div>
                                             <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Sport &amp; Outdoor</div>
                                         </td>
 
                                         @if (ticket.Updated != null)
                                         {
                                             <td class="">
-                                                <a > <div href="" class="fw-medium text-nowrap"> @ticket.Updated?.ToString("MMM dd, yyyy")</div></a> 
+                                                <div > <div href="" class="fw-medium text-nowrap"> @ticket.Updated?.ToString("MMM dd, yyyy")</div></div> 
                                                 <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Updated Date</div>
                                             </td>
                                         }
@@ -833,22 +793,19 @@
                                         {
 
                                             <td class="">
-                                                <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id"> @ticket.Created.ToString("MMM dd, yyyy")</a>
+                                                <div class="fw-medium text-nowrap"> @ticket.Created.ToString("MMM dd, yyyy")</div>
                                                 <div class="text-gray-600 fs-xs text-nowrap mt-0.5">Creation Date</div>
                                             </td>
                                         }
 
 
-                                        @*            <td class="">
-                                    <a href="" class="fw-medium text-nowrap">@ticket.Project.Name</a>
-                                    </td>*@
 
                     
 
 
 
                                         <td class="text-center">
-                                            <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">@ticket.TicketType.Name</a>
+                                            <div class="fw-medium text-nowrap">@ticket.TicketType.Name</div>
                                         </td>
 
                                        
@@ -858,27 +815,27 @@
 
                                         case 1:
                                         <td class="text-center">
-                                            <a class="fw-medium text-nowrap"><span class="text-theme-9">@ticket.TicketPriority.Name</span></a>
+                                            <div class="fw-medium text-nowrap"><span class="text-theme-9">@ticket.TicketPriority.Name</span></div>
                                         </td>
                                         break;
 
                                         case 2:
                                         <td class="text-center">
-                                            <a class="fw-medium text-nowrap"><span class="text-theme-31">@ticket.TicketPriority.Name</span></a>
+                                            <div class="fw-medium text-nowrap"><span class="text-theme-31">@ticket.TicketPriority.Name</span></div>
                                         </td>
                                         break;
 
 
                                         case 3:
                                         <td class="text-center">
-                                            <a class="fw-medium text-nowrap"><span class="text-theme-32">@ticket.TicketPriority.Name</span></a>
+                                            <div class="fw-medium text-nowrap"><span class="text-theme-32">@ticket.TicketPriority.Name</span></div>
                                         </td>
                                         break;
 
 
                                         case 4:
                                         <td class="text-center">
-                                            <a class="fw-medium text-nowrap"><span class="text-theme-6">@ticket.TicketPriority.Name</span></a>
+                                            <div class="fw-medium text-nowrap"><span class="text-theme-6">@ticket.TicketPriority.Name</span></div>
                                         </td>
                                         break;
 
@@ -923,7 +880,7 @@
                         <h2 class="fs-lg fw-medium truncate me-5">
                             Recent Activities
                         </h2>
-                    @*    <a href="" class="ms-auto text-theme-1 dark-text-theme-10 truncate">Show More</a>*@
+
                     </div>
                     <div class="report-timeline mt-5 position-relative">
 
@@ -955,77 +912,6 @@
                         }
 
 
-     @*           <div class="g-col-12 g-col-md-6 g-col-xl-4 g-col-xxl-12 mt-3 mt-xxl-8">
-                    <div class="intro-x d-flex align-items-center h-10">
-                        <h2 class="fs-lg fw-medium truncate me-5">
-                            Transactions
-                        </h2>
-                    </div>
-                    <div class="mt-5">
-                        <div class="intro-x">
-                            <div class="box px-5 py-3 mb-3 d-flex align-items-center zoom-in">
-                                <div class="w-10 h-10 flex-none image-fit rounded-circle overflow-hidden">
-                                    <img alt="Rubick Bootstrap HTML Admin Template" src="dist/images/profile-1.jpg">
-                                </div>
-                                <div class="ms-4 me-auto">
-                                    <div class="fw-medium">Angelina Jolie</div>
-                                    <div class="text-gray-600 fs-xs mt-0.5">20 August 2020</div>
-                                </div>
-                                <div class="text-theme-6">-$70</div>
-                            </div>
-                        </div>
-                        <div class="intro-x">
-                            <div class="box px-5 py-3 mb-3 d-flex align-items-center zoom-in">
-                                <div class="w-10 h-10 flex-none image-fit rounded-circle overflow-hidden">
-                                    <img alt="Rubick Bootstrap HTML Admin Template" src="dist/images/profile-6.jpg">
-                                </div>
-                                <div class="ms-4 me-auto">
-                                    <div class="fw-medium">Leonardo DiCaprio</div>
-                                    <div class="text-gray-600 fs-xs mt-0.5">2 September 2020</div>
-                                </div>
-                                <div class="text-theme-9">+$40</div>
-                            </div>
-                        </div>
-                        <div class="intro-x">
-                            <div class="box px-5 py-3 mb-3 d-flex align-items-center zoom-in">
-                                <div class="w-10 h-10 flex-none image-fit rounded-circle overflow-hidden">
-                                    <img alt="Rubick Bootstrap HTML Admin Template" src="dist/images/profile-2.jpg">
-                                </div>
-                                <div class="ms-4 me-auto">
-                                    <div class="fw-medium">Johnny Depp</div>
-                                    <div class="text-gray-600 fs-xs mt-0.5">12 February 2022</div>
-                                </div>
-                                <div class="text-theme-9">+$80</div>
-                            </div>
-                        </div>
-                        <div class="intro-x">
-                            <div class="box px-5 py-3 mb-3 d-flex align-items-center zoom-in">
-                                <div class="w-10 h-10 flex-none image-fit rounded-circle overflow-hidden">
-                                    <img alt="Rubick Bootstrap HTML Admin Template" src="dist/images/profile-12.jpg">
-                                </div>
-                                <div class="ms-4 me-auto">
-                                    <div class="fw-medium">Tom Cruise</div>
-                                    <div class="text-gray-600 fs-xs mt-0.5">19 November 2021</div>
-                                </div>
-                                <div class="text-theme-6">-$27</div>
-                            </div>
-                        </div>
-                        <div class="intro-x">
-                            <div class="box px-5 py-3 mb-3 d-flex align-items-center zoom-in">
-                                <div class="w-10 h-10 flex-none image-fit rounded-circle overflow-hidden">
-                                    <img alt="Rubick Bootstrap HTML Admin Template" src="dist/images/profile-4.jpg">
-                                </div>
-                                <div class="ms-4 me-auto">
-                                    <div class="fw-medium">Johnny Depp</div>
-                                    <div class="text-gray-600 fs-xs mt-0.5">28 November 2022</div>
-                                </div>
-                                <div class="text-theme-9">+$41</div>
-                            </div>
-                        </div>
-                        <a href="" class="intro-x w-full d-block text-center rounded-2 py-3 border border-dotted border-theme-15 dark-border-dark-5 text-theme-16 dark-text-gray-600">View More</a>
-                    </div>
-                </div>
-                <!-- END: Transactions -->*@
             </div>
         </div>
     </div>

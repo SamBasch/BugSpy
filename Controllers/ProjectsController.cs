@@ -574,7 +574,7 @@ namespace BugSpy.Controllers
 
 
         // GET: Projects/Edit/5
-
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> Edit(int? id)
         {
 
@@ -602,6 +602,7 @@ namespace BugSpy.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin, ProjectManager")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Created,StartDate,EndDate,ImageFormFile,Archived,CompanyId,ProjectPriorityId")] Project project)
         {
@@ -723,6 +724,7 @@ namespace BugSpy.Controllers
 
         // POST: Projects/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin, ProjectManager")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? Id)
         {
@@ -784,6 +786,7 @@ namespace BugSpy.Controllers
         // POST: Projects/Delete/5
         [HttpPost, ActionName("Unarchiver")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, ProjectManager")]
         public async Task<IActionResult> UnarchiveConfirm(int? Id)
         {
 
@@ -817,6 +820,7 @@ namespace BugSpy.Controllers
 
         // POST: Projects/Delete/5
         [HttpPost, ActionName("UnarchiveWithTickets")]
+        [Authorize(Roles = "Admin, ProjectManager")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UnarchiveAndTicketsConfirm(int? Id)
         {
@@ -855,5 +859,5 @@ namespace BugSpy.Controllers
         {
           return (_context.Projects?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-    }
+    }M
 }

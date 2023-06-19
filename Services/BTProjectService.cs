@@ -26,7 +26,7 @@ namespace BugSpy.Services
         {
             try
 			{
-                Project? project = await _context.Projects.Where(p => p.CompanyId == companyId).Include(p => p.Members).Include(p => p.Tickets).ThenInclude(t => t.TicketPriority).Include(p => p.Tickets).ThenInclude(t => t.TicketType).Include(p => p.Company).Include(p => p.ProjectPriority).FirstOrDefaultAsync(p => p.Id == projectId);
+                Project? project = await _context.Projects.Include(p => p.Members).Include(p => p.Tickets).ThenInclude(t => t.TicketPriority).Include(p => p.Tickets).ThenInclude(t => t.TicketType).Include(p => p.Company).Include(p => p.ProjectPriority).FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == companyId);
 
                 return project;
             }
@@ -270,19 +270,30 @@ namespace BugSpy.Services
 		}
 
         public async Task<bool> IsMemberInProject(BTUser member, int? projectId)
+
 		{
-            Project project = await GetProjectByIdAsync(member!.CompanyId, projectId);
+			
 
-            bool IsOnProject = project.Members.Any(m => m.Id == member.Id);
+            Project? project = await GetProjectByIdAsync(member!.CompanyId, projectId);
 
-            if (!IsOnProject)
-            {
-             
-                return true;
+			if(project.Members != null)
+			{
+                bool IsOnProject = project.Members.Any(m => m.Id == member.Id);
+                if (!IsOnProject)
+                {
 
-            }
+                    return true;
 
-            return false;
+                }
+
+                return false;
+            } else
+			{
+				return false;
+			}
+           
+
+      
 
         }
 
