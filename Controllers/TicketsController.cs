@@ -819,16 +819,20 @@ namespace BugSpy.Controllers
         public async Task<IActionResult> Create([Bind("Id,Title,Description,Created,Updated,Archived,ArchivedByProject,ProjectId,TicketTypeId,TicketStatusId,TicketPriorityId,DeveloperUserId,SubmitterUserId")] Ticket ticket)
         {
             ModelState.Remove("SubmitterUserId");
+
+
             int companyId = User.Identity.GetCompanyId();
+
             if (ModelState.IsValid)
             {
                 string userId = _userManager.GetUserId(User);
+
                 ticket.SubmitterUserId = _userManager.GetUserId(User);
 
                 BTUser? btUser = await _userManager.GetUserAsync(User);
 
-
-
+                ticket.Description.ToString();
+                
 
 
                 ticket.Created = DataUtility.GetPostGresDate(DateTime.UtcNow);

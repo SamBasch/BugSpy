@@ -48,7 +48,17 @@ namespace BugSpy.Services
 
 			try
 			{
-				Ticket? ticket = await _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).FirstOrDefaultAsync(t => t.Id == ticketId && t.Project.CompanyId == companyId);
+				Ticket? ticket = await _context.Tickets
+                    .Include(t => t.DeveloperUser)
+                    .Include(t => t.Project)
+                    .Include(t => t.SubmitterUser)
+                    .Include(t => t.TicketPriority)
+                    .Include(t => t.TicketStatus)
+                    .Include(t => t.TicketType)
+                    .Include(t => t.Comments)
+                    .Include(t => t.Attachments)
+                    .Include(t => t.History)
+                    .FirstOrDefaultAsync(t => t.Id == ticketId && t.Project!.CompanyId == companyId);
 
 
 				return ticket!;
