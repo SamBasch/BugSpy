@@ -831,7 +831,7 @@ namespace BugSpy.Controllers
 
                 BTUser? btUser = await _userManager.GetUserAsync(User);
 
-                ticket.Description.ToString();
+                
                 
 
 
