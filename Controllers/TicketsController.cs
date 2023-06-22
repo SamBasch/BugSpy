@@ -396,6 +396,7 @@ namespace BugSpy.Controllers
 
            
                 IEnumerable<Ticket> companyTickets = (await _btTicketService.GetAllCompanyActiveTickets(companyId));
+
                 return View(companyTickets);
         
 
@@ -739,7 +740,7 @@ namespace BugSpy.Controllers
 		// GET: Tickets/Details/5
 		public async Task<IActionResult> Details(int? id)
         {
-            int companyId = User.Identity.GetCompanyId();
+            int companyId = User.Identity!.GetCompanyId();
 
             if (id == null)
             {
