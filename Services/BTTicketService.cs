@@ -132,10 +132,20 @@ namespace BugSpy.Services
             try
             {
 
-                //List<TicketHistory> ticketHistories = (await _context.TicketHistories.Include(t => t.User).Include(th => th.Ticket).ThenInclude(t => t.Project).Where(t => t.Ticket.Project.CompanyId == companyId).ToListAsync());
+                
 
-
-                IEnumerable<Ticket> allCompanyTickets = await _context.Tickets.Where(t => t.Archived == false).Include(t => t.DeveloperUser).Include(t => t.Project).Include(t => t.SubmitterUser).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType).Include(t => t.Comments).Include(t => t.Attachments).Include(t => t.History).Where(t => t.Project.CompanyId == companyId && t.Archived == false && t.ArchivedByProject == false).ToListAsync();
+                IEnumerable<Ticket> allCompanyTickets = await _context.Tickets
+                    .Where(t => t.Archived == false)
+                    .Include(t => t.DeveloperUser)
+                    .Include(t => t.Project)
+                    .Include(t => t.SubmitterUser)
+                    .Include(t => t.TicketPriority)
+                    .Include(t => t.TicketStatus)
+                    .Include(t => t.TicketType)
+                    .Include(t => t.Comments)
+                    .Include(t => t.Attachments)
+                    .Include(t => t.History)
+                    .Where(t => t.Project!.CompanyId == companyId && t.Archived == false && t.ArchivedByProject == false).ToListAsync();
 
                 return allCompanyTickets.OrderByDescending(rst => rst.Created);
 

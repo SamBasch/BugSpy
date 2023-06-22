@@ -18,6 +18,7 @@ using BugSpy.Models.Enums;
 using BugSpy.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Text.RegularExpressions;
 
 namespace BugSpy.Controllers
 {
@@ -831,9 +832,11 @@ namespace BugSpy.Controllers
 
                 BTUser? btUser = await _userManager.GetUserAsync(User);
 
-                
-                
 
+
+                string noHTML = Regex.Replace(ticket.Description, @"<[^>]+>| ", " ").Trim();
+
+                ticket.Description = noHTML;
 
                 ticket.Created = DataUtility.GetPostGresDate(DateTime.UtcNow);
 
